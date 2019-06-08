@@ -1,4 +1,5 @@
 import { get } from "http";
+import { offset } from "highcharts";
 
 $(document).ready(function(e){
     let slider = $('.slider');
@@ -11,13 +12,12 @@ $(document).ready(function(e){
         })
         moveAt(e);
         slider.append(toggler);  
-          
-        function moveAt(e){
-            let sliderCoords = slider.get(0).getBoundingClientRect().left;
-            let shiftX = e.pageX - toggler.get(0).getBoundingClientRect().left;
-            let newLeft = e.pageX - sliderCoords;
 
-            console.log(Math.round(newLeft));
+        let shiftX = e.pageX - (toggler.get(0).getBoundingClientRect().left + window.pageXOffset);
+        let sliderCoords = slider.get(0).getBoundingClientRect().left + window.pageXOffset;
+        
+        function moveAt(e){
+            let newLeft = e.pageX - shiftX - sliderCoords;
 
             if (newLeft < 0) {
                 newLeft = 0;
