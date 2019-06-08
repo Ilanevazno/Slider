@@ -28,4 +28,16 @@
         position: absolute;
         cursor: pointer;
     }
+
+    .slider_value{
+        width: 5%;
+        height: 403%;
+        background: red;
+        color: white;
+        position: absolute;
+        bottom: 517%;
+        border-radius: 8px;
+        text-align: center;
+        font-family: lato black;
+    }
 }
