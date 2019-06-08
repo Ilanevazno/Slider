@@ -14,10 +14,20 @@ $(document).ready(function(e){
           
         function moveAt(e){
             let sliderCoords = slider.get(0).getBoundingClientRect().left;
-            let shiftX = e.pageX - toggler.get(0).getBoundingClientRect().left
+            let shiftX = e.pageX - toggler.get(0).getBoundingClientRect().left;
             let newLeft = e.pageX - sliderCoords;
 
             console.log(Math.round(newLeft));
+
+            if (newLeft < 0) {
+                newLeft = 0;
+            }
+
+            let rightEdge = slider.width() - toggler.width();
+
+            if (newLeft > rightEdge) {
+                newLeft = rightEdge;
+            }
             
             toggler.css({
                 "left": newLeft + "px",
@@ -26,16 +36,11 @@ $(document).ready(function(e){
 
         $('body').on('mousemove', function(e){
             moveAt(e);
-            getCoords();
         });
 
         $('body').on('mouseup', function(e){
             $('body').off("mousemove");
         })
-
-        function getCoords(elem){
-
-        }
     })
 
     toggler.ondragstart = function() {
