@@ -2,6 +2,14 @@ import { get } from "http";
 import { offset } from "highcharts";
 
 $(document).ready(function(e){
+
+    // Добавление pointer и значение над слайдером
+    $('.slider').append('<div class="slider_toggler"></div>');
+    $('.slider').append('<div class="slider_value">0</div>');
+
+    //Добавление панели настроек
+    $('.slider').append('<div class="slider_settinsgs"></div>');
+
     // Движение pointer по слайдеру
     let slider = $('.slider');
     let toggler = slider.children(0);
@@ -29,17 +37,21 @@ $(document).ready(function(e){
             if (newLeft > rightEdge) {
                 newLeft = rightEdge;
             }
-            console.log(Math.floor(newLeft * 100 / rightEdge))
             
             toggler.css({
                 "left": newLeft + "px",
+
             })
             //Отрисовка процентов заполненности слайдера
             let sliderValue = $('.slider_value');
-            sliderValue[0].innerText = Math.floor(newLeft * 100 / rightEdge); 
-            // 
+
+            if(!isNaN(newLeft)){
+                sliderValue[0].innerText = Math.floor(newLeft * 100 / rightEdge); 
+            }
+            /////////////////////////////////// 
         }
 
+        
         $('body').on('mousemove', function(e){
             moveAt(e);
         });

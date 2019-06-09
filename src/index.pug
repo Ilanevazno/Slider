@@ -1,4 +1,18 @@
 div(class="slider-wrapper")
     div(class="slider")
-        div(class="slider_toggler")
-        div(class="slider_value") 15
+    div(class="slider_settings")
+        input(type="value" placeholder="Размер шага:")
+        input(type="value" placeholder="Установить значение")
+        label(for="Enable_actValue") Показыавть бегунок:
+            input(type="checkbox" id="Enable_actValue")
+        form(action="#" id="view_type" class="view_type") Тип слайдера:
+            label(for="Horizontal_view") Горизонтальный вид
+                input(type="checkbox" id="Horizontal_view")
+            label(for="Vertical_view") Вертикальный вид
+                input(type="checkbox" id="Vertical_view")
+        form(action="#" id="value_type" class="value_type") Тип значения:
+            label(for="single_value") Одиночное значение
+                input(type="checkbox" id="single_value")
+            label(for="interval_value") Интервал
+                input(type="checkbox" id="interval_value")
+        button(type="submit") Применить значения
