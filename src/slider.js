@@ -1,67 +1,74 @@
-import { get } from "http";
-import { offset } from "highcharts";
-
 $(document).ready(function(e){
+    function loadSettingsPanel(){
 
-    // Добавление pointer и значение над слайдером
-    $('.slider').append('<div class="slider_toggler"></div>');
-    $('.slider').append('<div class="slider_value">0</div>');
-
-    //Добавление панели настроек
-    $('.slider').append('<div class="slider_settinsgs"></div>');
-
-    // Движение pointer по слайдеру
-    let slider = $('.slider');
-    let toggler = slider.children(0);
+    }
     
-    toggler.on('mousedown', function(e) {
-        toggler.css({
-            "position": "absolute",
-            "z-index": "1000",
-        })
-        moveAt(e);
-        slider.append(toggler);  
+    let slider = $('.slider');
+    let toggler = slider.children();
+    let sliderWidth = slider[0].offsetWidth - toggler[0].offsetWidth;
+    GetValueIndicator();
 
-        let shiftX = e.pageX - (toggler.get(0).getBoundingClientRect().left + window.pageXOffset);
-        let sliderCoords = slider.get(0).getBoundingClientRect().left + window.pageXOffset;
-        
-        function moveAt(e){
-            let newLeft = e.pageX - shiftX - sliderCoords;
+    function GetValueIndicator(){
+        indicatorElem = $('<div/>', {
+            class: 'slider_value',
+            text: '0'
+        });
+        toggler.append(indicatorElem);
+    }
 
-            if (newLeft < 0) {
-                newLeft = 0;
-            }
+    function getSliderValue(indicatorElem)
+    {
+        let sliderValue = Math.round((toggler[0].offsetLeft * 100) / sliderWidth);
+        indicatorElem[0].innerText = sliderValue;
+    }
 
-            let rightEdge = slider.width() - toggler.width();
+    toggler.on('mousedown', function(e)
+    {
+        prepareToggler();
+        let thumbCoords = getCoords(toggler);
+        let shiftX = Math.floor(e.pageX - thumbCoords.left);
+        let sliderCoords = getCoords(slider);
 
-            if (newLeft > rightEdge) {
-                newLeft = rightEdge;
-            }
-            
-            toggler.css({
-                "left": newLeft + "px",
+        function prepareToggler()
+        {
+            thumbCoords;
+            let startPos = thumbCoords + '%';
 
-            })
-            //Отрисовка процентов заполненности слайдера
-            let sliderValue = $('.slider_value');
-
-            if(!isNaN(newLeft)){
-                sliderValue[0].innerText = Math.floor(newLeft * 100 / rightEdge); 
-            }
-            /////////////////////////////////// 
+            toggler.css(
+                {
+                    "position": "absolute",
+                    "left": `${startPos}`
+                }
+            )
         }
 
+        function getCoords(elem)
+        {
+            let box = elem[0].getBoundingClientRect();
+            return {
+                left: box.left + pageXOffset
+            }
+        }
         
-        $('body').on('mousemove', function(e){
-            moveAt(e);
+        $(document).on('mousemove', function(e, newLeft)
+        {
+            getSliderValue(indicatorElem);
+            newLeft = e.pageX - shiftX - sliderCoords.left;
+            checkScope();
+            toggler.css(
+                {
+                    "left": newLeft + "px"
+                }
+            )
+
+            function checkScope(){
+                (newLeft < 0) ? newLeft = 0 : newLeft;
+                (newLeft > sliderWidth) ? newLeft = sliderWidth : newLeft;
+            }
         });
-
-        $('body').on('mouseup', function(e){
-            $('body').off("mousemove");
-        })
     })
-
-    toggler.ondragstart = function() {
-        return false;
-      };
+    $(document).on("mouseup", function(e)
+    {
+        $(document).off("mousemove");
+    })
 })
