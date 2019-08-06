@@ -1,12 +1,43 @@
 $(document).ready(function(e){
-    function loadSettingsPanel(){
+    loadSettingsPanel();
 
+    function loadSettingsPanel(){
+        let settingsPanel = $('<div/>', {
+            class: 'slider_settings'
+        }).appendTo('.slider-wrapper');
+
+        let stepSize = $('<input/>', {
+            class: 'step_size',
+            placeholder: 'Размер шага'
+        }).appendTo(settingsPanel);
+
+        let setValue = $('<input/>', {
+            class: 'set_size',
+            placeholder: 'Установить значение'
+        }).appendTo(settingsPanel)
+
+        let showToggle = $('<label/>', {
+            for: 'Enable_actValue',
+            text: 'Показывать бегунок'
+        }).appendTo(settingsPanel)
+
+        let toggle = $('<input/>', {
+            type: 'checkbox',
+            id: 'Enable_actValue'
+        }).appendTo(showToggle)
+
+        toggle.click(function(){
+            if(toggle.prop("checked")){
+                GetValueIndicator();
+            } else {
+                removeValueIndicator();
+            }
+        })
     }
     
     let slider = $('.slider');
     let toggler = slider.children();
     let sliderWidth = slider[0].offsetWidth - toggler[0].offsetWidth;
-    GetValueIndicator();
 
     function GetValueIndicator(){
         indicatorElem = $('<div/>', {
@@ -14,6 +45,10 @@ $(document).ready(function(e){
             text: '0'
         });
         toggler.append(indicatorElem);
+    }
+
+    function removeValueIndicator(){
+        (indicatorElem).remove();
     }
 
     function getSliderValue(indicatorElem)
