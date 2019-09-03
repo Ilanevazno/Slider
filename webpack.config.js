@@ -2,8 +2,14 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-  module: {
+    entry: './src/index.ts',
+    module: {
     rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/
+      },  
       {
         test: require.resolve('jquery'),
         use: [{
@@ -59,7 +65,7 @@ module.exports = {
           loader: 'file-loader?name=/src/images/[name].[ext]'
         }]
       }
-    ]
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin({
