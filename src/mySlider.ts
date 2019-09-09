@@ -7,9 +7,22 @@ namespace Slider {
     class model{
         sliderBody: JQuery<HTMLElement>;
         sliderPointer: JQuery<HTMLElement>;
-        
-        sayHello(){
-            console.log(this.sliderPointer[0]);
+        pointerCoords = this.getCoords(this.sliderPointer);
+
+        getCoords(elem: any){
+            let box = elem[0].getBoundingClientRect();
+            return {
+                left: box.left + pageXOffset
+            }
+        }
+
+        preparePointer(){
+            let startPos = this.pointerCoords + "%";
+
+            this.sliderPointer.css({
+                "position": "absolute",
+                "left": `${startPos}`,
+            })
         }
     }
 
@@ -49,4 +62,3 @@ let slider: any;
 
 slider = $("#first_slider");
 slider.createSlider();
-slider.sayHello();
