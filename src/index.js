@@ -5,6 +5,9 @@ import './fonts/fonts.scss';
 import './index.pug';
 import './index.scss';
 
+import './mySlider.ts';
+import './mySlider.scss';
+
 (function ($) {
     jquery.fn.mySlider = function() {
     
