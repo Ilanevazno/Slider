@@ -4,19 +4,40 @@ namespace Slider {
         mySlider():jQuery;
     }
 
-    class model{
-        sliderBody: JQuery<HTMLElement>;
-        sliderPointer: JQuery<HTMLElement>;
-        pointerCoords = this.getCoords(this.sliderPointer);
-
-        getCoords(elem: any){
+    class Model{
+        getCoords(elem: JQuery<HTMLElement>){
             let box = elem[0].getBoundingClientRect();
             return {
                 left: box.left + pageXOffset
             }
         }
+    }
 
-        preparePointer(){
+    class View{
+        sliderBody: JQuery<HTMLElement>;
+        sliderPointer: JQuery<HTMLElement>;
+        model = new Model;
+        pointerCoords: object;
+
+        sliderStart(){
+            this.sliderBody = $('<div/>', {
+                class: 'slider__body'
+            }).appendTo(slider);
+    
+            this.sliderPointer = $('<span/>', {
+                class: "slider__pointer"
+            }).appendTo(this.sliderBody);
+
+            this.pointerCoords = this.model.getCoords(this.sliderPointer);
+        }
+
+        getValueIndicator(){
+            let valueIndicator = $('<span/>', {
+                class: "slider__value"
+            }).appendTo(this.sliderBody);
+        }
+
+        preparePointer(): void{
             let startPos = this.pointerCoords + "%";
 
             this.sliderPointer.css({
@@ -26,34 +47,20 @@ namespace Slider {
         }
     }
 
-    class view extends model{
-        model = new model;
-        controller = new controller;
+    class Controller{
+        view = new View;
+        model = new Model;
 
-        sliderBody = $('<div/>', {
-            class: 'slider__body'
-        }).appendTo(slider);
-
-        sliderPointer = $('<span/>', {
-            class: "slider__pointer"
-        }).appendTo(this.sliderBody);
-
-        getValueIndicator(){
-            let valueIndicator = $('<span/>', {
-                class: "slider__value"
-            }).appendTo(this.sliderBody);
+        constructor(){
+            this.view.sliderStart();
         }
-    }
-
-    class controller extends model{
-
     }
 
     let $ = jQuery;
 
     jQuery.fn.extend({
         createSlider: function(){
-            slider = new view;
+            slider = new Controller;
         }
     })
 }
