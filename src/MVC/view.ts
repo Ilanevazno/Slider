@@ -2,6 +2,10 @@ import { Model } from './model';
 
 export class View{
 
+    constructor () {
+        
+    }
+
     slider: JQuery<HTMLElement>;
     sliderBody: JQuery<HTMLElement>;
     sliderPointer: JQuery<HTMLElement>;
@@ -9,18 +13,18 @@ export class View{
     pointerCoords: any;
 
     getCoords(elem: JQuery<HTMLElement>){
-        console.log("хы");
     }
 
-    sliderStart(){
+    sliderStart(exemplar: any){
         this.sliderBody = $('<div/>', {
             class: 'slider__body'
-        }).appendTo(this.slider);
+        }).appendTo(exemplar);
 
         this.sliderPointer = $('<span/>', {
             class: "slider__pointer"
         }).appendTo(this.sliderBody);
         this.pointerCoords = this.getCoords(this.sliderPointer);
+        console.log(exemplar);
     }
 
     getValueIndicator(){

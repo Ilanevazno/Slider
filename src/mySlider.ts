@@ -1,14 +1,16 @@
 import * as $ from "jquery";
 import './mySlider.scss';
 import './fonts/fonts.scss';
-import { Controller } from './MVC/controller';
+import { View } from "./MVC/view";
 
 export namespace Slider {
     let $ = jQuery;
+    let slider: JQuery<HTMLElement>;
     
     jQuery.fn.extend({
-        createSlider: function(){
-            const slider = new Controller;
+        createSlider: function(): void{
+            let slider = new View();
+            slider.sliderStart(this);
         }
     })
 
