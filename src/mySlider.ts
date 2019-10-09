@@ -2,6 +2,7 @@ import * as $ from "jquery";
 import './mySlider.scss';
 import './fonts/fonts.scss';
 import { View } from "./MVC/view";
+import { Controller } from './MVC/controller';
 
 export namespace Slider {
     let $ = jQuery;
@@ -9,8 +10,10 @@ export namespace Slider {
     
     jQuery.fn.extend({
         createSlider: function(): void{
-            let slider = new View();
-            slider.sliderStart(this);
+            let slider = new Controller();
+            slider.view.sliderStart(this);
+
+            slider.AccessToDragging();
         }
     })
 

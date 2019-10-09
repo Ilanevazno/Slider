@@ -1,11 +1,41 @@
 import {expect} from "chai";
+import { View } from "../src/MVC/view";
+import $ from 'jquery';
+import { Controller } from "../src/MVC/controller";
 
-function pow(){
-    return 8;
-}
+let containerForSlider = document.createElement("div");
 
-describe("pow", () => {
-    it("Возводит в n-ую степень", () => {
-        assert.equal(pow(2, 3), 8);
+document.body.appendChild(containerForSlider);
+containerForSlider.classList.add("example-slider")
+
+let testSlider = document.querySelector(".example-slider");
+
+let slider = new View();
+
+describe("Slider render test", () => {
+    slider.sliderStart(testSlider);
+    
+    it("Rendering slider body", () =>{
+        assert(testSlider.querySelector(".slider__body"));
+    });
+    it("Rendering slider pointer", () => {
+        assert(testSlider.querySelector(".slider__pointer"));
+    });
+
+    describe("Getting value indicator", () => {
+        slider.getValueIndicator();
+        it("Rendering slider indicator after installing", () => {
+            assert(testSlider.querySelector(".slider__value"));
+        })
+    })
+})
+
+let sliderController = new Controller();
+
+describe("Testing controller", () => {
+    sliderController.startDragging();
+
+    it("Not returns undefined", () => {
+        assert.isDefined(sliderController);
     })
 })

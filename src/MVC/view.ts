@@ -1,7 +1,6 @@
 import { Model } from './model';
 
 export class View{
-
     constructor () {
         
     }
@@ -13,6 +12,10 @@ export class View{
     pointerCoords: any;
 
     getCoords(elem: JQuery<HTMLElement>){
+        let box = elem[0].getBoundingClientRect();
+        return {
+            left: box.left + pageXOffset
+        }
     }
 
     sliderStart(exemplar: any){
@@ -24,21 +27,22 @@ export class View{
             class: "slider__pointer"
         }).appendTo(this.sliderBody);
         this.pointerCoords = this.getCoords(this.sliderPointer);
-        console.log(exemplar);
+        this.preparePointer();
     }
 
     getValueIndicator(){
-        let valueIndicator = $('<span/>', {
+        let valueIndicator: JQuery<HTMLElement> = $('<span/>', {
             class: "slider__value"
         }).appendTo(this.sliderBody);
     }
 
     preparePointer(): void{
-        let startPos = this.pointerCoords + "%";
+        // let startPos: number = this.pointerCoords.left;
 
         this.sliderPointer.css({
             "position": "absolute",
-            "left": `${startPos}`,
+            // "left": `${startPos}%`,
+            "z-index": "1000"
         })
     }
 }
