@@ -35,7 +35,13 @@ export class Controller{
             this.view.sliderPointer.css({
                 "left": `${position}px`,
             })
+
+            this.getValueIndicator(sliderWidth, position);
         }
+    }
+
+    getValueIndicator(sliderWidth: number, percentages: number) {
+        let activePercent = Math.round(100 * percentages / sliderWidth); 
     }
 
     StopPointerMove() {

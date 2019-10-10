@@ -39,3 +39,11 @@ describe("Testing controller", () => {
         assert.isDefined(sliderController);
     });
 })
+
+describe("Added table with percentages", () => {
+    sliderController.getPercentages();
+
+    it("Renderings table with percentages", () => {
+        assert(testSlider.querySelector(".slider__percenages"))
+    })
+})

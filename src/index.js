@@ -6,3 +6,5 @@ import './index.scss';
 import './mySlider.ts';
 
 $("#first_slider").createSlider();
+$("#second_slider").createSlider();
+$("#third_slider").createSlider();
