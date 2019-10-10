@@ -33,9 +33,9 @@ describe("Slider render test", () => {
 let sliderController = new Controller();
 
 describe("Testing controller", () => {
-    sliderController.startDragging();
+    sliderController.StartPointerMove();
 
-    it("Not returns undefined", () => {
+    it("Method not returns undefined", () => {
         assert.isDefined(sliderController);
-    })
+    });
 })
