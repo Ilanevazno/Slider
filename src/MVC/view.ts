@@ -1,24 +1,14 @@
 import { Model } from './model';
 
 export class View{
-    constructor () {
-        
-    }
-
     slider: JQuery<HTMLElement>;
     sliderBody: JQuery<HTMLElement>;
     sliderPointer: JQuery<HTMLElement>;
-    model = new Model;
-    pointerCoords: any;
+    valueIndicator: any;
+    model: any = new Model;
+    pointerPercentages: number;
 
-    getCoords(elem: JQuery<HTMLElement>){
-        let box = elem[0].getBoundingClientRect();
-        return {
-            left: box.left + pageXOffset
-        }
-    }
-
-    sliderStart(exemplar: any){
+    sliderStart(exemplar: any): void{
         this.sliderBody = $('<div/>', {
             class: 'slider__body'
         }).appendTo(exemplar);
@@ -26,23 +16,13 @@ export class View{
         this.sliderPointer = $('<span/>', {
             class: "slider__pointer"
         }).appendTo(this.sliderBody);
-        this.pointerCoords = this.getCoords(this.sliderPointer);
-        this.preparePointer();
+        this.model.pointerCoords = this.model.getCoords(this.sliderPointer);
     }
 
-    getValueIndicator(){
-        let valueIndicator: JQuery<HTMLElement> = $('<span/>', {
-            class: "slider__value"
-        }).appendTo(this.sliderBody);
-    }
-
-    preparePointer(): void{
-        // let startPos: number = this.pointerCoords.left;
-
-        this.sliderPointer.css({
-            "position": "absolute",
-            // "left": `${startPos}%`,
-            "z-index": "1000"
-        })
-    }
+    getValueIndicator(): void {
+        this.valueIndicator = $('<span/>', {
+            class: "slider__value",
+            text: "0"
+        }).appendTo(this.sliderPointer);
+    }   
 }

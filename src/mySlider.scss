@@ -52,13 +52,13 @@ $gray-template: #e5e5e5;
     &__value{
         background: #e75735;
         color: white;
-        position: absolute;
-        width: 9%;
+        width: 100%;
         height: 26px;
         border-radius: 4px;
-        bottom: 483%;
-        left: -1%;
         text-align: center;
         font-family: lato black;
+        position: absolute;
+        left: 0%;
+        bottom: 125%;
     }
 }

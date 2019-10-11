@@ -6,11 +6,7 @@ export class Controller{
     view = new View;
     that = this;
 
-    constructor() {
-        
-    }
-
-    AccessToDragging() {
+    AccessToDragging(): void {
         this.view.sliderPointer.on("mousedown", (e) => {
             e.preventDefault();
             let shiftX = e.clientX - this.view.sliderPointer[0].getBoundingClientRect().left;
@@ -18,7 +14,7 @@ export class Controller{
         });
     }
 
-    prepareForUsing(e: any, shiftX: number) {
+    prepareForUsing(e: object, shiftX: number): void {
         $(document).on("mousemove", this.StartPointerMove(shiftX).bind(this));
         $(document).on("mouseup", this.StopPointerMove.bind(this));
     }
@@ -36,15 +32,12 @@ export class Controller{
                 "left": `${position}px`,
             })
 
-            this.getValueIndicator(sliderWidth, position);
+            this.view.pointerPercentages = Number(this.model.getValueIndicator(sliderWidth, position));
+            this.view.valueIndicator[0].innerHTML = this.view.pointerPercentages;
         }
     }
 
-    getValueIndicator(sliderWidth: number, percentages: number) {
-        let activePercent = Math.round(100 * percentages / sliderWidth); 
-    }
-
-    StopPointerMove() {
+    StopPointerMove(): void {
         $(document).off("mousemove");
     }
 }
