@@ -30,7 +30,7 @@ describe("Slider render test", () => {
     })
 
     describe("Render settings panel", () => {
-        slider.initSettings();
+        slider.initSettings(testSlider);
         it("Render panel", () => {
             assert(testSlider.querySelector(".slider_settings"));
         });
@@ -55,7 +55,7 @@ describe("Slider render test", () => {
             assert(testSlider.querySelector(".value_type"));
         });
 
-        it("Render apply walues button", () => {
+        it("Render apply values button", () => {
             assert(testSlider.querySelector(".apply_values"));
         });
     })
@@ -75,6 +75,6 @@ describe("Added table with percentages", () => {
     slider.getValueIndicator();
 
     it("Renderings table with percentages", () => {
-        assert(testSlider.querySelector(".slider__percenages"))
+        assert(testSlider.querySelector(".slider__value"))
     })
 })
