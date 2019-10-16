@@ -12,9 +12,7 @@ export namespace Slider {
         createSlider: function(): void{
             let slider = new Controller();
             slider.view.sliderStart(this);
-            slider.view.getValueIndicator();
-            slider.view.initSettings(this);
-
+            slider.initSettings(this);
             slider.AccessToDragging();
         }
     })

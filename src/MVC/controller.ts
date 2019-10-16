@@ -40,4 +40,16 @@ export class Controller{
     StopPointerMove(): void {
         $(document).off("mousemove");
     }
+
+    initSettings(exemplar: any){
+        this.view.renderSettingsPanel(exemplar);
+
+        this.view.enablePointerButton.change(function(){
+            if(this.view.enablePointerButton.is(':checked')){
+                this.view.getValueIndicator();
+            } else {
+                this.view.valueIndicator.remove(); 
+            }
+        }.bind(this));
+    }
 }

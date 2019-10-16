@@ -43,7 +43,7 @@ export class View{
         }).appendTo(this.sliderPointer);
     }   
 
-    initSettings(exemplar: JQuery<HTMLElement>): void{
+    renderSettingsPanel(exemplar: JQuery<HTMLElement>): void{
         this.settingsPanel = $('<div/>', {
             class: "slider_settings"
         }).appendTo(exemplar);
@@ -68,7 +68,7 @@ export class View{
         this.enablePointerButton = $('<input/>', {
             type: "checkbox",
             id: "Enable_actValue"
-        }).appendTo(this.settingsPanel);
+        }).appendTo(this.enablePointerLabel);
 
         this.sliderTypeForm = $('<form/>', {
             id: "view_type",
@@ -84,7 +84,7 @@ export class View{
         this.horizontViewButton = $('<input/>', {
             type: "checkbox",
             id: "Horizontal_view",
-        }).appendTo(this.settingsPanel);
+        }).appendTo(this.horizonViewLabel);
 
         this.verticalViewLabel = $('<label/>', {
             for: "Vertical_view",
@@ -94,7 +94,7 @@ export class View{
         this.verticalViewButton = $('<input/>', {
             type: "checkbox",
             id: "Vertical_view",
-        }).appendTo(this.settingsPanel);
+        }).appendTo(this.verticalViewLabel);
 
         this.valueTypeForm = $('<form/>', {
             class: "value_type",
@@ -110,7 +110,7 @@ export class View{
         this.singleValueButton = $('<input/>', {
             id: "single_value",
             type: "checkbox",
-        }).appendTo(this.settingsPanel);
+        }).appendTo(this.singleValueLabel);
 
         this.intervalLabel = $('<label/>', {
             for: "interval_value",
@@ -120,9 +120,9 @@ export class View{
         this.intervalButton = $('<input/>', {
             type: "checkbox",
             id: "interval_value"
-        }).appendTo(this.settingsPanel);
+        }).appendTo(this.intervalLabel);
 
-        this.applySettingsBtn = $('<label/>', {
+        this.applySettingsBtn = $('<button/>', {
             class: "apply_values",
             type: "submit",
             text: "Применить значения"
