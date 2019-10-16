@@ -5,6 +5,7 @@ export class Controller{
     model = new Model;
     view = new View;
     that = this;
+    activePercent: number;
 
     AccessToDragging(): void {
         this.view.sliderPointer.on("mousedown", (e) => {
@@ -33,7 +34,14 @@ export class Controller{
             })
 
             this.view.pointerPercentages = Number(this.model.getValueIndicator(sliderWidth, position));
-            this.view.valueIndicator[0].innerHTML = this.view.pointerPercentages;
+            this.activePercent = Number(this.model.getValueIndicator(sliderWidth, position));
+
+            try {
+                this.view.setValueSetting.val(this.view.pointerPercentages);
+                this.view.valueIndicator.text(this.view.pointerPercentages);
+            } catch (err) {
+
+            }
         }
     }
 
@@ -41,15 +49,32 @@ export class Controller{
         $(document).off("mousemove");
     }
 
-    initSettings(exemplar: any){
+    initSettings(exemplar: any): void{
         this.view.renderSettingsPanel(exemplar);
 
         this.view.enablePointerButton.change(function(){
             if(this.view.enablePointerButton.is(':checked')){
                 this.view.getValueIndicator();
+                this.view.valueIndicator.text(this.activePercent);
             } else {
                 this.view.valueIndicator.remove(); 
             }
+        }.bind(this));
+
+        this.view.setValueSetting.on("input", function(){
+            let successChange = false;
+
+            if (this.view.setValueSetting.val() <= 100 && this.view.setValueSetting.val() >= 0){
+                this.view.pointerPercentages = this.view.setValueSetting.val();
+                this.view.sliderPointer.css({
+                    "left": `${this.view.pointerPercentages}%`
+                }) 
+                successChange = true;
+            } else {
+                successChange = false;
+            }
+
+            this.view.checkValueSettingCorrect(successChange);
         }.bind(this));
     }
 }

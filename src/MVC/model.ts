@@ -15,6 +15,7 @@ export class Model{
     }
 
     subscribe(observer: any) {
-        this.getValueIndicator = observer;
+        this.getPercent = observer;
+        console.log(this.getPercent);
     }
 }

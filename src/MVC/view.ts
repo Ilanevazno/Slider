@@ -128,4 +128,16 @@ export class View{
             text: "Применить значения"
         }).appendTo(this.settingsPanel);
     }
+
+    checkValueSettingCorrect(success: any){
+        if (success) {
+            this.setValueSetting.css({
+                "outline": "none",
+            })
+        } else {
+            this.setValueSetting.css({
+                "outline": "2px solid red",
+            })
+        }
+    }
 }
