@@ -8,6 +8,8 @@ export class View{
     model: any = new Model;
     pointerPercentages: number;
 
+    settingsPanel: JQuery<HTMLElement>;
+
     sliderStart(exemplar: any): void{
         this.sliderBody = $('<div/>', {
             class: 'slider__body'
@@ -25,4 +27,8 @@ export class View{
             text: "0"
         }).appendTo(this.sliderPointer);
     }   
+
+    initSettings(): void{
+        this.settingsPanel
+    }
 }

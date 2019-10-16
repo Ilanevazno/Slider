@@ -28,6 +28,37 @@ describe("Slider render test", () => {
             assert(testSlider.querySelector(".slider__value"));
         })
     })
+
+    describe("Render settings panel", () => {
+        slider.initSettings();
+        it("Render panel", () => {
+            assert(testSlider.querySelector(".slider_settings"));
+        });
+
+        it("Render step size button", () => {
+            assert(testSlider.querySelector(".step_size"));
+        });
+
+        it("Render setup value area", () => {
+            assert(testSlider.querySelector(".setup_value"));
+        });
+
+        it("Render enable pointer button", () => {
+            assert(testSlider.querySelector("#Enable_actValue"));
+        });
+
+        it("Render slider type area", () => {
+            assert(testSlider.querySelector(".view_type"));
+        });
+
+        it("Render value type area", () => {
+            assert(testSlider.querySelector(".value_type"));
+        });
+
+        it("Render apply walues button", () => {
+            assert(testSlider.querySelector(".apply_values"));
+        });
+    })
 })
 
 let sliderController = new Controller();
