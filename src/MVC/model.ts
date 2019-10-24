@@ -1,5 +1,5 @@
 export class Model{
-    pointerCoords: any;
+    Coords: any;
     activePercent: number;
     getPercent: number;
 

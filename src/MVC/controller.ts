@@ -22,18 +22,23 @@ export class Controller{
 
     StartPointerMove(shiftX: number) {
         return (e: any) => {
-            let position: number = e.clientX - shiftX - this.view.sliderBody[0].getBoundingClientRect().left;
             let sliderWidth: number = this.view.sliderBody[0].offsetWidth - this.view.sliderPointer[0].offsetWidth;
+            let position: number = e.clientX - shiftX - this.view.sliderBody[0].getBoundingClientRect().left;
 
             position < 0 ? position = 0 : false;
 
             position > sliderWidth ? position = sliderWidth : false;
-    
-            this.view.sliderPointer.css({
-                "left": `${position}px`,
-            })
+            
+            if(this.activePercent % 20 === 0){
+                this.view.pointerPercentages = Number(this.model.getValueIndicator(sliderWidth, position));
 
-            this.view.pointerPercentages = Number(this.model.getValueIndicator(sliderWidth, position));
+                console.log(this.activePercent);
+
+                this.view.sliderPointer.css({
+                    "left": `${this.activePercent}%`,
+                })
+            }
+    
             this.activePercent = Number(this.model.getValueIndicator(sliderWidth, position));
 
             try {
@@ -69,6 +74,7 @@ export class Controller{
                 this.view.sliderPointer.css({
                     "left": `${this.view.pointerPercentages}%`
                 }) 
+                this.view.valueIndicator.text(this.view.pointerPercentages);
                 successChange = true;
             } else {
                 successChange = false;
