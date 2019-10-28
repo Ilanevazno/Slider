@@ -9,7 +9,7 @@ export class View{
     pointerPercentages: number;
 
     settingsPanel: JQuery<HTMLElement>;
-    stepSizeSetting: JQuery<HTMLElement>;
+    stepSizeSetting: any;
     setValueSetting: JQuery<HTMLElement>;
     enablePointerLabel: JQuery<HTMLElement>;
     enablePointerButton: JQuery<HTMLElement>;
