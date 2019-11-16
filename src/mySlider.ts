@@ -11,7 +11,7 @@ export namespace Slider {
     jQuery.fn.extend({
         createSlider: function(): void{
             let slider = new Controller();
-            slider.view.sliderStart(this);
+            slider.generateSlider(this);
             slider.initSettings(this);
             slider.AccessToDragging();
         }

@@ -2,15 +2,18 @@ import { Model } from './model';
 import { View } from './view';
 
 export class Controller{
-    model = new Model;
-    view = new View;
-    that = this;
-    activePercent: number = 0;
-    sliderWidth: number;
-    pointerPosition: number;
-    stepSize: number;
+    private model = new Model;
+    private view = new View;
+    private activePercent: number = 0;
+    private sliderWidth: number;
+    private pointerPosition: number;
+    private stepSize: number;
 
-    AccessToDragging(): void {
+    public generateSlider(exemplar: JQuery<HTMLElement>){
+        this.view.sliderStart(exemplar);
+    }
+
+    public AccessToDragging(): void {
         this.view.sliderPointer.on("mousedown", (e) => {
             e.preventDefault();
             let shiftX = e.clientX - this.view.sliderPointer[0].getBoundingClientRect().left;
@@ -18,56 +21,60 @@ export class Controller{
         });
     }
 
-    prepareForUsing(e: object, shiftX: number): void {
+    public prepareForUsing(e: object, shiftX: number): void {
         $(document).on("mousemove", this.StartPointerMove(shiftX).bind(this));
         $(document).on("mouseup", this.StopPointerMove.bind(this));
     }
 
-    StartPointerMove(shiftX: number) {
+    public StartPointerMove(shiftX: number) {
         return (e: any) => {
             this.sliderWidth = this.view.sliderBody[0].offsetWidth - this.view.sliderPointer[0].offsetWidth;
             let position: number = e.clientX - shiftX - this.view.sliderBody[0].getBoundingClientRect().left;
             this.pointerPosition = position;
 
+            // this.setActivePercentage((this.model.getValueIndicator(this.sliderWidth, this.pointerPosition)));
             this.setStepSettings(this.stepSize);
-
-            this.activePercent = Number(this.model.getValueIndicator(this.sliderWidth, this.pointerPosition));
-
-            console.log((this.activePercent * this.sliderWidth) / 100);
         }
     }
 
-    setStepSettings(stepSize: number){
-        if(this.activePercent % stepSize === 0){
-            this.view.pointerPercentages = Number(this.model.getValueIndicator(this.sliderWidth, this.pointerPosition));
+    public setActivePercentage(percent: any){
+        this.activePercent = percent;
+        let percentState = this.getActivePercentage();
 
-            // let percent = this.activePercent;
+        this.view.setPointerIndicatorValue(percentState);
+    }
 
+    public getActivePercentage(){
+        return this.activePercent;
+    }
+
+    public setStepSettings(stepSize: number){
+        this.setActivePercentage((this.model.getValueIndicator(this.sliderWidth, this.pointerPosition)));
+        console.log(this.activePercent);
+        if(this.activePercent % stepSize === 0 && this.activePercent <= 100){
+            
             this.pointerPosition < 0 ? this.pointerPosition = 0 : false;
-
             this.pointerPosition > this.sliderWidth ? this.pointerPosition = this.sliderWidth : false;
 
             this.movePointerTo(this.pointerPosition);
-
-            if(this.view.valueIndicator){
-                this.view.valueIndicator.text(this.activePercent);
-            }
 
             this.view.setValueSetting.val(this.activePercent);
         }
     }
 
-    movePointerTo(position: number){
+    public movePointerTo(position: number){
         this.view.sliderPointer.css({
             "left": `${position}px`,
         })
+
+        this.setActivePercentage(this.activePercent);
     };
 
-    StopPointerMove(): void {
+    public StopPointerMove(): void {
         $(document).off("mousemove");
     }
 
-    initSettings(exemplar: any): void{
+    public initSettings(exemplar: any): void{
         this.view.renderSettingsPanel(exemplar);
 
         this.view.enablePointerButton.change(function(){
@@ -84,20 +91,20 @@ export class Controller{
         }.bind(this))
 
         this.view.setValueSetting.on("input", function(){
-            let successChange = false;
+            let successChange = true;
 
             if (this.view.setValueSetting.val() <= 100 && this.view.setValueSetting.val() >= 0){
-                this.activePercent = this.view.setValueSetting.val();
+                this.setActivePercentage(this.view.setValueSetting.val());
                 let ConvertedFromPercPos = Math.round((this.activePercent * this.sliderWidth) / 100);
 
                 this.movePointerTo(ConvertedFromPercPos);
-                this.view.valueIndicator.text(this.view.pointerPercentages);
+                
                 successChange = true;
             } else {
                 successChange = false;
             }
 
-            this.view.checkValueSettingCorrect(successChange);
+            this.view.setValueSettingCorrect(successChange);
         }.bind(this));
     }
 }

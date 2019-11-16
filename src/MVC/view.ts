@@ -6,8 +6,6 @@ export class View{
     sliderPointer: JQuery<HTMLElement>;
     valueIndicator: any;
     model: any = new Model;
-    pointerPercentages: number;
-
     settingsPanel: JQuery<HTMLElement>;
     stepSizeSetting: any;
     setValueSetting: JQuery<HTMLElement>;
@@ -25,7 +23,7 @@ export class View{
     intervalButton: JQuery<HTMLElement>;
     applySettingsBtn: JQuery<HTMLElement>;
 
-    sliderStart(exemplar: any): void{
+    public sliderStart(exemplar: any): void{
         this.sliderBody = $('<div/>', {
             class: 'slider__body'
         }).appendTo(exemplar);
@@ -36,14 +34,14 @@ export class View{
         this.model.pointerCoords = this.model.getCoords(this.sliderPointer);
     }
 
-    getValueIndicator(): void {
+    public getValueIndicator(): void {
         this.valueIndicator = $('<span/>', {
             class: "slider__value",
             text: "0"
         }).appendTo(this.sliderPointer);
     }   
 
-    renderSettingsPanel(exemplar: JQuery<HTMLElement>): void{
+    public renderSettingsPanel(exemplar: JQuery<HTMLElement>): void{
         this.settingsPanel = $('<div/>', {
             class: "slider_settings"
         }).appendTo(exemplar);
@@ -129,7 +127,11 @@ export class View{
         }).appendTo(this.settingsPanel);
     }
 
-    checkValueSettingCorrect(success: any){
+    public setPointerIndicatorValue(percent: any){
+        this.valueIndicator.text(percent);
+    }
+
+    public setValueSettingCorrect(success: any){
         if (success) {
             this.setValueSetting.css({
                 "outline": "none",
