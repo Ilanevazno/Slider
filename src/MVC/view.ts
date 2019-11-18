@@ -1,9 +1,10 @@
 import { Model } from './model';
 
 export class View{
+    viewType: string;
     slider: JQuery<HTMLElement>;
-    sliderBody: JQuery<HTMLElement>;
-    sliderPointer: JQuery<HTMLElement>;
+    sliderBody: any;
+    sliderPointer: any;
     valueIndicator: any;
     model: any = new Model;
     settingsPanel: JQuery<HTMLElement>;
@@ -22,15 +23,38 @@ export class View{
     intervalLabel: JQuery<HTMLElement>;
     intervalButton: JQuery<HTMLElement>;
     applySettingsBtn: JQuery<HTMLElement>;
+    sliderValueType: number = 2;
+
+    private renderPointer (count: any) {
+        for(let i = 0; i < count; i++) {
+            this.sliderPointer = $('<span/>', {
+                class: "slider__pointer"
+            }).appendTo(this.sliderBody);
+        }
+    }
 
     public sliderStart(exemplar: any): void{
-        this.sliderBody = $('<div/>', {
-            class: 'slider__body'
-        }).appendTo(exemplar);
 
-        this.sliderPointer = $('<span/>', {
-            class: "slider__pointer"
-        }).appendTo(this.sliderBody);
+        // this.model.subscribe((data: any) => { console.log("view test", data) });
+
+        // this.model.broadcast({somedata: "hello"});
+
+        if (this.viewType === 'horizontal') {
+            this.sliderBody = $('<div/>', {
+                class: 'slider__body-horizontal'
+            }).appendTo(exemplar);
+    
+            this.renderPointer(this.sliderValueType);
+            this.viewType = 'horizontal'
+        } else if (this.viewType === 'vertical') {
+            this.sliderBody = $('<div/>', {
+                class: 'slider__body-vertical'
+            }).appendTo(exemplar);
+    
+            this.renderPointer(this.sliderValueType);
+
+            this.viewType = 'vertical'
+        }
         this.model.pointerCoords = this.model.getCoords(this.sliderPointer);
     }
 
@@ -128,7 +152,11 @@ export class View{
     }
 
     public setPointerIndicatorValue(percent: any){
-        this.valueIndicator.text(percent);
+        try {
+            this.valueIndicator.text(percent);
+        } catch (err) {
+            // console.log("Не могу включить индикатор по причине: ", err);
+        }
     }
 
     public setValueSettingCorrect(success: any){
