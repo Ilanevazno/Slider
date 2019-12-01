@@ -151,6 +151,19 @@ export class View{
         }).appendTo(this.settingsPanel);
     }
 
+    public generateInput (inputClass: string, inputText: string) {
+        const label = $('<label />', {
+            for: inputClass,
+            text: inputText
+        }).appendTo(this.settingsPanel);
+        console.log("хы");
+        const input = $('<input />', {
+            type: 'text',
+            class: `${inputClass}`,
+            id: `${inputClass}`
+        }).appendTo(label);
+    }
+
     public setPointerIndicatorValue(percent: any){
         try {
             this.valueIndicator.text(percent);

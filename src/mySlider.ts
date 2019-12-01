@@ -9,13 +9,15 @@ export namespace Slider {
     let slider: JQuery<HTMLElement>;
     const horizontalType: string = 'horizontal';
     const verticalType: string = 'vertical';
+    const singleValue: string = 'singleValue';
+    const doubleValue: string = 'doubleValue';
     
     jQuery.fn.extend({
         createSlider: function(): void{
             let slider = new Controller();
-            slider.setViewType(horizontalType);
-            slider.generateSlider(this);
             slider.initSettings(this);
+            slider.setViewType(horizontalType, doubleValue);
+            slider.generateSlider(this);
             slider.AccessToDragging();
         }
     })

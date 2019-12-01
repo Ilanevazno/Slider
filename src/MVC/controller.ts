@@ -6,25 +6,37 @@ export class Controller{
     private view = new View;
     private activePercent: number = 0;
     private slider: number;
-    private sliderHeight: number;
     private pointerPosition: number;
     private stepSize: number;
     private targetedPointer: any;
     firstValue: number;
     secondValue: number;
-    sliderType: string = 'doubleValue';
-    
+    sliderType: string;
+    firstPointerClass: string = 'first_value';
+    secondPointerClass: string = 'second_value';
+
     public enableLogs (state: boolean) {
         this.model.enableLogs(state);
     }
 
-    public setViewType (viewType: string): void {
+    public setViewType (viewType: string, valueType: string): void {
         this.view.viewType = viewType;
+        this.sliderType = valueType;
+
+        if (this.sliderType === 'singleValue') {
+            this.view.generateInput('slider__value', 'Значение');
+        }
+
+        if (this.sliderType === 'doubleValue') {
+            this.view.generateInput(this.firstPointerClass, 'Значение первого ползунка');
+            this.view.generateInput(this.secondPointerClass, 'Значение второго ползунка');
+        }
     }
 
     public generateSlider(exemplar: JQuery<HTMLElement>): void{
         this.model.devLog("Генерирую слайдер");
         this.view.sliderStart(exemplar);
+    
     }
 
     public AccessToDragging(): void {
@@ -85,6 +97,9 @@ export class Controller{
         } else if (this.sliderType === 'doubleValue'){
             this.firstValue = percentMin;
             this.secondValue = percentMax;
+
+            $(`input.${this.firstPointerClass}`).val(this.firstValue)
+            $(`input.${this.secondPointerClass}`).val(this.secondValue)
         }
     }
 
