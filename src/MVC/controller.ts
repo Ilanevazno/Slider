@@ -24,10 +24,13 @@ export class Controller{
         this.sliderType = valueType;
 
         if (this.sliderType === 'singleValue') {
+            this.view.renderPointer(1);
             this.view.generateInput('slider__value', 'Значение');
+            // this.model.pointerCoords = this.model.getCoords(this.sliderPointer);
         }
 
         if (this.sliderType === 'doubleValue') {
+            this.view.renderPointer(2);
             this.view.generateInput(this.firstPointerClass, 'Значение первого ползунка');
             this.view.generateInput(this.secondPointerClass, 'Значение второго ползунка');
         }
@@ -40,7 +43,6 @@ export class Controller{
     }
 
     public AccessToDragging(): void {
-
         for(let i = 0; i < this.view.sliderBody[0].childNodes.length; i++) {
             let element = this.view.sliderBody[0].childNodes[i];
             $(element).on('mousedown', function(e: any) {

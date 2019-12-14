@@ -11,6 +11,7 @@ export namespace Slider {
     const verticalType: string = 'vertical';
     const singleValue: string = 'singleValue';
     const doubleValue: string = 'doubleValue';
+    let arbitraryAmount: number; 
     
     jQuery.fn.extend({
         createSlider: function(): void{

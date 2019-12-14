@@ -23,9 +23,8 @@ export class View{
     intervalLabel: JQuery<HTMLElement>;
     intervalButton: JQuery<HTMLElement>;
     applySettingsBtn: JQuery<HTMLElement>;
-    sliderValueType: number = 2;
 
-    private renderPointer (count: any) {
+    public renderPointer (count: any) {
         for(let i = 0; i < count; i++) {
             this.sliderPointer = $('<span/>', {
                 class: "slider__pointer"
@@ -44,18 +43,15 @@ export class View{
                 class: 'slider__body-horizontal'
             }).appendTo(exemplar);
     
-            this.renderPointer(this.sliderValueType);
             this.viewType = 'horizontal'
         } else if (this.viewType === 'vertical') {
             this.sliderBody = $('<div/>', {
                 class: 'slider__body-vertical'
             }).appendTo(exemplar);
-    
-            this.renderPointer(this.sliderValueType);
+
 
             this.viewType = 'vertical'
         }
-        this.model.pointerCoords = this.model.getCoords(this.sliderPointer);
     }
 
     public getValueIndicator(): void {
