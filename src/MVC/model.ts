@@ -4,6 +4,8 @@ export class Model{
     enabledLogs: boolean = false;
     activeViewType: string;
     observers: any = [];
+    pointerClass: string = "slider__pointer";
+    valueClass: string = "slider__value";
 
     constructor () {
         this.observers = [];

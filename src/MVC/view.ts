@@ -25,12 +25,30 @@ export class View{
     applySettingsBtn: JQuery<HTMLElement>;
 
     public renderPointer (count: any) {
+        let renderShiftCounter: number = 0;
         for(let i = 0; i < count; i++) {
             this.sliderPointer = $('<span/>', {
-                class: "slider__pointer"
+                class: this.model.pointerClass
             }).appendTo(this.sliderBody);
         }
+
+        for (let i = 0; i < $(`.${this.model.pointerClass}`).length; i++) {
+            $(`.${this.model.pointerClass}`).eq(i).css({
+                "left": `${renderShiftCounter}px`
+            })
+
+            renderShiftCounter = renderShiftCounter + 30;
+        }
     }
+
+    public getValueIndicator(): void {
+        for(let i = 0; i < $(`.${this.model.pointerClass}`).length; i++) {
+            this.valueIndicator = $('<span/>', {
+                class: this.model.valueClass,
+                text: "0"
+            }).appendTo($(`.${this.model.pointerClass}`)[i]);
+        }
+    }   
 
     public sliderStart(exemplar: any): void{
 
@@ -53,13 +71,6 @@ export class View{
             this.viewType = 'vertical'
         }
     }
-
-    public getValueIndicator(): void {
-        this.valueIndicator = $('<span/>', {
-            class: "slider__value",
-            text: "0"
-        }).appendTo(this.sliderPointer);
-    }   
 
     public renderSettingsPanel(exemplar: JQuery<HTMLElement>): void{
         this.settingsPanel = $('<div/>', {
@@ -152,7 +163,6 @@ export class View{
             for: inputClass,
             text: inputText
         }).appendTo(this.settingsPanel);
-        console.log("хы");
         const input = $('<input />', {
             type: 'text',
             class: `${inputClass}`,

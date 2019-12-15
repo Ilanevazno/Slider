@@ -17,8 +17,9 @@ export namespace Slider {
         createSlider: function(): void{
             let slider = new Controller();
             slider.initSettings(this);
-            slider.setViewType(horizontalType, doubleValue);
+            slider.setViewType(horizontalType);
             slider.generateSlider(this);
+            slider.setSliderType(doubleValue);
             slider.AccessToDragging();
         }
     })

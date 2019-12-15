@@ -1,4 +1,4 @@
-import { Model } from './model'; 
+import { Model } from './model';
 import { View } from './view';
 
 export class Controller{
@@ -19,18 +19,24 @@ export class Controller{
         this.model.enableLogs(state);
     }
 
-    public setViewType (viewType: string, valueType: string): void {
+    public setViewType (viewType: string): void {
         this.view.viewType = viewType;
-        this.sliderType = valueType;
+    }
 
-        if (this.sliderType === 'singleValue') {
-            this.view.renderPointer(1);
+    public setSliderType (sliderType: string): void {
+        let pointersCount: number = null;
+        sliderType === 'singleValue' ? pointersCount = 1 : null;
+        sliderType === 'doubleValue' ? pointersCount = 2 : null;
+
+        this.view.renderPointer(pointersCount);
+
+        if (sliderType === 'singleValue') {
+            this.sliderType = sliderType;
             this.view.generateInput('slider__value', 'Значение');
-            // this.model.pointerCoords = this.model.getCoords(this.sliderPointer);
         }
 
-        if (this.sliderType === 'doubleValue') {
-            this.view.renderPointer(2);
+        if (sliderType === 'doubleValue') {
+            this.sliderType = sliderType;
             this.view.generateInput(this.firstPointerClass, 'Значение первого ползунка');
             this.view.generateInput(this.secondPointerClass, 'Значение второго ползунка');
         }
@@ -39,7 +45,7 @@ export class Controller{
     public generateSlider(exemplar: JQuery<HTMLElement>): void{
         this.model.devLog("Генерирую слайдер");
         this.view.sliderStart(exemplar);
-    
+
     }
 
     public AccessToDragging(): void {
@@ -55,7 +61,7 @@ export class Controller{
                     this.prepareForUsing(this.targetedPointer, shiftX);
                 } else if (this.view.viewType === 'vertical') {
                     let shiftY = e.clientY - $(element)[0].getBoundingClientRect().top;
-                    this.prepareForUsing(this.targetedPointer, shiftY); 
+                    this.prepareForUsing(this.targetedPointer, shiftY);
                 }
             }.bind(this));
         }
@@ -70,9 +76,11 @@ export class Controller{
         return (e: any) => {
             this.model.devLog("Старт движения ползунка, получаю ширину слайдера и координаты ползунка");
 
+            let value = $(targetedPointer).children();
+
             if (this.sliderType === 'doubleValue') {
                 this.firstValue = Number(this.view.sliderBody[0].childNodes[0].style.left.replace('px', ''));
-                this.secondValue = Number(this.view.sliderBody[0].childNodes[1].style.left.replace('px', ''));           
+                this.secondValue = Number(this.view.sliderBody[0].childNodes[1].style.left.replace('px', ''));
             }
 
             if (this.view.viewType === 'horizontal') {
@@ -94,18 +102,21 @@ export class Controller{
         if (this.sliderType === 'singleValue') {
             this.model.devLog(`Устанавливаю процент на ${percentMin}`);
             this.activePercent = percentMin;
-    
+
             this.view.setPointerIndicatorValue(this.activePercent);
         } else if (this.sliderType === 'doubleValue'){
             this.firstValue = percentMin;
             this.secondValue = percentMax;
+
+            $(`.${this.model.valueClass}`).eq(0).text(this.firstValue);
+            $(`.${this.model.valueClass}`).eq(1).text(this.secondValue);
 
             $(`input.${this.firstPointerClass}`).val(this.firstValue)
             $(`input.${this.secondPointerClass}`).val(this.secondValue)
         }
     }
 
-    public setStepSettings(stepSize: number){    
+    public setStepSettings(stepSize: number){
         this.model.devLog(`Шаг установлен на ${stepSize}`);
         let cursorPosition = this.model.getValuePercent(this.slider, this.pointerPosition);
 
@@ -114,11 +125,15 @@ export class Controller{
             this.pointerPosition > this.slider ? this.pointerPosition = this.slider : false;
 
             this.model.devLog(`Позиция ползунка установлена на ${(this.model.getValuePercent(this.slider, this.pointerPosition))}`);
-            this.movePointerTo(this.pointerPosition);
             if (this.sliderType === 'singleValue') {
                 this.setActivePercentage((this.model.getValuePercent(this.slider, this.pointerPosition)), 0);
+                this.movePointerTo(this.pointerPosition);
             } else if (this.sliderType === 'doubleValue'){
-                this.setActivePercentage((this.model.getValuePercent(this.slider, this.firstValue)), (this.model.getValuePercent(this.slider, this.secondValue)));
+                this.movePointerTo(this.pointerPosition);
+
+                if (this.firstValue < this.secondValue) {
+                    this.setActivePercentage((this.model.getValuePercent(this.slider, this.firstValue)), (this.model.getValuePercent(this.slider, this.secondValue)));
+                }
             }
 
             this.view.setValueSetting.val(this.activePercent);
@@ -127,9 +142,22 @@ export class Controller{
 
     public movePointerTo(position: number){
         if (this.view.viewType === 'horizontal') {
-            $(this.targetedPointer).css({
-                "left": `${position}px`,
-            })
+            let offset: number = $(`.${this.model.pointerClass}`)[0].offsetWidth;
+
+            if (this.firstValue > (this.secondValue - offset)) {
+                this.targetedPointer === $(`.${this.model.pointerClass}`)[0] ?
+                    $(`.${this.model.pointerClass}`).eq(1).css({
+                        "left": `${this.firstValue + offset}px`
+                    })
+                    :
+                    $(`.${this.model.pointerClass}`).eq(0).css({
+                        "left": `${this.secondValue - offset}px`
+                    })
+            } else {
+                $(this.targetedPointer).css({
+                    "left": `${position}px`,
+                })
+            }
         } else if (this.view.viewType === 'vertical') {
             this.view.sliderPointer.css({
                 "top": `${position}px`,
@@ -149,7 +177,7 @@ export class Controller{
                 this.view.getValueIndicator();
                 this.view.valueIndicator.text(this.activePercent);
             } else {
-                this.view.valueIndicator.remove(); 
+                this.view.valueIndicator.remove();
             }
         }.bind(this));
 
@@ -165,7 +193,7 @@ export class Controller{
                 let ConvertedFromPercPos = Math.round((this.activePercent * this.slider) / 100);
 
                 this.movePointerTo(ConvertedFromPercPos);
-                
+
                 successChange = true;
             } else {
                 successChange = false;
