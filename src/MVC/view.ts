@@ -37,7 +37,7 @@ export class View{
                 "left": `${renderShiftCounter}px`
             })
 
-            renderShiftCounter = renderShiftCounter + 30;
+            renderShiftCounter = renderShiftCounter + 35;
         }
     }
 
@@ -51,11 +51,6 @@ export class View{
     }   
 
     public sliderStart(exemplar: any): void{
-
-        // this.model.subscribe((data: any) => { console.log("view test", data) });
-
-        // this.model.broadcast({somedata: "hello"});
-
         if (this.viewType === 'horizontal') {
             this.sliderBody = $('<div/>', {
                 class: 'slider__body-horizontal'

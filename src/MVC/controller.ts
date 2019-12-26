@@ -45,6 +45,11 @@ export class Controller{
     public generateSlider(exemplar: JQuery<HTMLElement>): void{
         this.model.devLog("Генерирую слайдер");
         this.view.sliderStart(exemplar);
+        
+        this.model.subscribe((data: any) => {});
+        this.model.broadcast({
+            sliderWidth: this.slider
+        });
 
     }
 
@@ -78,6 +83,7 @@ export class Controller{
 
             let value = $(targetedPointer).children();
 
+            // записываем активные значения первого и второго бегунка
             if (this.sliderType === 'doubleValue') {
                 this.firstValue = Number(this.view.sliderBody[0].childNodes[0].style.left.replace('px', ''));
                 this.secondValue = Number(this.view.sliderBody[0].childNodes[1].style.left.replace('px', ''));
@@ -108,8 +114,8 @@ export class Controller{
             this.firstValue = percentMin;
             this.secondValue = percentMax;
 
-            $(`.${this.model.valueClass}`).eq(0).text(this.firstValue);
-            $(`.${this.model.valueClass}`).eq(1).text(this.secondValue);
+            // $(`.${this.model.valueClass}`).eq(0).text(this.firstValue);
+            // $(`.${this.model.valueClass}`).eq(1).text(this.secondValue);
 
             $(`input.${this.firstPointerClass}`).val(this.firstValue)
             $(`input.${this.secondPointerClass}`).val(this.secondValue)
@@ -117,6 +123,8 @@ export class Controller{
     }
 
     public setStepSettings(stepSize: number){
+        this.model.changePointerState();
+        this.model.getPointerState();
         this.model.devLog(`Шаг установлен на ${stepSize}`);
         let cursorPosition = this.model.getValuePercent(this.slider, this.pointerPosition);
 
@@ -140,24 +148,57 @@ export class Controller{
         }
     }
 
-    public movePointerTo(position: number){
-        if (this.view.viewType === 'horizontal') {
-            let offset: number = $(`.${this.model.pointerClass}`)[0].offsetWidth;
+    private getNthPointer(eq: number) {
+        return $(`.${this.model.pointerClass}`).eq(eq);
+    }
+    
 
-            if (this.firstValue > (this.secondValue - offset)) {
-                this.targetedPointer === $(`.${this.model.pointerClass}`)[0] ?
-                    $(`.${this.model.pointerClass}`).eq(1).css({
-                        "left": `${this.firstValue + offset}px`
-                    })
-                    :
-                    $(`.${this.model.pointerClass}`).eq(0).css({
-                        "left": `${this.secondValue - offset}px`
-                    })
-            } else {
-                $(this.targetedPointer).css({
-                    "left": `${position}px`,
-                })
+    public movePointerTo(position: number){
+        // this.model.subscribe((data: any) => { console.log("view test", data) });
+
+        // this.model.broadcast({pointerPosition: $(`.${this.model.pointerClass}`)});
+
+        let offset: number = this.getNthPointer(0)[0].offsetWidth;
+
+        let move = (eq: number, expression: any) => {
+            this.getNthPointer(eq).css({
+                "left": `${expression}px`
+            })
+        }
+
+        let checkValues = () => {
+            let percentMin = this.model.getValuePercent(this.slider, this.firstValue);
+            let percentMax = this.model.getValuePercent(this.slider, this.secondValue);
+            // console.log(percentMin);
+            // console.log(percentMax);
+            // console.log(this.stepSize);
+            if (this.targetedPointer === this.getNthPointer(0)[0]) {
+                //коллизия для левого бегунка
+                if (position >= this.slider - offset) {
+                    
+                }
             }
+            // коллизия для правого бегунка 
+            if (this.targetedPointer === this.getNthPointer(1)[0] && position <= 0 + offset) {
+                
+            }
+            
+
+            let convertedStepSize: number = Math.round((this.stepSize * this.slider) / 100);
+
+            if (this.firstValue > this.secondValue) {
+                this.targetedPointer === this.getNthPointer(0)[0] ?
+                    move(1, this.firstValue)
+                    :
+                    move(0, this.secondValue)
+            }
+        }
+
+        if (this.view.viewType === 'horizontal') {
+            checkValues() 
+            $(this.targetedPointer).css({
+                "left": `${position}px`,
+            })
         } else if (this.view.viewType === 'vertical') {
             this.view.sliderPointer.css({
                 "top": `${position}px`,
@@ -183,7 +224,7 @@ export class Controller{
 
         this.view.stepSizeSetting.on("input", function(){
             this.stepSize = this.view.stepSizeSetting.val();
-        }.bind(this))
+        }.bind(this));
 
         this.view.setValueSetting.on("input", function(){
             let successChange = true;
