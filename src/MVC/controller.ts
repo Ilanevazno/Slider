@@ -1,14 +1,18 @@
-import { Model } from './model';
-import { View } from './view';
-
 export class Controller{
-    private model = new Model;
-    private view = new View;
+    observer: void
+    model: any;
+    view: any;
+    constructor (model, view, observer) {
+        this.model = model;
+        this.view = view;
+        this.observer = observer;
+    }
     private activePercent: number = 0;
     private slider: number;
     private pointerPosition: number;
     private stepSize: number;
     private targetedPointer: any;
+    public pointerValues: object;
     firstValue: number;
     secondValue: number;
     sliderType: string;
@@ -21,14 +25,11 @@ export class Controller{
 
     public setViewType (viewType: string): void {
         this.view.viewType = viewType;
+        console.log(this.observer)
     }
 
     public setSliderType (sliderType: string): void {
-        let pointersCount: number = null;
-        sliderType === 'singleValue' ? pointersCount = 1 : null;
-        sliderType === 'doubleValue' ? pointersCount = 2 : null;
-
-        this.view.renderPointer(pointersCount);
+        this.view.renderPointer(this.model.getPointerCount(sliderType));
 
         if (sliderType === 'singleValue') {
             this.sliderType = sliderType;
@@ -45,12 +46,6 @@ export class Controller{
     public generateSlider(exemplar: JQuery<HTMLElement>): void{
         this.model.devLog("Генерирую слайдер");
         this.view.sliderStart(exemplar);
-        
-        this.model.subscribe((data: any) => {});
-        this.model.broadcast({
-            sliderWidth: this.slider
-        });
-
     }
 
     public AccessToDragging(): void {
@@ -84,6 +79,11 @@ export class Controller{
             let value = $(targetedPointer).children();
 
             // записываем активные значения первого и второго бегунка
+
+            this.pointerValues = this.model.getPointerValues('doubleValue');
+
+            console.log(this.pointerValues)
+
             if (this.sliderType === 'doubleValue') {
                 this.firstValue = Number(this.view.sliderBody[0].childNodes[0].style.left.replace('px', ''));
                 this.secondValue = Number(this.view.sliderBody[0].childNodes[1].style.left.replace('px', ''));
@@ -98,6 +98,10 @@ export class Controller{
                 let position: number = e.clientY - shift - this.view.sliderBody[0].getBoundingClientRect().top;
                 this.pointerPosition = position;
             }
+
+            // this.model.observer.broadcast({
+            //     sliderWidth: this.slider
+            // });
 
             this.model.devLog("Устанавливаю шаг");
             this.setStepSettings(this.stepSize);

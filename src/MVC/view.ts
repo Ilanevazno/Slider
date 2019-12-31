@@ -6,7 +6,7 @@ export class View{
     sliderBody: any;
     sliderPointer: any;
     valueIndicator: any;
-    model: any = new Model;
+    model: any;
     settingsPanel: JQuery<HTMLElement>;
     stepSizeSetting: any;
     setValueSetting: JQuery<HTMLElement>;
@@ -23,6 +23,10 @@ export class View{
     intervalLabel: JQuery<HTMLElement>;
     intervalButton: JQuery<HTMLElement>;
     applySettingsBtn: JQuery<HTMLElement>;
+
+    constructor (model) {
+        this.model = model;
+    }
 
     public renderPointer (count: any) {
         let renderShiftCounter: number = 0;

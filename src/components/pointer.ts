@@ -1,3 +1,5 @@
 class Pointer {
-    
+
 }
+
+export = Pointer
