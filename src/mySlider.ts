@@ -4,7 +4,7 @@ import './fonts/fonts.scss';
 import { Model } from './MVC/model';
 import { View } from "./MVC/view";
 import { Controller } from './MVC/controller';
-import ObserverInterface from '../components/observer';
+import { ObserverInterface } from './components/observer';
 
 export namespace Slider {
     const observer = new ObserverInterface.Observer;
@@ -14,7 +14,7 @@ export namespace Slider {
     const verticalType: string = 'vertical';
     const singleValue: string = 'singleValue';
     const doubleValue: string = 'doubleValue';
-    let arbitraryAmount: number; 
+    let arbitraryAmount: number;
     
     jQuery.fn.extend({
         createSlider: function(): void{
