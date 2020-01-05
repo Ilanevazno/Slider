@@ -27,6 +27,10 @@ export class Controller{
         this.view.viewType = viewType;
     }
 
+    public getValueIndicator (data) {
+        this.view.getValueIndicator(data);
+    }
+
     public setSliderType (sliderType: string): void {
         this.view.renderPointer(this.model.getPointerCount(sliderType));
 
@@ -34,11 +38,12 @@ export class Controller{
     }
 
     public generateSlider(exemplar: JQuery<HTMLElement>): void{
-        this.model.devLog("Генерирую слайдер");
         this.view.sliderStart(exemplar);
     }
 
     public AccessToDragging(): void {
+        this.slider = this.model.getSliderData(this.view.viewType);
+
         for(let i = 0; i < this.view.sliderBody[0].childNodes.length; i++) {
             let element = this.view.sliderBody[0].childNodes[i];
             $(element).on('mousedown', function(e: any) {
@@ -59,13 +64,10 @@ export class Controller{
 
     public StartPointerMove(shift: number, targetedPointer: object) {
         return (e: any) => {
-            this.model.devLog("Старт движения ползунка, получаю ширину слайдера и координаты ползунка");
-
             // записываем активные значения первого и второго бегунка
-
-            this.pointerValues = this.model.getPointerValues('doubleValue', this.slider);
-            this.pointerPosition = this.model.getPointerPosition(this.view.viewType, shift, e);
             this.slider = this.model.getSliderData(this.view.viewType);
+            this.pointerValues = this.model.getPointerValues(this.slider);
+            this.pointerPosition = this.model.getPointerPosition(this.view.viewType, shift, e);
             this.model.changePointerState(this.slider);
 
             if (this.sliderType === 'doubleValue') {
@@ -83,22 +85,18 @@ export class Controller{
             // Object.keys(this.pointerValues.pointerValue).forEach(element => {
             //     console.log(element);
             // });
-
-            this.model.devLog("Устанавливаю шаг");
             this.setStepSettings(this.stepSize);
         }
     }
     
     public setStepSettings(stepSize: number){
         this.model.getPointerState();
-        this.model.devLog(`Шаг установлен на ${stepSize}`);
         let cursorPosition = this.model.getValuePercent(this.slider, this.pointerPosition);
 
         let stepMove = this.model.checkStepSettings(cursorPosition);
 
         if(stepMove){
             this.pointerPosition = this.model.checkSliderArea(this.pointerPosition, this.slider);
-            this.model.devLog(`Позиция ползунка установлена на ${(this.model.getValuePercent(this.slider, this.pointerPosition))}`);
             
             this.movePointerTo(this.pointerPosition);
 
@@ -137,10 +135,30 @@ export class Controller{
         $(document).off("mousemove");
     }
 
-    public initSettings(exemplar: any): void{
+    public initSettings(exemplar: any): void{   
+        const controller = this;
         const panel = this.view.getSettingsPanel(exemplar);
-        const stepSize = panel.getInput(this.model.setStepSize.bind(this.model), panel.stepSizeSetting);
-        this.view.getValueIndicator();
-        // const showValues = panel.connectCheckBox();
+
+        const stepSizeInput = {
+            mounted (stepSize) {
+                controller.model.setStepSize(stepSize)
+            },
+            text: 'шаг'
+        }
+
+        const showValueCheckbox: object = {
+            mounted () {
+                const pointerValues = controller.model.getPointerValues(controller.slider);
+                controller.getValueIndicator(pointerValues)
+            }, 
+            destroy () {
+                controller.view.removeValueIndicator();
+            },
+            text: 'Показывать значение'
+        };
+
+        const stepSize = panel.getInput(stepSizeInput);
+        const showValue = panel.getCheckBox(showValueCheckbox);
+            
     }
 }

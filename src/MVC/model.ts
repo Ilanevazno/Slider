@@ -1,5 +1,4 @@
 export class Model{
-    Coords: any;
     activePercent: number;
     enabledLogs: boolean = false;
     activeViewType: string;
@@ -8,11 +7,10 @@ export class Model{
     valueClass: string = "slider__value";
     valueFrom: number = 0
     valueTo: number = 0;
-    exampl: any = null;
     pointerStepSize: number = 1;
 
     constructor (observer: any) {
-        console.log(observer)
+        // console.log(observer)
         // this.observer.subscribe(data => {
         //     console.log(data)
         // })
@@ -35,7 +33,7 @@ export class Model{
         this.pointerStepSize = stepSize;
     }
 
-    public getPointerValues (sliderType, sliderWidth) {
+    public getPointerValues (sliderWidth) {
         let valuesArr: any = [];
         for (let i = 0; i < $(`.${this.pointerClass}`).length; i++) {
             let currentValue = Number($(`.${this.pointerClass}`)[i].style.left.replace('px', ''));
@@ -52,7 +50,6 @@ export class Model{
     }
 
     public checkCollision (values) {
-        const offset: number = this.getNthPointer(0)[0].offsetWidth;
         const minValue: number = values[0].pointerValue;
         const maxValue: number = values[Object.keys(values).length - 1].pointerValue;
         return minValue >= maxValue ? false : true
@@ -98,6 +95,7 @@ export class Model{
     public changePointerState (sliderData) {
         for (let i = 0; i < $(`.${this.pointerClass}`).length; i++) {
             let currentValue = Number($(`.${this.pointerClass}`)[i].style.left.replace('px', ''));
+            console.log(sliderData);
             let activePercent = this.getValuePercent(sliderData, currentValue);
             $(`.${this.valueClass}`).eq(i).text(activePercent);
         }
@@ -137,10 +135,6 @@ export class Model{
 
     public PercentToPx (sliderWidth: number, pointerValue: number) {
         return Math.round(sliderWidth / 100 * pointerValue)
-    }
-
-    public devLog (message: any) {
-        this.enabledLogs ? console.log(message) : false;
     }
 
     public enableLogs (state: boolean) {

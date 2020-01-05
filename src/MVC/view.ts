@@ -36,14 +36,20 @@ export class View{
         }
     }
 
-    public getValueIndicator(): void {
-        for(let i = 0; i < $(`.${this.model.pointerClass}`).length; i++) {
+    public getValueIndicator(data): void {
+        for(let i = 0; i < data.length; i++) {
             this.valueIndicator = $('<span/>', {
                 class: this.model.valueClass,
-                text: "0"
+                text: data[i].pointerValue
             }).appendTo($(`.${this.model.pointerClass}`)[i]);
         }
     }   
+
+    public removeValueIndicator(): void {
+        for(let i = 0; i < $(`.${this.model.pointerClass}`).length; i++) {
+            $(`.${this.model.pointerClass}`).eq(i).children().remove();
+        }
+    }
 
     public sliderStart(exemplar: any): void{
         if (this.viewType === 'horizontal') {

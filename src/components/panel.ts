@@ -2,19 +2,26 @@ export namespace SettingsPanel {
     export class Panel {
         settingsPanel: JQuery<HTMLElement>;
 
-        public getInput (fn, placeholder) {
-            let input = $('<input/>', {
-                placeholder: placeholder
+        public getInput (obj) {
+            const input = $('<input/>', {
+                placeholder: obj.text
             }).appendTo(this.settingsPanel)
             .on('input', () => {
-                fn(input.val());
+                obj.mounted(input.val());
             });
         }
 
-        public getCheckBox (fn, connectTo) {
-            connectTo.on('checked', () => {
-                console.log('checked!');
-            })
+        public getCheckBox (obj) {
+            const labelForCheckbox = $('<label/>', {
+                type: 'checkbox',
+                text: obj.text
+            }).appendTo(this.settingsPanel)
+            const checkBox: any = $('<input/>', {
+                type: 'checkbox'
+            }).appendTo(labelForCheckbox)
+            .on('change', () => {
+                checkBox.is(':checked') ? obj.mounted() : obj.destroy();
+            });
         }
 
         public renderSettingsPanel(exemplar: JQuery<HTMLElement>): void{

@@ -21,11 +21,11 @@ export namespace Slider {
             let model = new Model(observer);
             let view = new View(model);
             let slider = new Controller(model, view, observer);
-            slider.initSettings(this);
             slider.setViewType(horizontalType);
             slider.generateSlider(this);
             slider.setSliderType(doubleValue);
             slider.AccessToDragging();
+            slider.initSettings(this);
         }
     })
 
