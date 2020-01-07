@@ -33,10 +33,19 @@ export class Model{
         this.pointerStepSize = stepSize;
     }
 
-    public getPointerValues (sliderWidth) {
+    public getPointerValues (SliderViewType, sliderWidth) {
         let valuesArr: any = [];
         for (let i = 0; i < $(`.${this.pointerClass}`).length; i++) {
-            let currentValue = Number($(`.${this.pointerClass}`)[i].style.left.replace('px', ''));
+            let currentValue: any;
+
+            switch (SliderViewType) {
+                case "vertical":
+                    currentValue = Number($(`.${this.pointerClass}`)[i].style.top.replace('px', ''));
+                    break
+                case "horizontal":
+                    currentValue = Number($(`.${this.pointerClass}`)[i].style.left.replace('px', ''));
+                    break
+            }
             let convertedPerc = this.getValuePercent(sliderWidth, currentValue);
             valuesArr.push(convertedPerc);
         }
@@ -92,18 +101,19 @@ export class Model{
         }
     }
 
-    public changePointerState (sliderData) {
+    public changePointerState (SliderViewType, sliderData) {
         for (let i = 0; i < $(`.${this.pointerClass}`).length; i++) {
-            let currentValue = Number($(`.${this.pointerClass}`)[i].style.left.replace('px', ''));
-            console.log(sliderData);
+            let currentValue: any;
+            switch (SliderViewType) {
+                case "vertical":
+                    currentValue = Number($(`.${this.pointerClass}`)[i].style.top.replace('px', ''));
+                    break
+                case "horizontal":
+                    currentValue = Number($(`.${this.pointerClass}`)[i].style.left.replace('px', ''));
+                    break
+            }
             let activePercent = this.getValuePercent(sliderData, currentValue);
             $(`.${this.valueClass}`).eq(i).text(activePercent);
-        }
-    }
-
-    public getPointerState () {
-        for (let i = 0; i < $(`.${this.pointerClass}`).length; i++) {
-            
         }
     }
 

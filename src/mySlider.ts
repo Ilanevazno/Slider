@@ -24,7 +24,6 @@ export namespace Slider {
             slider.setViewType(horizontalType);
             slider.generateSlider(this);
             slider.setSliderType(doubleValue);
-            slider.AccessToDragging();
             slider.initSettings(this);
         }
     })

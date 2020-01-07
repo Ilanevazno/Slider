@@ -20,8 +20,16 @@ export namespace SettingsPanel {
                 type: 'checkbox'
             }).appendTo(labelForCheckbox)
             .on('change', () => {
+                obj.destroy();
                 checkBox.is(':checked') ? obj.mounted() : obj.destroy();
             });
+
+            const data: object = {
+                checkbox: checkBox,
+                obj: obj
+            }
+            
+            return data;
         }
 
         public renderSettingsPanel(exemplar: JQuery<HTMLElement>): void{

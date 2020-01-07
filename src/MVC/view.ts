@@ -28,9 +28,14 @@ export class View{
         }
 
         for (let i = 0; i < $(`.${this.model.pointerClass}`).length; i++) {
-            $(`.${this.model.pointerClass}`).eq(i).css({
-                "left": `${renderShiftCounter}px`
-            })
+            if (this.viewType === 'horizontal') {
+                $(`.${this.model.pointerClass}`).eq(i).css({
+                    "left": `${renderShiftCounter}px`
+                })} else if (this.viewType === 'vertical') {
+                $(`.${this.model.pointerClass}`).eq(i).css({
+                    "top": `${renderShiftCounter}px`
+                })
+            }
 
             renderShiftCounter = renderShiftCounter + 35;
         }
@@ -55,16 +60,19 @@ export class View{
         if (this.viewType === 'horizontal') {
             this.sliderBody = $('<div/>', {
                 class: `${this.model.sliderBodyClass} slider__body-horizontal`
-            }).appendTo(exemplar);
+            }).prependTo(exemplar);
     
             this.viewType = 'horizontal'
         } else if (this.viewType === 'vertical') {
             this.sliderBody = $('<div/>', {
                 class: `${this.model.sliderBodyClass} slider__body-vertical`
-            }).appendTo(exemplar);
+            }).prependTo(exemplar);
+        }
+    }
 
-
-            this.viewType = 'vertical'
+    public destroySlider(exemplar: any): void {
+        if (exemplar.eq(0).children().eq(0).is(`.${this.model.sliderBodyClass}`)) {
+            exemplar.eq(0).children().eq(0).remove();
         }
     }
 
