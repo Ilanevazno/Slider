@@ -6,19 +6,13 @@ export class Model{
     pointerClass: string = "slider__pointer";
     valueClass: string = "slider__value";
     valueFrom: number = 0
-    valueTo: number = 0;
+    valueTo: number = 100;
     pointerStepSize: number = 1;
+    state: any;
+    observer: any;
 
     constructor (observer: any) {
-        // console.log(observer)
-        // this.observer.subscribe(data => {
-        //     console.log(data)
-        // })
-        // this.observer.broadcast({
-        //     'sliderWidth': 'this.slider'
-        // });
-
-        // console.log(this.observer)
+        this.observer = observer;
     }
 
     public getPointerCount (sliderType) {
@@ -33,7 +27,11 @@ export class Model{
         this.pointerStepSize = stepSize;
     }
 
-    public getPointerValues (SliderViewType, sliderWidth) {
+    public getPointersList () {
+        return $(`.${this.pointerClass}`);
+    }
+
+    public initState (SliderViewType, sliderWidth) {
         let valuesArr: any = [];
         for (let i = 0; i < $(`.${this.pointerClass}`).length; i++) {
             let currentValue: any;
@@ -47,21 +45,53 @@ export class Model{
                     break
             }
             let convertedPerc = this.getValuePercent(sliderWidth, currentValue);
-            valuesArr.push(convertedPerc);
+            valuesArr.push([convertedPerc, $(`.${this.pointerClass}`)[i]]);
         }
 
-        return valuesArr = valuesArr.map((cv, idx) => {
+        return this.state = valuesArr.map((cv, idx) => {
             return {
                 pointerName: `pointer_${idx + 1}`,
-                pointerValue: cv
+                pointerValue: cv[0],
+                pointerItem: cv[1]
             }
         })
+    }
+
+    public getState () {
+        this.observer.broadcast({somedata: this.state})
+        return this.state;
+    }
+
+    public setState (targetPointer, val) {
+        this.state.map(item => {
+            targetPointer == item.pointerItem ? item.pointerValue = Number(val) : false;
+        })
+
+        for (let i = 0; i < this.state.length; i++) {
+            const everyPointers = this.state[i];
+            const lastPointer = this.state[this.state.length - 1];
+            
+            // checking to do collision
+            if (targetPointer !==  lastPointer.pointerItem) {
+                everyPointers.pointerValue >= lastPointer.pointerValue ? lastPointer.pointerValue = everyPointers.pointerValue : false;
+            }
+
+            lastPointer.pointerValue < everyPointers.pointerValue ? everyPointers.pointerValue = lastPointer.pointerValue : false;
+
+            // checking each pointer to min and max values
+            everyPointers.pointerValue <= this.valueFrom ? everyPointers.pointerValue = this.valueFrom : false;
+            everyPointers.pointerValue >= this.valueTo ? everyPointers.pointerValue = this.valueTo : false;
+
+            //set each pointer statement value
+            $(`.${this.valueClass}`).eq(i).text(this.state[i].pointerValue);
+        }
+
     }
 
     public checkCollision (values) {
         const minValue: number = values[0].pointerValue;
         const maxValue: number = values[Object.keys(values).length - 1].pointerValue;
-        return minValue >= maxValue ? false : true
+        return minValue >= maxValue ? true : false
     }
 
     public getShiftВirection (viewType, event, element) {
@@ -101,21 +131,22 @@ export class Model{
         }
     }
 
-    public changePointerState (SliderViewType, sliderData) {
-        for (let i = 0; i < $(`.${this.pointerClass}`).length; i++) {
-            let currentValue: any;
-            switch (SliderViewType) {
-                case "vertical":
-                    currentValue = Number($(`.${this.pointerClass}`)[i].style.top.replace('px', ''));
-                    break
-                case "horizontal":
-                    currentValue = Number($(`.${this.pointerClass}`)[i].style.left.replace('px', ''));
-                    break
-            }
-            let activePercent = this.getValuePercent(sliderData, currentValue);
-            $(`.${this.valueClass}`).eq(i).text(activePercent);
-        }
-    }
+    // public changePointerState (SliderViewType, sliderData) {
+    //     console.log(sliderData)
+    //     for (let i = 0; i < $(`.${this.pointerClass}`).length; i++) {
+    //         let currentValue: any;
+    //         switch (SliderViewType) {
+    //             case "vertical":
+    //                 currentValue = Number($(`.${this.pointerClass}`)[i].style.top.replace('px', ''));
+    //                 break
+    //             case "horizontal":
+    //                 currentValue = Number($(`.${this.pointerClass}`)[i].style.left.replace('px', ''));
+    //                 break
+    //         }
+    //         let activePercent = this.getValuePercent(sliderData, currentValue);
+    //         $(`.${this.valueClass}`).eq(i).text(activePercent);
+    //     }
+    // }
 
     public checkStepSettings (cursorPosition) {
         return cursorPosition % this.pointerStepSize === 0 ? true : false;

@@ -1,5 +1,5 @@
 export class Controller{
-    observer: void
+    observer: any
     model: any;
     view: any;
     constructor (model, view, observer) {
@@ -46,6 +46,7 @@ export class Controller{
 
     public AccessToDragging(): void {
         this.slider = this.model.getSliderData(this.view.viewType);
+        this.pointerValues = this.model.initState(this.view.viewType, this.slider);
 
         for(let i = 0; i < this.view.sliderBody[0].childNodes.length; i++) {
             let element = this.view.sliderBody[0].childNodes[i];
@@ -67,14 +68,12 @@ export class Controller{
 
     public StartPointerMove(shift: number, targetedPointer: object) {
         return (e: any) => {
-            // записываем активные значения первого и второго бегунка
-            this.slider = this.model.getSliderData(this.view.viewType);
-            this.pointerValues = this.model.getPointerValues(this.view.viewType, this.slider);
+            this.pointerValues = this.model.getState();
             this.pointerPosition = this.model.getPointerPosition(this.view.viewType, shift, e);
-            this.model.changePointerState(this.view.viewType, this.slider);
+            this.model.setState(targetedPointer, this.model.getValuePercent(this.slider, this.pointerPosition));
 
             if (this.sliderType === 'doubleValue') {
-                // здесь берём самый первый pointer как минимальное значение, и последний - как минимальное
+                // здесь берём самый первый pointer как минимальное значение, и последний - как максимальное
                 this.minValue = this.pointerValues[0];
                 this.maxValue = this.pointerValues[Object.keys(this.pointerValues).length - 1];
             }
@@ -97,30 +96,29 @@ export class Controller{
         }
     }
 
+    private move (direction: string, eq: number, expression: any) {
+        direction === "left" ? 
+        this.model.getNthPointer(eq).css({
+            "left": `${expression}px`
+        }) 
+        :
+        this.model.getNthPointer(eq).css({
+            "top": `${expression}px`
+        }) 
+
+    }
+
     public movePointerTo(position: number){
         const offset: number = this.model.getNthPointer(0)[0].offsetWidth;
-
-        const move = (direction: string, eq: number, expression: any) => {
-            direction === "left" ? 
-            this.model.getNthPointer(eq).css({
-                "left": `${expression}px`
-            }) 
-            :
-            this.model.getNthPointer(eq).css({
-                "top": `${expression}px`
-            }) 
-        }
-
         const checkCollision = (direction) => {
-            if (!this.model.checkCollision(this.pointerValues)) {
+            // console.log(this.model.state)
+            if (this.model.checkCollision(this.pointerValues)) {
                 this.targetedPointer === this.model.getNthPointer(0)[0] ?
-                    move(direction, 1, this.model.PercentToPx(this.slider, this.minValue.pointerValue))
+                    this.move(direction, 1, this.model.PercentToPx(this.slider, this.minValue.pointerValue))
                     :
-                    move(direction, 0, this.model.PercentToPx(this.slider, this.maxValue.pointerValue))
+                    this.move(direction, 0, this.model.PercentToPx(this.slider, this.maxValue.pointerValue))
             }
         }
-
-
 
         if (this.view.viewType === 'horizontal') {
             checkCollision("left");
@@ -152,8 +150,7 @@ export class Controller{
 
         const showValueCheckbox: object = {
             mounted () {
-                const pointerValues = controller.model.getPointerValues(controller.view.viewType, controller.slider);
-                controller.getValueIndicator(pointerValues)
+                controller.getValueIndicator(controller.pointerValues)
             }, 
             destroy () {
                 controller.view.removeValueIndicator();
@@ -185,6 +182,45 @@ export class Controller{
             text: 'Вертикальный вид'
         }
 
+        // для каждого pointer'a создаём отдельный инпут
+
+        let inputValues: any = [];
+        let checkValidData = (value: any, state) => {
+            if (value < controller.model.valueFrom || value > controller.model.valueTo) {
+                return  false;
+            } else {
+                return true;
+            }
+        }
+
+        for (let i = 0; i < controller.pointerValues.length; i++) {
+            let activeState = controller.model.getState();
+            const inputList = {
+                mounted (value) {
+                    try {
+                        if (checkValidData(Number(value), activeState)) {
+                            controller.model.setState(controller.model.getNthPointer(i)[0], value);
+                            controller.move('left', i, controller.model.PercentToPx(controller.slider, Number(value)));
+                        }
+                    } catch (err) {
+                        alert('Не удалось установить значение');
+                    }
+                },
+                destroy () {
+    
+                },
+                text: controller.pointerValues[i].pointerValue
+            }
+            let input = panel.getInput(inputList);
+            inputValues.push(input.input);
+        }
+
+        controller.model.observer.subscribe(data => {
+            for (let i = 0; i < data.somedata.length; i++) {
+                inputValues[i].val(data.somedata[i].pointerValue);
+            }
+        })
+        
         const stepSize = panel.getInput(stepSizeInput);
         const showValue = panel.getCheckBox(showValueCheckbox);
         const horizontalView = panel.getCheckBox(horizontalViewCheckbox);

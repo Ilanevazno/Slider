@@ -9,6 +9,13 @@ export namespace SettingsPanel {
             .on('input', () => {
                 obj.mounted(input.val());
             });
+
+            const data: object = {
+                input: input,
+                obj: obj
+            }
+
+            return data
         }
 
         public getCheckBox (obj) {
