@@ -85,7 +85,7 @@ export class Model{
             //set each pointer statement value
             $(`.${this.valueClass}`).eq(i).text(this.state[i].pointerValue);
         }
-
+        this.observer.broadcast({somedata: this.state})
     }
 
     public checkCollision (values) {
@@ -130,23 +130,6 @@ export class Model{
             return position
         }
     }
-
-    // public changePointerState (SliderViewType, sliderData) {
-    //     console.log(sliderData)
-    //     for (let i = 0; i < $(`.${this.pointerClass}`).length; i++) {
-    //         let currentValue: any;
-    //         switch (SliderViewType) {
-    //             case "vertical":
-    //                 currentValue = Number($(`.${this.pointerClass}`)[i].style.top.replace('px', ''));
-    //                 break
-    //             case "horizontal":
-    //                 currentValue = Number($(`.${this.pointerClass}`)[i].style.left.replace('px', ''));
-    //                 break
-    //         }
-    //         let activePercent = this.getValuePercent(sliderData, currentValue);
-    //         $(`.${this.valueClass}`).eq(i).text(activePercent);
-    //     }
-    // }
 
     public checkStepSettings (cursorPosition) {
         return cursorPosition % this.pointerStepSize === 0 ? true : false;

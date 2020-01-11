@@ -1,11 +1,12 @@
 import { Model } from './model';
 import { SettingsPanel } from '../components/panel'
+import { GettingPointer }  from '../components/pointer'
 
 export class View{
+    pointer: any = new GettingPointer.Pointer;
     settingsPanel: any = new SettingsPanel.Panel;
     viewType: string;
     sliderBody: any;
-    sliderPointer: any;
     valueIndicator: any;
     model: any;
 
@@ -20,25 +21,8 @@ export class View{
     }
 
     public renderPointer (count: any) {
-        let renderShiftCounter: number = 0;
-        for(let i = 0; i < count; i++) {
-            this.sliderPointer = $('<span/>', {
-                class: this.model.pointerClass
-            }).appendTo(this.sliderBody);
-        }
-
-        for (let i = 0; i < $(`.${this.model.pointerClass}`).length; i++) {
-            if (this.viewType === 'horizontal') {
-                $(`.${this.model.pointerClass}`).eq(i).css({
-                    "left": `${renderShiftCounter}px`
-                })} else if (this.viewType === 'vertical') {
-                $(`.${this.model.pointerClass}`).eq(i).css({
-                    "top": `${renderShiftCounter}px`
-                })
-            }
-
-            renderShiftCounter = renderShiftCounter + 35;
-        }
+        const pointers = this.pointer.generatePointer(this.sliderBody, this.model.pointerClass, count);
+        this.pointer.setOffset(this.viewType);
     }
 
     public getValueIndicator(data): void {
@@ -73,26 +57,6 @@ export class View{
     public destroySlider(exemplar: any): void {
         if (exemplar.eq(0).children().eq(0).is(`.${this.model.sliderBodyClass}`)) {
             exemplar.eq(0).children().eq(0).remove();
-        }
-    }
-
-    public generateInput (inputClass: string, inputText: string) {
-        const label = $('<label />', {
-            for: inputClass,
-            text: inputText
-        }).appendTo(this.settingsPanel);
-        const input = $('<input />', {
-            type: 'text',
-            class: `${inputClass}`,
-            id: `${inputClass}`
-        }).appendTo(label);
-    }
-
-    public setPointerIndicatorValue(percent: any){
-        try {
-            this.valueIndicator.text(percent);
-        } catch (err) {
-            // console.log("Не могу включить индикатор по причине: ", err);
         }
     }
 }

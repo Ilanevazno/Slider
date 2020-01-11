@@ -19,6 +19,7 @@ export class Controller{
     firstPointerClass: string = 'first_value';
     secondPointerClass: string = 'second_value';
     sliderExemplar: any;
+    private activeDirection: string;
 
     public enableLogs (state: boolean) {
         this.model.enableLogs(state);
@@ -26,6 +27,7 @@ export class Controller{
 
     public setViewType (viewType: string): void {
         this.view.viewType = viewType;
+        this.view.viewType === 'horizontal' ? this.activeDirection = 'left' : this.activeDirection = 'top'
     }
 
     public getValueIndicator (data) {
@@ -47,6 +49,12 @@ export class Controller{
     public AccessToDragging(): void {
         this.slider = this.model.getSliderData(this.view.viewType);
         this.pointerValues = this.model.initState(this.view.viewType, this.slider);
+
+        if (this.sliderType === 'doubleValue') {
+            // здесь берём самый первый pointer как минимальное значение, и последний - как максимальное
+            this.minValue = this.pointerValues[0];
+            this.maxValue = this.pointerValues[Object.keys(this.pointerValues).length - 1];
+        }
 
         for(let i = 0; i < this.view.sliderBody[0].childNodes.length; i++) {
             let element = this.view.sliderBody[0].childNodes[i];
@@ -70,14 +78,6 @@ export class Controller{
         return (e: any) => {
             this.pointerValues = this.model.getState();
             this.pointerPosition = this.model.getPointerPosition(this.view.viewType, shift, e);
-            this.model.setState(targetedPointer, this.model.getValuePercent(this.slider, this.pointerPosition));
-
-            if (this.sliderType === 'doubleValue') {
-                // здесь берём самый первый pointer как минимальное значение, и последний - как максимальное
-                this.minValue = this.pointerValues[0];
-                this.maxValue = this.pointerValues[Object.keys(this.pointerValues).length - 1];
-            }
-
             this.setStepSettings(this.stepSize);
         }
     }
@@ -89,7 +89,7 @@ export class Controller{
 
         if(stepMove){
             this.pointerPosition = this.model.checkSliderArea(this.pointerPosition, this.slider);
-            
+            this.model.setState(this.targetedPointer, this.model.getValuePercent(this.slider, this.pointerPosition));
             this.movePointerTo(this.pointerPosition);
 
             // this.view.setValueSetting.val(this.activePercent);
@@ -105,28 +105,29 @@ export class Controller{
         this.model.getNthPointer(eq).css({
             "top": `${expression}px`
         }) 
+    }
 
+    private checkCollision (direction) {
+        if (this.model.checkCollision(this.pointerValues)) {
+            this.targetedPointer === this.model.getNthPointer(0)[0] ?
+                this.move(direction, 1, this.model.PercentToPx(this.slider, this.minValue.pointerValue))
+                :
+                this.move(direction, 0, this.model.PercentToPx(this.slider, this.maxValue.pointerValue))
+        }
     }
 
     public movePointerTo(position: number){
         const offset: number = this.model.getNthPointer(0)[0].offsetWidth;
-        const checkCollision = (direction) => {
-            // console.log(this.model.state)
-            if (this.model.checkCollision(this.pointerValues)) {
-                this.targetedPointer === this.model.getNthPointer(0)[0] ?
-                    this.move(direction, 1, this.model.PercentToPx(this.slider, this.minValue.pointerValue))
-                    :
-                    this.move(direction, 0, this.model.PercentToPx(this.slider, this.maxValue.pointerValue))
-            }
-        }
 
         if (this.view.viewType === 'horizontal') {
-            checkCollision("left");
+            this.checkCollision(this.activeDirection);
+
             $(this.targetedPointer).css({
                 "left": `${position}px`,
             })
         } else if (this.view.viewType === 'vertical') {
-            checkCollision("top");
+            this.checkCollision(this.activeDirection);
+
             $(this.targetedPointer).css({
                 "top": `${position}px`,
             })
@@ -182,6 +183,28 @@ export class Controller{
             text: 'Вертикальный вид'
         }
 
+        const singleValueCheckbox = {
+            mounted () {
+
+            },
+
+            destroy () {
+
+            },
+            text: 'одиночное значение'
+        }
+
+        const doubleValueCheckbox = {
+            mounted () {
+
+            },
+
+            destroy () {
+
+            },
+            text: 'интервал'
+        }
+
         // для каждого pointer'a создаём отдельный инпут
 
         let inputValues: any = [];
@@ -200,10 +223,12 @@ export class Controller{
                     try {
                         if (checkValidData(Number(value), activeState)) {
                             controller.model.setState(controller.model.getNthPointer(i)[0], value);
-                            controller.move('left', i, controller.model.PercentToPx(controller.slider, Number(value)));
+                            controller.targetedPointer = controller.model.getNthPointer(i)[0];
+                            controller.movePointerTo(controller.model.PercentToPx(controller.slider, Number(value)));
                         }
                     } catch (err) {
                         alert('Не удалось установить значение');
+                        console.log('не удалось установить значение по причине: \n', err);
                     }
                 },
                 destroy () {
@@ -220,11 +245,13 @@ export class Controller{
                 inputValues[i].val(data.somedata[i].pointerValue);
             }
         })
-        
+
         const stepSize = panel.getInput(stepSizeInput);
         const showValue = panel.getCheckBox(showValueCheckbox);
         const horizontalView = panel.getCheckBox(horizontalViewCheckbox);
         const verticalView = panel.getCheckBox(verticalViewCheckbox);
+        const singleValue = panel.getCheckBox(singleValueCheckbox);
+        const doubleValue = panel.getCheckBox(doubleValueCheckbox);
 
         const defaultViewType = () => {
             switch (controller.view.viewType) {
