@@ -1,15 +1,14 @@
 export class Model{
-    activePercent: number;
-    enabledLogs: boolean = false;
-    activeViewType: string;
-    sliderBodyClass: string = "slider__body";
-    pointerClass: string = "slider__pointer";
-    valueClass: string = "slider__value";
-    valueFrom: number = 0
-    valueTo: number = 100;
-    pointerStepSize: number = 1;
-    state: any;
-    observer: any;
+    private activePercent: number;
+    private sliderBodyClass: string = "slider__body";
+    private pointerClass: string = "slider__pointer";
+    private valueClass: string = "slider__value";
+    private valueFrom: number = 0
+    private valueTo: number = 100;
+    private pointerStepSize: number = 1;
+    private state: any;
+    private observer: any;
+    private sliderBody: any;
 
     constructor (observer: any) {
         this.observer = observer;
@@ -25,10 +24,6 @@ export class Model{
 
     public setStepSize (stepSize) {
         this.pointerStepSize = stepSize;
-    }
-
-    public getPointersList () {
-        return $(`.${this.pointerClass}`);
     }
 
     public initState (SliderViewType, sliderWidth) {
@@ -58,7 +53,6 @@ export class Model{
     }
 
     public getState () {
-        this.observer.broadcast({somedata: this.state})
         return this.state;
     }
 
@@ -95,7 +89,7 @@ export class Model{
     }
 
     public getShiftВirection (viewType, event, element) {
-        let shift;
+        let shift = null;
         if (viewType === 'horizontal') {
             shift = event.clientX - $(element)[0].getBoundingClientRect().left;
         } else if (viewType === 'vertical') {
@@ -105,17 +99,15 @@ export class Model{
         return shift
     }
 
-    public getSliderData (sliderViewType) {
-        let sliderBody = $(`.${this.sliderBodyClass}`)[0];
-        let sliderPointer = $(`.${this.pointerClass}`)[0];
+    public getSliderParams (sliderBody, sliderViewType) {
+        let sliderPointer = sliderBody.children().eq(0)[0];
         let sliderData = null;
         
         if (sliderViewType === 'horizontal') {
-            sliderData = sliderBody.offsetWidth - sliderPointer.offsetWidth
+            sliderData = sliderBody[0].offsetWidth - sliderPointer.offsetWidth
         } else if (sliderViewType === 'vertical'){
-            sliderData = sliderBody.offsetHeight - sliderPointer.offsetHeight;
+            sliderData = sliderBody[0].offsetHeight - sliderPointer.offsetHeight;
         }
-
         return sliderData
     }
 
@@ -159,10 +151,6 @@ export class Model{
 
     public PercentToPx (sliderWidth: number, pointerValue: number) {
         return Math.round(sliderWidth / 100 * pointerValue)
-    }
-
-    public enableLogs (state: boolean) {
-        this.enabledLogs = state;
     }
 
 

@@ -1,17 +1,29 @@
 import { Model } from './model';
 import { SettingsPanel } from '../components/panel'
 import { GettingPointer }  from '../components/pointer'
+import { SliderBody } from '../components/sliderBody';
 
 export class View{
     pointer: any = new GettingPointer.Pointer;
+    sliderBodyExemplar: any = new SliderBody.Body;
     settingsPanel: any = new SettingsPanel.Panel;
     viewType: string;
-    sliderBody: any;
     valueIndicator: any;
     model: any;
+    pointerList: object;
+    sliderBodyHtml: any;
 
     constructor (model) {
         this.model = model;
+    }
+
+    public renderSlider(exemplar: any): void{
+        this.sliderBodyExemplar.renderSliderBody(this.viewType, this.model.sliderBodyClass, exemplar);
+        this.sliderBodyHtml = this.sliderBodyExemplar.getBody();
+    }
+
+    public destroySlider (): void {
+        this.sliderBodyExemplar.destroy();
     }
 
     public getSettingsPanel (exemplar) {
@@ -21,8 +33,9 @@ export class View{
     }
 
     public renderPointer (count: any) {
-        const pointers = this.pointer.generatePointer(this.sliderBody, this.model.pointerClass, count);
+        const pointers = this.pointer.generatePointer(this.sliderBodyExemplar.body, this.model.pointerClass, count);
         this.pointer.setOffset(this.viewType);
+        this.pointerList = pointers;
     }
 
     public getValueIndicator(data): void {
@@ -37,26 +50,6 @@ export class View{
     public removeValueIndicator(): void {
         for(let i = 0; i < $(`.${this.model.pointerClass}`).length; i++) {
             $(`.${this.model.pointerClass}`).eq(i).children().remove();
-        }
-    }
-
-    public sliderStart(exemplar: any): void{
-        if (this.viewType === 'horizontal') {
-            this.sliderBody = $('<div/>', {
-                class: `${this.model.sliderBodyClass} slider__body-horizontal`
-            }).prependTo(exemplar);
-    
-            this.viewType = 'horizontal'
-        } else if (this.viewType === 'vertical') {
-            this.sliderBody = $('<div/>', {
-                class: `${this.model.sliderBodyClass} slider__body-vertical`
-            }).prependTo(exemplar);
-        }
-    }
-
-    public destroySlider(exemplar: any): void {
-        if (exemplar.eq(0).children().eq(0).is(`.${this.model.sliderBodyClass}`)) {
-            exemplar.eq(0).children().eq(0).remove();
         }
     }
 }

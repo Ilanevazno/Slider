@@ -5,6 +5,8 @@ import './index.pug';
 import './index.scss';
 import './mySlider.ts';
 
-$("#first_slider").createSlider();
-// $("#second_slider").createSlider();
-// $("#third_slider").createSlider();
+let slider = $("#first_slider").createSlider({
+    initSettings: true,
+});
+
+console.log(slider);

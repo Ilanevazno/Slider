@@ -18,6 +18,12 @@ export namespace SettingsPanel {
             return data
         }
 
+        public destroyInput (obj) {
+            for (let i = 0; i < obj.length; i++) {
+                $(obj)[i].remove();
+            }
+        }
+
         public getCheckBox (obj) {
             const labelForCheckbox = $('<label/>', {
                 type: 'checkbox',

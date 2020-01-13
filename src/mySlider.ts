@@ -17,15 +17,18 @@ export namespace Slider {
     let arbitraryAmount: number;
     
     jQuery.fn.extend({
-        createSlider: function(): void{
+        createSlider: function(settings: any = {}){
             let model = new Model(observer);
             let view = new View(model);
             let slider = new Controller(model, view, observer);
-            slider.setViewType(horizontalType);
+            slider.setViewType(settings.viewType || horizontalType);
+            slider.setStepSize(settings.stepSize || 1);
+            slider.setSliderType(settings.valueType || doubleValue);
             slider.generateSlider(this);
-            slider.setSliderType(doubleValue);
-            slider.initSettings(this);
-        }
+            slider.initSettings(settings.initSettings || false, this);
+            slider.getValueIndicator(settings.valueIndicator ? slider.state : false)
+            return 'kek'
+        },
     })
 
     interface jQuery{
