@@ -2,9 +2,11 @@ import { Model } from './model';
 import { SettingsPanel } from '../components/panel'
 import { GettingPointer }  from '../components/pointer'
 import { SliderBody } from '../components/sliderBody';
+import { PointerIndicator } from '../components/pointerIndicator';
 
 export class View{
     pointer: any = new GettingPointer.Pointer;
+    pointerIndicator: any = new PointerIndicator.Indicator;
     sliderBodyExemplar: any = new SliderBody.Body;
     settingsPanel: any = new SettingsPanel.Panel;
     viewType: string;
@@ -39,12 +41,13 @@ export class View{
     }
 
     public getValueIndicator(data): void {
-        for(let i = 0; i < data.length; i++) {
-            this.valueIndicator = $('<span/>', {
-                class: this.model.valueClass,
-                text: data[i].pointerValue
-            }).appendTo($(`.${this.model.pointerClass}`)[i]);
-        }
+        // for(let i = 0; i < data.length; i++) {
+        //     this.valueIndicator = $('<span/>', {
+        //         class: this.model.valueClass,
+        //         text: data[i].pointerValue
+        //     }).appendTo($(`.${this.model.pointerClass}`)[i]);
+        // }
+        this.pointerIndicator.getIndicator(data, this.model.valueClass);
     }   
 
     public removeValueIndicator(): void {

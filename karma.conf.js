@@ -3,6 +3,18 @@
 var webpackConfig = require('./webpack.config');
 module.exports=function(config) {
 config.set({
+    module: {
+      rules: [{
+        test: /\.(js|jsx|ts)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['es2015', 'stage-0'],
+          },
+        },
+      }],
+    },
     // конфигурация репортов о покрытии кода тестами
     coverageReporter: {
       dir:'tmp/coverage/',

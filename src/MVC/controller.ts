@@ -60,7 +60,7 @@ export class Controller{
         }
 
         for(let i = 0; i < this.state.length; i++) {
-            let element = this.view.sliderBodyHtml.children()[i];
+            let element = this.state[i].pointerItem;
             $(element).on('mousedown', function(e: any) {
                 e.preventDefault();
 
