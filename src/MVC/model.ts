@@ -1,14 +1,16 @@
 export class Model{
     private activePercent: number;
-    private sliderBodyClass: string = "slider__body";
-    private pointerClass: string = "slider__pointer";
-    private valueClass: string = "slider__value";
     private valueFrom: number = 0
     private valueTo: number = 100;
     private pointerStepSize: number = 1;
     private state: any;
     private observer: any;
     private sliderBody: any;
+    public classListNames: any = {
+        sliderBodyClass: 'slider__body',
+        pointerClass: 'slider__pointer',
+        valueClass: 'slider__value'
+    }
 
     constructor (observer: any) {
         this.observer = observer;
@@ -26,21 +28,23 @@ export class Model{
         this.pointerStepSize = stepSize;
     }
 
-    public initState (SliderViewType, sliderWidth) {
+    public initState (initState: any) {
+        this.state = [];
         let valuesArr: any = [];
-        for (let i = 0; i < $(`.${this.pointerClass}`).length; i++) {
+        for (let i = 0; i < initState.pointerList.length; i++) {
             let currentValue: any;
 
-            switch (SliderViewType) {
+            switch (initState.sliderViewType) {
                 case "vertical":
-                    currentValue = Number($(`.${this.pointerClass}`)[i].style.top.replace('px', ''));
+                    currentValue = Number(initState.pointerList[i].sliderPointer.css('top').replace('px', ''));
                     break
                 case "horizontal":
-                    currentValue = Number($(`.${this.pointerClass}`)[i].style.left.replace('px', ''));
+                    currentValue = Number(initState.pointerList[i].sliderPointer.css('left').replace('px', ''));
                     break
             }
-            let convertedPerc = this.getValuePercent(sliderWidth, currentValue);
-            valuesArr.push([convertedPerc, $(`.${this.pointerClass}`)[i]]);
+
+            let convertedPerc = this.getValuePercent(initState.sliderWidth, currentValue);
+            valuesArr.push([convertedPerc, initState.pointerList[i].sliderPointer[0]]);
         }
 
         return this.state = valuesArr.map((cv, idx) => {
@@ -77,7 +81,7 @@ export class Model{
             everyPointers.pointerValue >= this.valueTo ? everyPointers.pointerValue = this.valueTo : false;
 
             //set each pointer statement value
-            $(`.${this.valueClass}`).eq(i).text(this.state[i].pointerValue);
+            $(`.${this.classListNames.valueClass}`).eq(i).text(this.state[i].pointerValue);
         }
         this.observer.broadcast({somedata: this.state})
     }
@@ -112,7 +116,7 @@ export class Model{
     }
 
     public getPointerPosition (sliderViewType, shift, target) {
-        let sliderBody = $(`.${this.sliderBodyClass}`)[0];
+        let sliderBody = $(`.${this.classListNames.sliderBodyClass}`)[0];
 
         if (sliderViewType === 'horizontal') {
             let position: number = target.clientX - shift - sliderBody.getBoundingClientRect().left;
@@ -142,7 +146,7 @@ export class Model{
     }
 
     private getNthPointer (eq: number) {
-        return $(`.${this.pointerClass}`).eq(eq);
+        return $(this.state[eq].pointerItem);
     }
 
     public getValuePercent (sliderWidth: number, percentages: number) {

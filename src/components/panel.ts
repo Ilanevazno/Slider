@@ -4,6 +4,7 @@ export namespace SettingsPanel {
 
         public getInput (obj) {
             const input = $('<input/>', {
+                type: 'text',
                 placeholder: obj.text
             }).appendTo(this.settingsPanel)
             .on('input', () => {
@@ -51,16 +52,8 @@ export namespace SettingsPanel {
             }).appendTo(exemplar);
         }
 
-        public setValueSettingCorrect(success: any){
-            // if (success) {
-            //     this.setValueSetting.css({
-            //         "outline": "none",
-            //     })
-            // } else {
-            //     this.setValueSetting.css({
-            //         "outline": "2px solid red",
-            //     })
-            // }
+        public destroyPanel () {
+            $(this.settingsPanel).remove();
         }
     }
 }

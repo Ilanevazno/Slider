@@ -48,7 +48,11 @@ export class Controller{
 
     private initState () {
         this.sliderParams = this.model.getSliderParams(this.view.sliderBodyHtml, this.view.viewType);
-        this.state = this.model.initState(this.view.viewType, this.sliderParams);
+        this.state = this.model.initState({
+            sliderViewType: this.view.viewType,
+            sliderWidth: this.sliderParams,
+            pointerList: this.view.pointerList
+        });
     }
 
     public AccessToDragging(): void {
@@ -61,8 +65,11 @@ export class Controller{
 
         for(let i = 0; i < this.state.length; i++) {
             let element = this.state[i].pointerItem;
+            console.log(this.state[i]);
             $(element).on('mousedown', function(e: any) {
                 e.preventDefault();
+
+                console.log(e.currentTarget);
 
                 this.targetedPointer = e.currentTarget;
 
@@ -101,17 +108,18 @@ export class Controller{
 
     private move (direction: string, eq: number, expression: any) {
         direction === "left" ? 
-        this.model.getNthPointer(eq).css({
+        $(this.model.getNthPointer(eq)).css({
             "left": `${expression}px`
         }) 
         :
-        this.model.getNthPointer(eq).css({
+        $(this.model.getNthPointer(eq)).css({
             "top": `${expression}px`
         }) 
     }
 
     private checkCollision (direction) {
         if (this.model.checkCollision(this.state)) {
+            if(this.targetedPointer === this.model.getNthPointer(0)[0]) {}
             this.targetedPointer === this.model.getNthPointer(0)[0] ?
                 this.move(direction, 1, this.model.PercentToPx(this.sliderParams, this.minValue.pointerValue))
                 :
@@ -120,8 +128,6 @@ export class Controller{
     }
 
     public movePointerTo(position: number){
-        const offset: number = this.model.getNthPointer(0)[0].offsetWidth;
-
         if (this.view.viewType === 'horizontal') {
             this.checkCollision(this.activeDirection);
 

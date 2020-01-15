@@ -8,5 +8,3 @@ import './mySlider.ts';
 let slider = $("#first_slider").createSlider({
     initSettings: true,
 });
-
-console.log(slider);

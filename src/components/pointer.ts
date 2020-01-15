@@ -1,10 +1,11 @@
 export namespace GettingPointer {
     export class Pointer {
-        pointerList: any = []
+        pointerList: any;
         constructor () {
         }
 
         public generatePointer (body, className = 'Pointer', count = 1) {
+        this.pointerList = [];
         for(let i = 0; i < count; i++) {
             const sliderPointer = $('<span/>', {
                 class: className
@@ -32,10 +33,16 @@ export namespace GettingPointer {
             }
         }
 
+        public getPointerList () {
+            return this.pointerList;
+        }
+
         public destroyPointers () {
             for (let i = 0; i < this.pointerList.length; i++) {
                 $(this.pointerList)[i].sliderPointer.remove();
             }
+
+            return this.pointerList = [];
         }
     }
 }

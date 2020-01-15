@@ -12,7 +12,7 @@ export class View{
     viewType: string;
     valueIndicator: any;
     model: any;
-    pointerList: object;
+    pointerList: any;
     sliderBodyHtml: any;
 
     constructor (model) {
@@ -20,7 +20,7 @@ export class View{
     }
 
     public renderSlider(exemplar: any): void{
-        this.sliderBodyExemplar.renderSliderBody(this.viewType, this.model.sliderBodyClass, exemplar);
+        this.sliderBodyExemplar.renderSliderBody(this.viewType, this.model.classListNames.sliderBodyClass, exemplar);
         this.sliderBodyHtml = this.sliderBodyExemplar.getBody();
     }
 
@@ -35,24 +35,16 @@ export class View{
     }
 
     public renderPointer (count: any) {
-        const pointers = this.pointer.generatePointer(this.sliderBodyExemplar.body, this.model.pointerClass, count);
+        const pointers = this.pointer.generatePointer(this.sliderBodyExemplar.body, this.model.classListNames.pointerClass, count);
         this.pointer.setOffset(this.viewType);
         this.pointerList = pointers;
     }
 
     public getValueIndicator(data): void {
-        // for(let i = 0; i < data.length; i++) {
-        //     this.valueIndicator = $('<span/>', {
-        //         class: this.model.valueClass,
-        //         text: data[i].pointerValue
-        //     }).appendTo($(`.${this.model.pointerClass}`)[i]);
-        // }
-        this.pointerIndicator.getIndicator(data, this.model.valueClass);
+        this.pointerIndicator.getIndicator(data, this.model.classListNames.valueClass);
     }   
 
     public removeValueIndicator(): void {
-        for(let i = 0; i < $(`.${this.model.pointerClass}`).length; i++) {
-            $(`.${this.model.pointerClass}`).eq(i).children().remove();
-        }
+        this.pointerIndicator.removeIndicator();
     }
 }

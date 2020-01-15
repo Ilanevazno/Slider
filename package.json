@@ -6,7 +6,7 @@
     "dev": "webpack-dev-server --mode development --open --watch",
     "build": "webpack --mode development",
     "prod": "webpack --mode production --pretty",
-    "test:single": "rm -rf tmp/ && karma start karma.conf.js --single-run --browsers PhantomJS",
+    "test:single": "karma start karma.conf.js --single-run --browsers PhantomJS",
     "test:watch": "karma start karma.conf.js --browsers PhantomJS"
   },
   "keywords": [],
