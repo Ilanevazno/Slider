@@ -8,3 +8,11 @@ import './mySlider.ts';
 let slider = $("#first_slider").createSlider({
     initSettings: true,
 });
+
+let slidera = $("#second_slider").createSlider({
+    initSettings: true,
+});
+
+let sliderb = $("#third_slider").createSlider({
+    initSettings: true,
+});

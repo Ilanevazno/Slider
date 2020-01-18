@@ -25,7 +25,7 @@ export namespace Slider {
             slider.setStepSize(settings.stepSize || 1);
             slider.setSliderType(settings.valueType || doubleValue);
             slider.generateSlider(this);
-            slider.initSettings(settings.initSettings || false, this);
+            slider.initSettings(settings.initSettings || false);
             slider.getValueIndicator(settings.valueIndicator ? slider.state : false)
             return 'kek'
         },

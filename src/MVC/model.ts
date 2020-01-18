@@ -81,9 +81,9 @@ export class Model{
             everyPointers.pointerValue >= this.valueTo ? everyPointers.pointerValue = this.valueTo : false;
 
             //set each pointer statement value
-            $(`.${this.classListNames.valueClass}`).eq(i).text(this.state[i].pointerValue);
+            $(this.state[i].pointerItem).children(`span.${this.classListNames.valueClass}`).text(this.state[i].pointerValue);
         }
-        this.observer.broadcast({somedata: this.state})
+        this.observer.broadcast({state: this.state})
     }
 
     public checkCollision (values) {

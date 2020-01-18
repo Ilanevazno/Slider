@@ -1,7 +1,9 @@
+import { SettingsPanel } from '../components/panel'
 export class Controller{
     observer: any
     model: any;
     view: any;
+    panel: any;
     constructor (model, view, observer) {
         this.model = model;
         this.view = view;
@@ -65,11 +67,8 @@ export class Controller{
 
         for(let i = 0; i < this.state.length; i++) {
             let element = this.state[i].pointerItem;
-            console.log(this.state[i]);
             $(element).on('mousedown', function(e: any) {
                 e.preventDefault();
-
-                console.log(e.currentTarget);
 
                 this.targetedPointer = e.currentTarget;
 
@@ -77,6 +76,13 @@ export class Controller{
                 this.prepareForUsing(this.targetedPointer, shiftDirection);
             }.bind(this));
         }
+
+        this.model.observer.subscribe(data => {
+            for (let i = 0; i < data.length; i++) {
+                console.log('asd');
+                this.move(this.activeDirection, i, this.model.PercentToPx(this.sliderParams, this.state[i].pointerValue));
+            }
+        })
     }
 
     public prepareForUsing(targetedPointer: any, shift: number): void {
@@ -121,7 +127,7 @@ export class Controller{
         if (this.model.checkCollision(this.state)) {
             if(this.targetedPointer === this.model.getNthPointer(0)[0]) {}
             this.targetedPointer === this.model.getNthPointer(0)[0] ?
-                this.move(direction, 1, this.model.PercentToPx(this.sliderParams, this.minValue.pointerValue))
+                this.move(direction, this.state.length - 1, this.model.PercentToPx(this.sliderParams, this.minValue.pointerValue))
                 :
                 this.move(direction, 0, this.model.PercentToPx(this.sliderParams, this.maxValue.pointerValue))
         }
@@ -147,200 +153,141 @@ export class Controller{
         $(document).off("mousemove");
     }
 
-    public initSettings(settingsEnabled: boolean, exemplar: any): void{   
-        if (settingsEnabled === false) {
-            return null
-        }
-        const controller = this;
-        const panel = this.view.getSettingsPanel(exemplar);
-        let inputValues: any = [];
+    public initSettings (activity: boolean) {
+        this.panel = new SettingsPanel.Panel;
+        this.panel.renderSettingsPanel(this.sliderExemplar);
+        const that = this;
 
         const refreshSlider = () => {
-            controller.view.destroySlider();
-            controller.view.renderSlider(controller.sliderExemplar);
-            controller.view.renderPointer(controller.model.getPointerCount(controller.sliderType));
-            controller.AccessToDragging();
+            this.view.destroySlider();
+            this.view.renderSlider(this.sliderExemplar);
+            this.view.renderPointer(this.model.getPointerCount(this.sliderType));
+            this.AccessToDragging();
         }
 
-        const stepSizeInput = {
-            mounted (stepSize) {
-                controller.model.setStepSize(stepSize)
+        const getStateInputs = () => {
+            const inputState = [];
+            for (let i = 0; i < this.model.state.length; i++) {
+                let InputObj = {
+                    mounted () {
+                        that.model.setState(that.state[i].pointerItem, gettedInput.input.val());
+
+                        that.model.observer.subscribe(data => {
+                            for (let i = 0; i < that.state.length; i++) {
+                                that.move(that.activeDirection, i, that.model.PercentToPx(that.sliderParams, that.state[i].pointerValue));
+                            }
+                        })
+                    },
+        
+                    destroy () {
+        
+                    },
+    
+                    text: this.model.state[i].pointerValue
+                }
+    
+                let gettedInput = this.panel.getInput(InputObj);
+                inputState.push(gettedInput.input);
+            }
+            return inputState;
+        }
+
+        const singleValueCheckBox = {
+            inputs: [],
+            mounted () {
+                that.setSliderType('singleValue');
+                refreshSlider();
+                const stateInputs = getStateInputs();
+
+                this.inputs.push(stateInputs);
+
+                that.model.observer.subscribe(data => {
+                    for(let i = 0; i < that.state.length; i++) {
+                        that.panel.settingsPanel.find(stateInputs[0]).val(that.state[0].pointerValue);
+                    }
+                })
             },
-            text: 'шаг'
+
+            text: 'одиночное значение'
+        }
+
+        const doubleValueCheckBox = {
+            inputs: [],
+            mounted () {
+                this.inputs.map(item => {
+                    item.remove();
+                });
+
+                that.setSliderType('doubleValue');
+                refreshSlider();
+                const stateInputs = getStateInputs();
+                
+
+                stateInputs.map(input => {
+                    this.inputs.push(input);
+                })
+
+                that.model.observer.subscribe(data => {
+                    for(let i = 0; i < that.state.length; i++) {
+                        that.panel.settingsPanel.find(stateInputs[i]).val(that.state[i].pointerValue);
+                    }
+                })
+            },
+
+            destroy () {
+                console.log('destroyed')
+            },
+
+            text: 'интервал'
         }
 
         const showValueCheckbox: object = {
             mounted () {
-                controller.getValueIndicator(controller.state)
+                that.getValueIndicator(that.state)
             }, 
             destroy () {
-                controller.view.removeValueIndicator();
+                that.view.removeValueIndicator();
             },
             text: 'Показывать значение'
         };
 
         const horizontalViewCheckbox = {
             mounted () {
-                controller.setViewType('horizontal');
+                that.setViewType('horizontal');
                 refreshSlider();
-                controller.setSliderType(controller.sliderType);
+                that.setSliderType(that.sliderType);
             },
             destroy () {
-                controller.view.destroySlider();
+                that.view.destroySlider();
             },
             text: 'Горизонтальный вид'
         };
 
         const verticalViewCheckbox = {
             mounted () {
-                controller.setViewType('vertical');
+                that.setViewType('vertical');
                 refreshSlider();
-                controller.setSliderType(controller.sliderType);
+                that.setSliderType(that.sliderType);
             },
             destroy () {
-                controller.view.destroySlider();
+                that.view.destroySlider();
             },
             text: 'Вертикальный вид'
         }
 
-        const getStateInputs = (i) => {
-            let activeState = controller.model.getState();
-            const inputList = {
-                mounted (value) {
-                    try {
-                        if (checkValidData(Number(value), activeState)) {
-                            controller.model.setState(controller.model.getNthPointer(i)[0], value);
-                            controller.targetedPointer = controller.model.getNthPointer(i)[0];
-                            controller.movePointerTo(controller.model.PercentToPx(controller.sliderParams, Number(value)));
-                        }
-                    } catch (err) {
-                        alert('Не удалось установить значение');
-                        console.log('не удалось установить значение по причине: \n', err);
-                    }
-                },
-                destroy () {
-    
-                },
-                text: controller.state[i].pointerValue
-            }
-            let input = panel.getInput(inputList);
-            inputValues.push(input.input);
+        const stepSizeInput = {
+            mounted (stepSize) {
+                that.model.setStepSize(stepSize)
+        },
+
+        text: 'шаг'
         }
 
-        const singleValueCheckbox = {
-            mounted () {
-                panel.destroyInput(inputValues);
-                controller.setSliderType('singleValue');
-                refreshSlider();
-
-                for (let i = 0; i < controller.state.length; i++) {
-                    getStateInputs(i);
-                }
-
-                controller.model.observer.subscribe(data => {
-                    for (let i = 0; i < data.somedata.length; i++) {
-                        inputValues[i].val(data.somedata[i].pointerValue);
-                    }
-                })
-            },
-
-            destroy () {
-                controller.view.pointer.destroyPointers();
-                panel.destroyInput(inputValues);
-                inputValues = [];
-                controller.model.observer.unsubscribe(data => {
-                    for (let i = 0; i < data.somedata.length; i++) {
-                        inputValues[i].val(data.somedata[i].pointerValue);
-                    }
-                });
-            },
-            text: 'одиночное значение'
-        }
-
-        const doubleValueCheckbox = {
-            mounted () {
-                panel.destroyInput(inputValues);
-                controller.setSliderType('doubleValue');
-                refreshSlider();
-                for (let i = 0; i < controller.state.length; i++) {
-                    getStateInputs(i);
-                }
-
-                controller.model.observer.subscribe(data => {
-                    for (let i = 0; i < data.somedata.length; i++) {
-                        inputValues[i].val(data.somedata[i].pointerValue);
-                    }
-                })
-            },
-
-            destroy () {
-                controller.view.pointer.destroyPointers();
-                panel.destroyInput(inputValues);
-                inputValues = [];
-                controller.model.observer.unsubscribe(data => {
-                    for (let i = 0; i < data.somedata.length; i++) {
-                        inputValues[i].val(data.somedata[i].pointerValue);
-                    }
-                });
-            },
-            text: 'интервал'
-        }
-
-        let checkValidData = (value: any, state) => {
-            if (value < controller.model.valueFrom || value > controller.model.valueTo) {
-                return  false;
-            } else {
-                return true;
-            }
-        }
-
-        const stepSize = panel.getInput(stepSizeInput);
-        const showValue = panel.getCheckBox(showValueCheckbox);
-        const horizontalView = panel.getCheckBox(horizontalViewCheckbox);
-        const verticalView = panel.getCheckBox(verticalViewCheckbox);
-        const singleValue = panel.getCheckBox(singleValueCheckbox);
-        const doubleValue = panel.getCheckBox(doubleValueCheckbox);
-
-        const defaultViewType = () => {
-            switch (controller.view.viewType) {
-                case 'horizontal':
-                    horizontalView.checkbox.prop('checked', true)
-                    break
-                case 'vertical':
-                    verticalView.checkbox.prop('checked', true)
-                    break
-            }
-        }
-
-        // select default view type checkbox
-        defaultViewType();
-
-        const uncheck = (checkBoxList: any) => {
-            checkBoxList.map((itm) => itm.checkbox.prop('checked', false));
-        }
-
-        singleValue.checkbox.on('change', () => {
-            if (doubleValue.checkbox.is(':checked')) {
-                uncheck([showValue, doubleValue]);
-            }
-        })
-
-        doubleValue.checkbox.on('change', () => {
-            if (singleValue.checkbox.is(':checked')) {
-                uncheck([showValue, singleValue]);
-            }
-        })
-
-        horizontalView.checkbox.on('change', () => {
-            if (verticalView.checkbox.is(':checked')) {
-                uncheck([verticalView, showValue]);
-            }
-        })
-
-        verticalView.checkbox.on('change', () => {
-            if (horizontalView.checkbox.is(':checked')) {
-                uncheck([showValue, horizontalView]);
-            }
-        })
+        const stepSize = this.panel.getInput(stepSizeInput);
+        const getValue = this.panel.getCheckBox(showValueCheckbox);
+        const singleValue = this.panel.getRadio(singleValueCheckBox, 'valueType');
+        const doubleValue = this.panel.getRadio(doubleValueCheckBox, 'valueType');
+        const horizontalView = this.panel.getRadio(horizontalViewCheckbox, 'viewType');
+        const verticalView = this.panel.getRadio(verticalViewCheckbox, 'viewType');
     }
 }

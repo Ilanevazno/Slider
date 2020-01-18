@@ -1,5 +1,4 @@
 import { Model } from './model';
-import { SettingsPanel } from '../components/panel'
 import { GettingPointer }  from '../components/pointer'
 import { SliderBody } from '../components/sliderBody';
 import { PointerIndicator } from '../components/pointerIndicator';
@@ -8,7 +7,6 @@ export class View{
     pointer: any = new GettingPointer.Pointer;
     pointerIndicator: any = new PointerIndicator.Indicator;
     sliderBodyExemplar: any = new SliderBody.Body;
-    settingsPanel: any = new SettingsPanel.Panel;
     viewType: string;
     valueIndicator: any;
     model: any;
@@ -28,11 +26,11 @@ export class View{
         this.sliderBodyExemplar.destroy();
     }
 
-    public getSettingsPanel (exemplar) {
-        this.settingsPanel.renderSettingsPanel(exemplar);
+    // public getSettingsPanel (exemplar) {
+    //     this.settingsPanel.renderSettingsPanel(exemplar);
 
-        return this.settingsPanel;
-    }
+    //     return this.settingsPanel;
+    // }
 
     public renderPointer (count: any) {
         const pointers = this.pointer.generatePointer(this.sliderBodyExemplar.body, this.model.classListNames.pointerClass, count);
