@@ -79,7 +79,6 @@ export class Controller{
 
         this.model.observer.subscribe(data => {
             for (let i = 0; i < data.length; i++) {
-                console.log('asd');
                 this.move(this.activeDirection, i, this.model.PercentToPx(this.sliderParams, this.state[i].pointerValue));
             }
         })
@@ -93,22 +92,35 @@ export class Controller{
     public StartPointerMove(shift: number, targetedPointer: object) {
         return (e: any) => {
             this.state = this.model.getState();
-            this.pointerPosition = this.model.getPointerPosition(this.view.viewType, shift, e);
+            this.pointerPosition = this.model.getPointerPosition(this.view.sliderBodyHtml[0], this.view.viewType, shift, e);
             this.checkStep(this.stepSize);
         }
     }
     
     private checkStep(stepSize: number){
-        let cursorPosition = this.model.getValuePercent(this.sliderParams, this.pointerPosition);
+        const getStep = () => {
+            const result = [];
+            let from = Number(this.model.valueFrom);
+            
+            while(from <= this.model.valueTo) {
+                result.push(Math.floor(from));
+                from = from + Number(this.model.pointerStepSize);
 
-        let stepMove = this.model.checkStepSettings(cursorPosition);
+            }
+            return result;
+        }
+
+        console.log(getStep());
+
+        const pos = Number($(this.targetedPointer).css('left').replace('px', ''));
+        const parsedPos = this.model.getValuePercent(this.sliderParams, pos)
+        // let cursorPosition = this.model.getValuePercent(this.sliderParams, this.pointerPosition);
+        let stepMove = this.model.checkStepSettings(parsedPos);
 
         if(stepMove){
             this.pointerPosition = this.model.checkSliderArea(this.pointerPosition, this.sliderParams);
             this.model.setState(this.targetedPointer, this.model.getValuePercent(this.sliderParams, this.pointerPosition));
             this.movePointerTo(this.pointerPosition);
-
-            // this.view.setValueSetting.val(this.activePercent);
         }
     }
 
@@ -192,14 +204,23 @@ export class Controller{
             return inputState;
         }
 
+        let stateInputList: any = [];
+
         const singleValueCheckBox = {
-            inputs: [],
             mounted () {
+                stateInputList.map(input => {
+                    $(input).remove();
+                })
+
+                stateInputList = [];
+
                 that.setSliderType('singleValue');
                 refreshSlider();
                 const stateInputs = getStateInputs();
 
-                this.inputs.push(stateInputs);
+                stateInputs.map(item => {
+                    stateInputList.push(item);
+                })
 
                 that.model.observer.subscribe(data => {
                     for(let i = 0; i < that.state.length; i++) {
@@ -208,23 +229,28 @@ export class Controller{
                 })
             },
 
+            destroy () {
+                //do something
+            },
+
             text: 'одиночное значение'
         }
 
         const doubleValueCheckBox = {
-            inputs: [],
+            inputList: [],
             mounted () {
-                this.inputs.map(item => {
-                    item.remove();
-                });
+                stateInputList.map(input => {
+                    $(input).remove();
+                })
+
+                stateInputList = [];
 
                 that.setSliderType('doubleValue');
                 refreshSlider();
-                const stateInputs = getStateInputs();
-                
+                let stateInputs = getStateInputs();
 
-                stateInputs.map(input => {
-                    this.inputs.push(input);
+                stateInputs.map(item => {
+                    stateInputList.push(item);
                 })
 
                 that.model.observer.subscribe(data => {
@@ -235,7 +261,7 @@ export class Controller{
             },
 
             destroy () {
-                console.log('destroyed')
+                //do something
             },
 
             text: 'интервал'

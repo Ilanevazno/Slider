@@ -52,8 +52,8 @@ export namespace SettingsPanel {
                 name: name
             }).appendTo(labelForRadio)
             .on('change', () => {
-                radio.is(':checked') ? obj.mounted() : console.log('asd');
-            });
+                radio.is(':checked') ? obj.mounted() : obj.destroy();
+            })
 
             this.inputList.inputs.push(labelForRadio);
 
@@ -72,19 +72,7 @@ export namespace SettingsPanel {
                 checkBox.is(':checked') ? obj.mounted() : obj.destroy();
             });
 
-            const data: object = {
-                checkbox: checkBox,
-                obj: obj
-            }
-
-            const checkBoxPack = {
-                label: labelForCheckbox,
-                checkBox: checkBox
-            }
-
-            this.checkBoxList.push(checkBoxPack);
-            
-            return data;
+            this.checkBoxList.push(labelForCheckbox);
         }
 
         public renderSettingsPanel(exemplar: JQuery<HTMLElement>){

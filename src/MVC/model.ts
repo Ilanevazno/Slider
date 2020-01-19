@@ -115,9 +115,7 @@ export class Model{
         return sliderData
     }
 
-    public getPointerPosition (sliderViewType, shift, target) {
-        let sliderBody = $(`.${this.classListNames.sliderBodyClass}`)[0];
-
+    public getPointerPosition (sliderBody, sliderViewType, shift, target) {
         if (sliderViewType === 'horizontal') {
             let position: number = target.clientX - shift - sliderBody.getBoundingClientRect().left;
             return position
