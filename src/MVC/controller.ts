@@ -9,17 +9,15 @@ export class Controller{
         this.view = view;
         this.observer = observer;
     }
-    private sliderParams: number;
-    private pointerPosition: number;
+    public sliderParams: number;
+    public pointerPosition: number;
     private stepSize: number;
-    private targetedPointer: any;
-    public state: any;
+    public targetedPointer: any;
     private minValue: any;
     private maxValue: any;
-    private sliderType: string;
-    private sliderExemplar: any;
+    public sliderType: string;
+    public sliderExemplar: any;
     private activeDirection: string;
-    private settings: boolean = false;
 
     public setStepSize (size: number) {
         this.model.pointerStepSize = size;
@@ -50,23 +48,57 @@ export class Controller{
 
     private initState () {
         this.sliderParams = this.model.getSliderParams(this.view.sliderBodyHtml, this.view.viewType);
-        this.state = this.model.initState({
+        this.model.state = this.model.initState({
             sliderViewType: this.view.viewType,
             sliderWidth: this.sliderParams,
             pointerList: this.view.pointerList
         });
     }
 
+    private renderTrackLine () {
+        this.model.observer.subscribe(data => {
+            for (let i = 0; i < this.model.state.length; i++) {
+                switch (this.sliderType) {
+                    case 'singleValue':
+                        if (this.view.viewType === 'horizontal') {
+                            this.view.trackLine.width(`${this.model.state[this.model.state.length - 1].pointerValue + 1}%`);
+                        } else if (this.view.viewType === 'vertical') {
+                            this.view.trackLine.width('100%');
+                            this.view.trackLine.height(`${this.model.state[this.model.state.length - 1].pointerValue + 1}%`);
+                        }
+                        
+                        break
+                    case 'doubleValue':
+                        if (this.view.viewType === 'horizontal') {
+                            this.view.trackLine.width(`${(this.maxValue.pointerValue - this.minValue.pointerValue) + 1}%`);
+                            $(this.view.trackLine).css({ 'left': `${this.minValue.pointerValue}%` })
+                        } else if (this.view.viewType === 'vertical') {
+                            this.view.trackLine.width('100%');
+                            $(this.view.trackLine).css({ 'top': `${this.minValue.pointerValue}%` })
+                            this.view.trackLine.height(`${(this.maxValue.pointerValue - this.minValue.pointerValue) + 1}%`);
+                        }
+
+                        break
+                    default: 
+                        alert('Ошибка в TrackLine');
+                        console.log('Ошибка в методе renderTrackLine');
+                }
+            }
+        })
+    }
+
     public AccessToDragging(): void {
         this.initState();
+        this.renderTrackLine();
+
         // if sliderType == double, then we getting 2 variables with min and max values 
         if (this.sliderType === 'doubleValue') {
-            this.minValue = this.state[0];
-            this.maxValue = this.state[Object.keys(this.state).length - 1];
+            this.minValue = this.model.state[0];
+            this.maxValue = this.model.state[Object.keys(this.model.state).length - 1];
         }
 
-        for(let i = 0; i < this.state.length; i++) {
-            let element = this.state[i].pointerItem;
+        for(let i = 0; i < this.model.state.length; i++) {
+            let element = this.model.state[i].pointerItem;
             $(element).on('mousedown', function(e: any) {
                 e.preventDefault();
 
@@ -79,7 +111,7 @@ export class Controller{
 
         this.model.observer.subscribe(data => {
             for (let i = 0; i < data.length; i++) {
-                this.move(this.activeDirection, i, this.model.PercentToPx(this.sliderParams, this.state[i].pointerValue));
+                this.moveCurrentPointer(this.activeDirection, i, this.model.PercentToPx(this.sliderParams, this.model.state[i].pointerValue));
             }
         })
     }
@@ -91,14 +123,15 @@ export class Controller{
 
     public StartPointerMove(shift: number, targetedPointer: object) {
         return (e: any) => {
-            this.state = this.model.getState();
+            this.model.state = this.model.getState();
             this.pointerPosition = this.model.getPointerPosition(this.view.sliderBodyHtml[0], this.view.viewType, shift, e);
-            this.checkStep(this.stepSize);
+            this.checkStep();
         }
     }
     
-    private checkStep(stepSize: number){
-        const getStep = () => {
+    private checkStep(){
+        let cursorPosition = this.model.getValuePercent(this.sliderParams, this.pointerPosition);
+        const getBreakPoints = () => {
             const result = [];
             let from = Number(this.model.valueFrom);
             
@@ -110,21 +143,16 @@ export class Controller{
             return result;
         }
 
-        console.log(getStep());
-
-        const pos = Number($(this.targetedPointer).css('left').replace('px', ''));
-        const parsedPos = this.model.getValuePercent(this.sliderParams, pos)
-        // let cursorPosition = this.model.getValuePercent(this.sliderParams, this.pointerPosition);
-        let stepMove = this.model.checkStepSettings(parsedPos);
-
-        if(stepMove){
-            this.pointerPosition = this.model.checkSliderArea(this.pointerPosition, this.sliderParams);
-            this.model.setState(this.targetedPointer, this.model.getValuePercent(this.sliderParams, this.pointerPosition));
-            this.movePointerTo(this.pointerPosition);
-        }
+        getBreakPoints().map(breakpoint => {
+            if (cursorPosition === breakpoint) {
+                this.pointerPosition = this.model.checkSliderArea(this.pointerPosition, this.sliderParams);
+                this.model.setState(this.targetedPointer, this.model.getValuePercent(this.sliderParams, this.pointerPosition));
+                this.moveTargetPointer(this.pointerPosition);
+            }
+        })
     }
 
-    private move (direction: string, eq: number, expression: any) {
+    public moveCurrentPointer (direction: string, eq: number, expression: any) {
         direction === "left" ? 
         $(this.model.getNthPointer(eq)).css({
             "left": `${expression}px`
@@ -136,16 +164,16 @@ export class Controller{
     }
 
     private checkCollision (direction) {
-        if (this.model.checkCollision(this.state)) {
+        if (this.model.checkCollision(this.model.state)) {
             if(this.targetedPointer === this.model.getNthPointer(0)[0]) {}
             this.targetedPointer === this.model.getNthPointer(0)[0] ?
-                this.move(direction, this.state.length - 1, this.model.PercentToPx(this.sliderParams, this.minValue.pointerValue))
+                this.moveCurrentPointer(direction, this.model.state.length - 1, this.model.PercentToPx(this.sliderParams, this.minValue.pointerValue))
                 :
-                this.move(direction, 0, this.model.PercentToPx(this.sliderParams, this.maxValue.pointerValue))
+                this.moveCurrentPointer(direction, 0, this.model.PercentToPx(this.sliderParams, this.maxValue.pointerValue))
         }
     }
 
-    public movePointerTo(position: number){
+    public moveTargetPointer(position: number){
         if (this.view.viewType === 'horizontal') {
             this.checkCollision(this.activeDirection);
 
@@ -158,6 +186,8 @@ export class Controller{
             $(this.targetedPointer).css({
                 "top": `${position}px`,
             })
+        } else {
+            console.log('не удалось изменить положение pointer')
         }
     };
 
@@ -177,16 +207,20 @@ export class Controller{
             this.AccessToDragging();
         }
 
+        const uncheck = (checkBoxList: any) => {
+            checkBoxList.map((itm) => itm.children().prop('checked', false));
+        }
+
         const getStateInputs = () => {
             const inputState = [];
             for (let i = 0; i < this.model.state.length; i++) {
                 let InputObj = {
                     mounted () {
-                        that.model.setState(that.state[i].pointerItem, gettedInput.input.val());
+                        that.model.setState(that.model.state[i].pointerItem, gettedInput.input.val());
 
                         that.model.observer.subscribe(data => {
-                            for (let i = 0; i < that.state.length; i++) {
-                                that.move(that.activeDirection, i, that.model.PercentToPx(that.sliderParams, that.state[i].pointerValue));
+                            for (let i = 0; i < that.model.state.length; i++) {
+                                that.moveCurrentPointer(that.activeDirection, i, that.model.PercentToPx(that.sliderParams, that.model.state[i].pointerValue));
                             }
                         })
                     },
@@ -208,6 +242,7 @@ export class Controller{
 
         const singleValueCheckBox = {
             mounted () {
+                uncheck([getValue]);
                 stateInputList.map(input => {
                     $(input).remove();
                 })
@@ -223,8 +258,8 @@ export class Controller{
                 })
 
                 that.model.observer.subscribe(data => {
-                    for(let i = 0; i < that.state.length; i++) {
-                        that.panel.settingsPanel.find(stateInputs[0]).val(that.state[0].pointerValue);
+                    for(let i = 0; i < that.model.state.length; i++) {
+                        that.panel.settingsPanel.find(stateInputs[0]).val(that.model.state[0].pointerValue);
                     }
                 })
             },
@@ -239,6 +274,7 @@ export class Controller{
         const doubleValueCheckBox = {
             inputList: [],
             mounted () {
+                uncheck([getValue]);
                 stateInputList.map(input => {
                     $(input).remove();
                 })
@@ -254,8 +290,8 @@ export class Controller{
                 })
 
                 that.model.observer.subscribe(data => {
-                    for(let i = 0; i < that.state.length; i++) {
-                        that.panel.settingsPanel.find(stateInputs[i]).val(that.state[i].pointerValue);
+                    for(let i = 0; i < that.model.state.length; i++) {
+                        that.panel.settingsPanel.find(stateInputs[i]).val(that.model.state[i].pointerValue);
                     }
                 })
             },
@@ -269,7 +305,7 @@ export class Controller{
 
         const showValueCheckbox: object = {
             mounted () {
-                that.getValueIndicator(that.state)
+                that.getValueIndicator(that.model.state)
             }, 
             destroy () {
                 that.view.removeValueIndicator();
@@ -279,6 +315,7 @@ export class Controller{
 
         const horizontalViewCheckbox = {
             mounted () {
+                uncheck([getValue]);
                 that.setViewType('horizontal');
                 refreshSlider();
                 that.setSliderType(that.sliderType);
@@ -291,6 +328,7 @@ export class Controller{
 
         const verticalViewCheckbox = {
             mounted () {
+                uncheck([getValue]);
                 that.setViewType('vertical');
                 refreshSlider();
                 that.setSliderType(that.sliderType);

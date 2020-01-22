@@ -1,15 +1,14 @@
 export class Model{
-    private activePercent: number;
     private valueFrom: number = 0
     private valueTo: number = 100;
     private pointerStepSize: number = 1;
     private state: any;
     private observer: any;
-    private sliderBody: any;
-    public classListNames: any = {
+    public classList: any = {
         sliderBodyClass: 'slider__body',
         pointerClass: 'slider__pointer',
-        valueClass: 'slider__value'
+        valueClass: 'slider__value',
+        trackLineClass: 'slider__track_line'
     }
 
     constructor (observer: any) {
@@ -81,7 +80,7 @@ export class Model{
             everyPointers.pointerValue >= this.valueTo ? everyPointers.pointerValue = this.valueTo : false;
 
             //set each pointer statement value
-            $(this.state[i].pointerItem).children(`span.${this.classListNames.valueClass}`).text(this.state[i].pointerValue);
+            $(this.state[i].pointerItem).children(`span.${this.classList.valueClass}`).text(this.state[i].pointerValue);
         }
         this.observer.broadcast({state: this.state})
     }
@@ -108,9 +107,9 @@ export class Model{
         let sliderData = null;
         
         if (sliderViewType === 'horizontal') {
-            sliderData = sliderBody[0].offsetWidth - sliderPointer.offsetWidth
+            sliderData = sliderBody[0].offsetWidth - sliderPointer.offsetWidth;
         } else if (sliderViewType === 'vertical'){
-            sliderData = sliderBody[0].offsetHeight - sliderPointer.offsetHeight;
+            sliderData = sliderBody[0].offsetHeight - sliderPointer.offsetWidth;
         }
         return sliderData
     }
@@ -148,11 +147,11 @@ export class Model{
     }
 
     public getValuePercent (sliderWidth: number, percentages: number) {
-        return this.activePercent = Math.round(100 * percentages / sliderWidth);
+        return Math.round(this.valueTo * percentages / sliderWidth);
     }
 
     public PercentToPx (sliderWidth: number, pointerValue: number) {
-        return Math.round(sliderWidth / 100 * pointerValue)
+        return Math.round(sliderWidth / this.valueTo * pointerValue)
     }
 
 

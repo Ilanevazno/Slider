@@ -14,9 +14,8 @@ export namespace SettingsPanel {
                 return false
             }
         }
-        checkBoxList: any = [];
 
-        public getInput (obj,panel) {
+        public getInput (obj) {
             const input = $('<input/>', {
                 type: 'text',
                 placeholder: obj.text
@@ -25,22 +24,9 @@ export namespace SettingsPanel {
                 obj.mounted(input.val());
             });
 
-            const data: object = {
-                input: input,
-                obj: obj
-            }
-
             this.inputList.inputs.push(input);
 
-            return data
-        }
-
-        public destroyInput (inputList) {
-            for (let i = 0; i < inputList.length; i++) {
-                $(inputList[i]).remove();
-            }
-            // console.log(this.inputList.inputs);
-            // this.inputList = [];
+            return input
         }
 
         public getRadio (obj, name = null) {
@@ -72,7 +58,9 @@ export namespace SettingsPanel {
                 checkBox.is(':checked') ? obj.mounted() : obj.destroy();
             });
 
-            this.checkBoxList.push(labelForCheckbox);
+            this.inputList.inputs.push(labelForCheckbox);
+
+            return labelForCheckbox
         }
 
         public renderSettingsPanel(exemplar: JQuery<HTMLElement>){

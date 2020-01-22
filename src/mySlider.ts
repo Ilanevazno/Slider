@@ -26,8 +26,9 @@ export namespace Slider {
             slider.setSliderType(settings.valueType || doubleValue);
             slider.generateSlider(this);
             slider.initSettings(settings.initSettings || false);
-            slider.getValueIndicator(settings.valueIndicator ? slider.state : false)
-            return 'kek'
+            slider.getValueIndicator(settings.valueIndicator ? slider.model.state : false);
+            console.log(slider.view.pointerList)
+            return slider.model.getState();
         },
     })
 

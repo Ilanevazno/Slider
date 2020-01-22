@@ -7,6 +7,7 @@ export class View{
     pointer: any = new GettingPointer.Pointer;
     pointerIndicator: any = new PointerIndicator.Indicator;
     sliderBodyExemplar: any = new SliderBody.Body;
+    trackLine: any;
     viewType: string;
     valueIndicator: any;
     model: any;
@@ -17,29 +18,31 @@ export class View{
         this.model = model;
     }
 
+    public getTrackLine (): void {
+        const trackLine = $('<div/>', {
+            class: this.model.classList.trackLineClass
+        }).appendTo(this.sliderBodyHtml);
+        this.trackLine = trackLine;
+    }
+
     public renderSlider(exemplar: any): void{
-        this.sliderBodyExemplar.renderSliderBody(this.viewType, this.model.classListNames.sliderBodyClass, exemplar);
+        this.sliderBodyExemplar.renderSliderBody(this.viewType, this.model.classList.sliderBodyClass, exemplar);
         this.sliderBodyHtml = this.sliderBodyExemplar.getBody();
+        this.getTrackLine();
     }
 
     public destroySlider (): void {
         this.sliderBodyExemplar.destroy();
     }
 
-    // public getSettingsPanel (exemplar) {
-    //     this.settingsPanel.renderSettingsPanel(exemplar);
-
-    //     return this.settingsPanel;
-    // }
-
     public renderPointer (count: any) {
-        const pointers = this.pointer.generatePointer(this.sliderBodyExemplar.body, this.model.classListNames.pointerClass, count);
+        const pointers = this.pointer.generatePointer(this.sliderBodyExemplar.body, this.model.classList.pointerClass, count);
         this.pointer.setOffset(this.viewType);
         this.pointerList = pointers;
     }
 
     public getValueIndicator(data): void {
-        this.pointerIndicator.getIndicator(data, this.model.classListNames.valueClass);
+        this.pointerIndicator.getIndicator(data, this.model.classList.valueClass);
     }   
 
     public removeValueIndicator(): void {

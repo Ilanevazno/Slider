@@ -1,5 +1,3 @@
-// karma.conf.js
-
 var webpackConfig = require('./webpack.config');
 module.exports=function(config) {
 config.set({
@@ -26,15 +24,13 @@ config.set({
         istanbul: { noCompact:true }
       }
     },
-    // spec файлы, условимся называть по маске **_*.spec.js_**
     files: [
-        'test/**/*.spec.js'
+        'test/**/*.spec.ts'
     ],
     frameworks: [ 'chai', 'jasmine' ],
-    // репортеры необходимы для  наглядного отображения результатов
     reporters: ['mocha', 'coverage'],
     preprocessors: {
-        'test/**/*.spec.js': ['webpack', 'sourcemap']
+        'test/**/*.spec.ts': ['webpack', 'sourcemap']
     },
     plugins: [
         'karma-jasmine', 'karma-mocha',

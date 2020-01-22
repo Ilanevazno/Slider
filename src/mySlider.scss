@@ -42,6 +42,12 @@ $gray-template: #e5e5e5;
 }
 
 .slider{
+    &__track_line {
+        position: absolute;
+        background: #e75735;
+        height: 100%;
+    }
+
     &__settings{
         width: 50%;
         height: 50%;
