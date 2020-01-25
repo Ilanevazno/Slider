@@ -104,7 +104,7 @@ export class Controller{
 
                 this.targetedPointer = e.currentTarget;
 
-                let shiftDirection = this.model.getShiftВirection(this.view.viewType, e, element);
+                let shiftDirection = this.getShiftВirection(this.view.viewType, e, element);
                 this.prepareForUsing(this.targetedPointer, shiftDirection);
             }.bind(this));
         }
@@ -114,6 +114,21 @@ export class Controller{
                 this.moveCurrentPointer(this.activeDirection, i, this.model.PercentToPx(this.sliderParams, this.model.state[i].pointerValue));
             }
         })
+    }
+
+    private getNthPointer (eq: number) {
+        return $(this.model.state[eq].pointerItem);
+    }
+
+    public getShiftВirection (viewType, event, element) {
+        let shift = null;
+        if (viewType === 'horizontal') {
+            shift = event.clientX - $(element)[0].getBoundingClientRect().left;
+        } else if (viewType === 'vertical') {
+            shift = event.clientY - $(element)[0].getBoundingClientRect().top;;
+        }
+
+        return shift
     }
 
     public prepareForUsing(targetedPointer: any, shift: number): void {
@@ -154,19 +169,19 @@ export class Controller{
 
     public moveCurrentPointer (direction: string, eq: number, expression: any) {
         direction === "left" ? 
-        $(this.model.getNthPointer(eq)).css({
+        $(this.getNthPointer(eq)).css({
             "left": `${expression}px`
         }) 
         :
-        $(this.model.getNthPointer(eq)).css({
+        $(this.getNthPointer(eq)).css({
             "top": `${expression}px`
         }) 
     }
 
     private checkCollision (direction) {
         if (this.model.checkCollision(this.model.state)) {
-            if(this.targetedPointer === this.model.getNthPointer(0)[0]) {}
-            this.targetedPointer === this.model.getNthPointer(0)[0] ?
+            if(this.targetedPointer === this.getNthPointer(0)[0]) {}
+            this.targetedPointer === this.getNthPointer(0)[0] ?
                 this.moveCurrentPointer(direction, this.model.state.length - 1, this.model.PercentToPx(this.sliderParams, this.minValue.pointerValue))
                 :
                 this.moveCurrentPointer(direction, 0, this.model.PercentToPx(this.sliderParams, this.maxValue.pointerValue))

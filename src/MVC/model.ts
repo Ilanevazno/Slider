@@ -91,17 +91,6 @@ export class Model{
         return minValue >= maxValue ? true : false
     }
 
-    public getShiftВirection (viewType, event, element) {
-        let shift = null;
-        if (viewType === 'horizontal') {
-            shift = event.clientX - $(element)[0].getBoundingClientRect().left;
-        } else if (viewType === 'vertical') {
-            shift = event.clientY - $(element)[0].getBoundingClientRect().top;;
-        }
-
-        return shift
-    }
-
     public getSliderParams (sliderBody, sliderViewType) {
         let sliderPointer = sliderBody.children().eq(0)[0];
         let sliderData = null;
@@ -142,16 +131,12 @@ export class Model{
         return pointerPosition
     }
 
-    private getNthPointer (eq: number) {
-        return $(this.state[eq].pointerItem);
+    public getValuePercent (sliderWidth: number, currentPx: number) {
+        return Math.round(this.valueTo * currentPx / sliderWidth);
     }
 
-    public getValuePercent (sliderWidth: number, percentages: number) {
-        return Math.round(this.valueTo * percentages / sliderWidth);
-    }
-
-    public PercentToPx (sliderWidth: number, pointerValue: number) {
-        return Math.round(sliderWidth / this.valueTo * pointerValue)
+    public PercentToPx (sliderWidth: number, percentages: number) {
+        return Math.round(sliderWidth / this.valueTo * percentages)
     }
 
 
