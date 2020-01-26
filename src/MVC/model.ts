@@ -78,9 +78,6 @@ export class Model{
             // checking each pointer to min and max values
             everyPointers.pointerValue <= this.valueFrom ? everyPointers.pointerValue = this.valueFrom : false;
             everyPointers.pointerValue >= this.valueTo ? everyPointers.pointerValue = this.valueTo : false;
-
-            //set each pointer statement value
-            $(this.state[i].pointerItem).children(`span.${this.classList.valueClass}`).text(this.state[i].pointerValue);
         }
         this.observer.broadcast({state: this.state})
     }
@@ -89,28 +86,6 @@ export class Model{
         const minValue: number = values[0].pointerValue;
         const maxValue: number = values[Object.keys(values).length - 1].pointerValue;
         return minValue >= maxValue ? true : false
-    }
-
-    public getSliderParams (sliderBody, sliderViewType) {
-        let sliderPointer = sliderBody.children().eq(0)[0];
-        let sliderData = null;
-        
-        if (sliderViewType === 'horizontal') {
-            sliderData = sliderBody[0].offsetWidth - sliderPointer.offsetWidth;
-        } else if (sliderViewType === 'vertical'){
-            sliderData = sliderBody[0].offsetHeight - sliderPointer.offsetWidth;
-        }
-        return sliderData
-    }
-
-    public getPointerPosition (sliderBody, sliderViewType, shift, target) {
-        if (sliderViewType === 'horizontal') {
-            let position: number = target.clientX - shift - sliderBody.getBoundingClientRect().left;
-            return position
-        } else if (sliderViewType === 'vertical') {
-            let position: number = target.clientY - shift - sliderBody.getBoundingClientRect().top;
-            return position
-        }
     }
 
     public checkStepSettings (cursorPosition) {
@@ -138,6 +113,4 @@ export class Model{
     public PercentToPx (sliderWidth: number, percentages: number) {
         return Math.round(sliderWidth / this.valueTo * percentages)
     }
-
-
 }

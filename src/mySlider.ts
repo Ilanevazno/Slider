@@ -14,7 +14,6 @@ export namespace Slider {
     const verticalType: string = 'vertical';
     const singleValue: string = 'singleValue';
     const doubleValue: string = 'doubleValue';
-    let arbitraryAmount: number;
     
     jQuery.fn.extend({
         createSlider: function(settings: any = {}){
@@ -25,14 +24,15 @@ export namespace Slider {
             slider.setStepSize(settings.stepSize || 1);
             slider.setSliderType(settings.valueType || doubleValue);
             slider.generateSlider(this);
+            slider.setMinValue(settings.minValue || 0);
+            slider.setMaxValue(settings.maxValue || 100);
             slider.initSettings(settings.initSettings || false);
             slider.getValueIndicator(settings.valueIndicator ? slider.model.state : false);
-            console.log(slider.view.pointerList)
             return slider.model.getState();
-        },
+        }
     })
 
     interface jQuery{
-        createSlider(): void;
+        createSlider();
     }
 }

@@ -25,9 +25,10 @@ export class View{
         this.trackLine = trackLine;
     }
 
-    public renderSlider(exemplar: any): void{
+    public renderSlider(exemplar: any, count: number): void{
         this.sliderBodyExemplar.renderSliderBody(this.viewType, this.model.classList.sliderBodyClass, exemplar);
         this.sliderBodyHtml = this.sliderBodyExemplar.getBody();
+        this.renderPointer(count);
         this.getTrackLine();
     }
 

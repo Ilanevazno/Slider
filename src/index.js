@@ -7,6 +7,7 @@ import './mySlider.ts';
 
 let slider = $("#first_slider").createSlider({
     initSettings: true,
+    maxValue: 200
 });
 
 let slidera = $("#second_slider").createSlider({

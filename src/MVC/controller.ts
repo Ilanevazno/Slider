@@ -11,13 +11,20 @@ export class Controller{
     }
     public sliderParams: number;
     public pointerPosition: number;
-    private stepSize: number;
     public targetedPointer: any;
     private minValue: any;
     private maxValue: any;
     public sliderType: string;
     public sliderExemplar: any;
     private activeDirection: string;
+
+    public setMinValue (value: number) {
+        this.model.valueFrom = value;
+    }
+
+    public setMaxValue (value: number) {
+        this.model.valueTo = value;
+    }
 
     public setStepSize (size: number) {
         this.model.pointerStepSize = size;
@@ -41,13 +48,22 @@ export class Controller{
 
     public generateSlider(exemplar: JQuery<HTMLElement>): void{
         this.sliderExemplar = exemplar;
-        this.view.renderSlider(exemplar);
-        this.view.renderPointer(this.model.getPointerCount(this.sliderType));
+        this.view.renderSlider(exemplar, this.model.getPointerCount(this.sliderType));
         this.AccessToDragging();
     }
 
+    public getPointerPosition (sliderBody, sliderViewType, shift, target) {
+        if (sliderViewType === 'horizontal') {
+            let position: number = target.clientX - shift - sliderBody.getBoundingClientRect().left;
+            return position
+        } else if (sliderViewType === 'vertical') {
+            let position: number = target.clientY - shift - sliderBody.getBoundingClientRect().top;
+            return position
+        }
+    }
+
     private initState () {
-        this.sliderParams = this.model.getSliderParams(this.view.sliderBodyHtml, this.view.viewType);
+        this.sliderParams = this.getSliderParams(this.view.sliderBodyHtml, this.view.viewType);
         this.model.state = this.model.initState({
             sliderViewType: this.view.viewType,
             sliderWidth: this.sliderParams,
@@ -61,21 +77,21 @@ export class Controller{
                 switch (this.sliderType) {
                     case 'singleValue':
                         if (this.view.viewType === 'horizontal') {
-                            this.view.trackLine.width(`${this.model.state[this.model.state.length - 1].pointerValue + 1}%`);
+                            this.view.trackLine.width(`${this.model.state[this.model.state.length - 1].pointerValue}%`);
                         } else if (this.view.viewType === 'vertical') {
                             this.view.trackLine.width('100%');
-                            this.view.trackLine.height(`${this.model.state[this.model.state.length - 1].pointerValue + 1}%`);
+                            this.view.trackLine.height(`${this.model.state[this.model.state.length - 1].pointerValue}%`);
                         }
                         
                         break
                     case 'doubleValue':
                         if (this.view.viewType === 'horizontal') {
-                            this.view.trackLine.width(`${(this.maxValue.pointerValue - this.minValue.pointerValue) + 1}%`);
+                            this.view.trackLine.width(`${(this.maxValue.pointerValue - this.minValue.pointerValue)}%`);
                             $(this.view.trackLine).css({ 'left': `${this.minValue.pointerValue}%` })
                         } else if (this.view.viewType === 'vertical') {
                             this.view.trackLine.width('100%');
                             $(this.view.trackLine).css({ 'top': `${this.minValue.pointerValue}%` })
-                            this.view.trackLine.height(`${(this.maxValue.pointerValue - this.minValue.pointerValue) + 1}%`);
+                            this.view.trackLine.height(`${(this.maxValue.pointerValue - this.minValue.pointerValue)}%`);
                         }
 
                         break
@@ -110,10 +126,24 @@ export class Controller{
         }
 
         this.model.observer.subscribe(data => {
-            for (let i = 0; i < data.length; i++) {
+            for (let i = 0; i < data.state.length; i++) {
                 this.moveCurrentPointer(this.activeDirection, i, this.model.PercentToPx(this.sliderParams, this.model.state[i].pointerValue));
+                //set each pointer statement value
+                $(this.model.state[i].pointerItem).children(`span.${this.model.classList.valueClass}`).text(this.model.state[i].pointerValue);
             }
         })
+    }
+
+    private getSliderParams (sliderBody, sliderViewType) {
+        let sliderPointer = sliderBody.children().eq(0)[0];
+        let sliderData = null;
+        
+        if (sliderViewType === 'horizontal') {
+            sliderData = sliderBody[0].offsetWidth - sliderPointer.offsetWidth;
+        } else if (sliderViewType === 'vertical'){
+            sliderData = sliderBody[0].offsetHeight - sliderPointer.offsetWidth;
+        }
+        return sliderData
     }
 
     private getNthPointer (eq: number) {
@@ -139,7 +169,7 @@ export class Controller{
     public StartPointerMove(shift: number, targetedPointer: object) {
         return (e: any) => {
             this.model.state = this.model.getState();
-            this.pointerPosition = this.model.getPointerPosition(this.view.sliderBodyHtml[0], this.view.viewType, shift, e);
+            this.pointerPosition = this.getPointerPosition(this.view.sliderBodyHtml[0], this.view.viewType, shift, e);
             this.checkStep();
         }
     }
@@ -217,8 +247,7 @@ export class Controller{
 
         const refreshSlider = () => {
             this.view.destroySlider();
-            this.view.renderSlider(this.sliderExemplar);
-            this.view.renderPointer(this.model.getPointerCount(this.sliderType));
+            this.view.renderSlider(this.sliderExemplar, this.model.getPointerCount(this.sliderType));
             this.AccessToDragging();
         }
 
@@ -226,12 +255,26 @@ export class Controller{
             checkBoxList.map((itm) => itm.children().prop('checked', false));
         }
 
+        const checkOnErrors = (checkingInput: JQuery<HTMLElement>, value: number) => {
+            const sounds = {
+                error: new Audio('./src/assets/sounds/sound__error.mp3')
+            }
+
+            if (Number(value) > that.model.valueTo || Number(value) < that.model.valueFrom) {
+                $(checkingInput).css('box-shadow', '0 0 4px 1px red')
+                sounds.error.play();
+                return;
+            } else {
+                $(checkingInput).css('box-shadow', 'none')
+            }
+        }
+
         const getStateInputs = () => {
             const inputState = [];
             for (let i = 0; i < this.model.state.length; i++) {
                 let InputObj = {
                     mounted () {
-                        that.model.setState(that.model.state[i].pointerItem, gettedInput.input.val());
+                        that.model.setState(that.model.state[i].pointerItem, $(gettedInput).val());
 
                         that.model.observer.subscribe(data => {
                             for (let i = 0; i < that.model.state.length; i++) {
@@ -248,7 +291,7 @@ export class Controller{
                 }
     
                 let gettedInput = this.panel.getInput(InputObj);
-                inputState.push(gettedInput.input);
+                inputState.push(gettedInput);
             }
             return inputState;
         }
@@ -354,15 +397,16 @@ export class Controller{
             text: 'Вертикальный вид'
         }
 
-        const stepSizeInput = {
+        const stepSizeObj = {
             mounted (stepSize) {
+                checkOnErrors(stepSizeInput, stepSize);
                 that.model.setStepSize(stepSize)
         },
 
         text: 'шаг'
         }
 
-        const stepSize = this.panel.getInput(stepSizeInput);
+        const stepSizeInput = this.panel.getInput(stepSizeObj);
         const getValue = this.panel.getCheckBox(showValueCheckbox);
         const singleValue = this.panel.getRadio(singleValueCheckBox, 'valueType');
         const doubleValue = this.panel.getRadio(doubleValueCheckBox, 'valueType');

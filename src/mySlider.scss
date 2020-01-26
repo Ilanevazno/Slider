@@ -78,6 +78,7 @@ $gray-template: #e5e5e5;
                 border-radius: 50%;
                 position: absolute;
                 cursor: pointer;
+                z-index: 10;
             }
         }
 
@@ -98,6 +99,7 @@ $gray-template: #e5e5e5;
                 border-radius: 50%;
                 position: absolute;
                 cursor: pointer;
+                z-index: 10;
             }
         }
     }

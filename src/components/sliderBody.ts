@@ -1,6 +1,5 @@
 export namespace SliderBody {
     export class Body {
-        observers: any;
         body: any;
         constructor () {
         }
