@@ -20,12 +20,12 @@ export namespace Slider {
             let model = new Model(observer);
             let view = new View(model);
             let slider = new Controller(model, view, observer);
+            slider.setMinValue(settings.minValue || 0);
+            slider.setMaxValue(settings.maxValue || 100);
             slider.setViewType(settings.viewType || horizontalType);
             slider.setStepSize(settings.stepSize || 1);
             slider.setSliderType(settings.valueType || doubleValue);
             slider.generateSlider(this);
-            slider.setMinValue(settings.minValue || 0);
-            slider.setMaxValue(settings.maxValue || 100);
             slider.initSettings(settings.initSettings || false);
             slider.getValueIndicator(settings.valueIndicator ? slider.model.state : false);
             return slider.model.getState();

@@ -1,4 +1,5 @@
 import { SettingsPanel } from '../components/panel'
+import { start } from 'repl';
 export class Controller{
     observer: any
     model: any;
@@ -72,40 +73,37 @@ export class Controller{
     }
 
     private renderTrackLine () {
-        this.model.observer.subscribe(data => {
-            for (let i = 0; i < this.model.state.length; i++) {
-                switch (this.sliderType) {
-                    case 'singleValue':
-                        if (this.view.viewType === 'horizontal') {
-                            this.view.trackLine.width(`${this.model.state[this.model.state.length - 1].pointerValue}%`);
-                        } else if (this.view.viewType === 'vertical') {
-                            this.view.trackLine.width('100%');
-                            this.view.trackLine.height(`${this.model.state[this.model.state.length - 1].pointerValue}%`);
-                        }
-                        
-                        break
-                    case 'doubleValue':
-                        if (this.view.viewType === 'horizontal') {
-                            this.view.trackLine.width(`${(this.maxValue.pointerValue - this.minValue.pointerValue)}%`);
-                            $(this.view.trackLine).css({ 'left': `${this.minValue.pointerValue}%` })
-                        } else if (this.view.viewType === 'vertical') {
-                            this.view.trackLine.width('100%');
-                            $(this.view.trackLine).css({ 'top': `${this.minValue.pointerValue}%` })
-                            this.view.trackLine.height(`${(this.maxValue.pointerValue - this.minValue.pointerValue)}%`);
-                        }
-
-                        break
-                    default: 
-                        alert('Ошибка в TrackLine');
-                        console.log('Ошибка в методе renderTrackLine');
-                }
+        const startVal = this.model.PercentToPx(this.sliderParams, this.minValue.pointerValue);
+        const endVal = this.model.PercentToPx(this.sliderParams, this.maxValue.pointerValue);
+        for (let i = 0; i < this.model.state.length; i++) {
+            switch (this.sliderType) {
+                case 'singleValue':
+                    if (this.view.viewType === 'horizontal') {
+                        this.view.trackLine.width(`${this.pointerPosition}px`);
+                    } else if (this.view.viewType === 'vertical') {
+                        this.view.trackLine.width('100%');
+                        this.view.trackLine.height(`${this.pointerPosition}px`);
+                    }
+                    break
+                case 'doubleValue':
+                    if (this.view.viewType === 'horizontal') {
+                        this.view.trackLine.width(`${endVal - startVal}px`);
+                        $(this.view.trackLine).css({ 'left': `${startVal}px` });
+                    } else if (this.view.viewType === 'vertical') {
+                        this.view.trackLine.width('100%');
+                        $(this.view.trackLine).css({ 'top': `${startVal}px` });
+                        this.view.trackLine.height(`${endVal - startVal}px`);
+                    }
+                    break
+                default: 
+                    alert('Ошибка в TrackLine');
+                    console.log('Ошибка в методе renderTrackLine');
             }
-        })
+        }
     }
 
     public AccessToDragging(): void {
         this.initState();
-        this.renderTrackLine();
 
         // if sliderType == double, then we getting 2 variables with min and max values 
         if (this.sliderType === 'doubleValue') {
@@ -126,8 +124,8 @@ export class Controller{
         }
 
         this.model.observer.subscribe(data => {
-            for (let i = 0; i < data.state.length; i++) {
-                this.moveCurrentPointer(this.activeDirection, i, this.model.PercentToPx(this.sliderParams, this.model.state[i].pointerValue));
+            for (let i = 0; i < this.model.state.length; i++) {
+                this.renderTrackLine();
                 //set each pointer statement value
                 $(this.model.state[i].pointerItem).children(`span.${this.model.classList.valueClass}`).text(this.model.state[i].pointerValue);
             }
@@ -162,11 +160,11 @@ export class Controller{
     }
 
     public prepareForUsing(targetedPointer: any, shift: number): void {
-        $(document).on("mousemove", this.StartPointerMove(shift, targetedPointer).bind(this));
+        $(document).on("mousemove", this.StartPointerMove(shift).bind(this));
         $(document).on("mouseup", this.StopPointerMove.bind(this));
     }
 
-    public StartPointerMove(shift: number, targetedPointer: object) {
+    public StartPointerMove(shift: number) {
         return (e: any) => {
             this.model.state = this.model.getState();
             this.pointerPosition = this.getPointerPosition(this.view.sliderBodyHtml[0], this.view.viewType, shift, e);
@@ -241,6 +239,9 @@ export class Controller{
     }
 
     public initSettings (activity: boolean) {
+        if (!activity) {
+            return false
+        }
         this.panel = new SettingsPanel.Panel;
         this.panel.renderSettingsPanel(this.sliderExemplar);
         const that = this;
@@ -412,5 +413,11 @@ export class Controller{
         const doubleValue = this.panel.getRadio(doubleValueCheckBox, 'valueType');
         const horizontalView = this.panel.getRadio(horizontalViewCheckbox, 'viewType');
         const verticalView = this.panel.getRadio(verticalViewCheckbox, 'viewType');
+        
+        if (this.sliderType === 'singleValue') {
+            singleValueCheckBox.mounted();
+        } else if (this.sliderType === 'doubleValue') {
+            doubleValueCheckBox.mounted();
+        }
     }
 }
