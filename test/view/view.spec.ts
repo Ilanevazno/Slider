@@ -1,13 +1,12 @@
-import {expect} from "chai";
-import { View } from "../../src/MVC/view";
-import { Model } from '../../src/MVC/model';
-import { ObserverInterface } from '../../src/components/observer';
+import { View } from "../../src/plugin/components/MVC/view";
+import { Model } from '../../src/plugin/components/MVC/model';
+import { ObserverInterface } from '../../src/plugin/components/Observer/Observer';
 import $ from 'jquery';
-import { Controller } from "../../src/MVC/controller";
-import { SettingsPanel } from '../../src/components/panel'
+import { Controller } from "../../src/plugin/components/MVC/controller";
+import { SettingsPanel } from '../../src/plugin/components/Panel/Panel'
 const assert = require('assert');
 
-namespace viewTest {
+export namespace viewTest {
     const containerForSlider: any = document.createElement("div");
     document.body.appendChild(containerForSlider);
     containerForSlider.classList.add("example-slider")
@@ -15,7 +14,7 @@ namespace viewTest {
     const observer = new ObserverInterface.Observer;
     const model = new Model(observer);
     const view = new View(model);
-    const slider = new Controller(model, view, observer);
+    new Controller(model, view, observer);
     const panel = new SettingsPanel.Panel;
 
     describe("slider render test", () => {

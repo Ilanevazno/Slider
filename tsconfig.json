@@ -4,9 +4,14 @@
         "sourceMap": true,
         "noImplicitAny": false,
         "module": "commonjs",
-        "target": "es5",
+        "target": "es6",
         "jsx": "react",
         "allowSyntheticDefaultImports": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "strict": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": true,
+        "noImplicitThis": false,
+        "noImplicitReturns": false,
     },
 }

@@ -1,12 +1,11 @@
 import {expect} from "chai";
-import { View } from "../../src/MVC/view";
-import { Model } from '../../src/MVC/model';
-import { ObserverInterface } from '../../src/components/observer';
+import { View } from "../../src/plugin/components/MVC/view";
+import { Model } from '../../src/plugin/components/MVC/model';
+import { ObserverInterface } from '../../src/plugin/components/Observer/Observer';
 import $ from 'jquery';
-import { Controller } from "../../src/MVC/controller";
-const assert = require('assert');
+import { Controller } from "../../src/plugin/components/MVC/controller";
 
-namespace modelTest {
+export namespace modelTest {
     let containerForSlider = document.createElement("div");
 
     document.body.appendChild(containerForSlider);
