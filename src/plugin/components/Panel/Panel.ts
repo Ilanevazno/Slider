@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace SettingsPanel {
   export class Panel {
     settingsPanel!: JQuery<HTMLElement>;
@@ -10,7 +11,7 @@ export namespace SettingsPanel {
       removeItem(item) {
         item.remove();
         const idx = this.inputs.indexOf(item);
-        if (idx != -1) {
+        if (idx !== -1) {
           return this.inputs.splice(idx, 1);
         }
         return false;
@@ -39,9 +40,7 @@ export namespace SettingsPanel {
         type: 'radio',
         name,
       }).appendTo(labelForRadio)
-        .on('change', () => {
-          radio.is(':checked') ? obj.mounted() : obj.destroy();
-        });
+        .on('change', () => (radio.is(':checked') ? obj.mounted() : obj.destroy()));
 
       this.inputList.inputs.push(labelForRadio);
 
@@ -56,9 +55,7 @@ export namespace SettingsPanel {
       const checkBox: any = $('<input/>', {
         type: 'checkbox',
       }).appendTo(labelForCheckbox)
-        .on('change', () => {
-          checkBox.is(':checked') ? obj.mounted() : obj.destroy();
-        });
+        .on('change', () => (checkBox.is(':checked') ? obj.mounted() : obj.destroy()));
 
       this.inputList.inputs.push(labelForCheckbox);
 

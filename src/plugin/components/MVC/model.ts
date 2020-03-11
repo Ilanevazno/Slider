@@ -1,4 +1,6 @@
-export class Model {
+const constant = require('../../constant.json');
+
+class Model {
   private valueFrom = 0
 
   private valueTo = 100;
@@ -10,32 +12,31 @@ export class Model {
   private observer: any;
 
   public classList: any = {
-    sliderBodyClass: 'slider__body',
-    pointerClass: 'slider__pointer',
-    valueClass: 'slider__value',
-    trackLineClass: 'slider__track_line',
+    sliderBodyClass: constant.classes.sliderBody,
+    pointerClass: constant.classes.pointer,
+    valueClass: constant.classes.value,
+    trackLineClass: constant.classes.trackLine,
   }
 
   constructor(observer: any) {
     this.observer = observer;
   }
 
-  public getPointerCount(sliderType) {
+  public getPointerCount(sliderType: string) {
     let pointersCount: number | null = null;
-    sliderType === 'singleValue' ? pointersCount = 1 : null;
-    sliderType === 'doubleValue' ? pointersCount = 2 : null;
+    pointersCount = sliderType === constant.singleValue ? 1 : 2;
 
     return pointersCount;
   }
 
-  public setStepSize(stepSize) {
+  public setStepSize(stepSize: number) {
     this.pointerStepSize = stepSize;
   }
 
   public initState(initState: any) {
     this.state = [];
     const valuesArr: any = [];
-    for (let i = 0; i < initState.pointerList.length; i++) {
+    for (let i = 0; i < initState.pointerList.length; i += 1) {
       let currentValue: any;
 
       switch (initState.sliderViewType) {
@@ -45,75 +46,103 @@ export class Model {
         case 'horizontal':
           currentValue = Number(initState.pointerList[i].sliderPointer.css('left').replace('px', ''));
           break;
+        default:
+          currentValue = 0;
       }
 
       const convertedPerc = this.getValuePercent(initState.sliderWidth, currentValue);
       valuesArr.push([convertedPerc, initState.pointerList[i].sliderPointer[0]]);
     }
 
-    return this.state = valuesArr.map((cv, idx) => ({
+    this.state = valuesArr.map((cv: any[], idx: number) => ({
       pointerName: `pointer_${idx + 1}`,
       pointerValue: cv[0],
       pointerItem: cv[1],
     }));
+
+    return this.state;
   }
 
   public getState() {
     return this.state;
   }
 
-  public setState(targetPointer, val) {
-    this.state.map((item) => {
-      targetPointer == item.pointerItem ? item.pointerValue = Number(val) : false;
+  public setState(targetPointer: any, val: any) {
+    this.state.map((item: { pointerItem: any; pointerValue: number | null }) => {
+      const value = item;
+
+      if (targetPointer === item.pointerItem) {
+        value.pointerValue = Number(val);
+      }
+      return targetPointer;
     });
 
-    for (let i = 0; i < this.state.length; i++) {
+    for (let i = 0; i < this.state.length; i += 1) {
       const everyPointers = this.state[i];
       const lastPointer = this.state[this.state.length - 1];
 
       // checking to do collision
       if (targetPointer !== lastPointer.pointerItem) {
-        everyPointers.pointerValue >= lastPointer.pointerValue ? lastPointer.pointerValue = everyPointers.pointerValue : false;
+        if (everyPointers.pointerValue >= lastPointer.pointerValue) {
+          lastPointer.pointerValue = everyPointers.pointerValue;
+        }
       }
 
-      lastPointer.pointerValue < everyPointers.pointerValue ? everyPointers.pointerValue = lastPointer.pointerValue : false;
+      if (lastPointer.pointerValue < everyPointers.pointerValue) {
+        everyPointers.pointerValue = lastPointer.pointerValue;
+      }
 
       // checking each pointer to min and max values
-      everyPointers.pointerValue <= this.valueFrom ? everyPointers.pointerValue = this.valueFrom : false;
-      everyPointers.pointerValue >= this.valueTo ? everyPointers.pointerValue = this.valueTo : false;
+      if (everyPointers.pointerValue <= this.valueFrom) {
+        everyPointers.pointerValue = this.valueFrom;
+      }
+
+      if (everyPointers.pointerValue >= this.valueTo) {
+        everyPointers.pointerValue = this.valueTo;
+      }
     }
     this.observer.broadcast({ state: this.state });
   }
 
-  public checkCollision(values) {
+  public checkCollision(values: { pointerValue: number }[]) {
     const minValue: number = values[0].pointerValue;
     const maxValue: number = values[Object.keys(values).length - 1].pointerValue;
     return minValue >= maxValue;
   }
 
-  public checkStepSettings(cursorPosition) {
+  public checkStepSettings(cursorPosition: number) {
     return cursorPosition % this.pointerStepSize === 0;
   }
 
   public getCoords(elem: JQuery<HTMLElement>) {
     const box = elem[0].getBoundingClientRect();
     return {
+      // eslint-disable-next-line no-restricted-globals
       left: box.left + pageXOffset,
     };
   }
 
-  public checkSliderArea(pointerPosition, sliderWidth) {
-    pointerPosition < 0 ? pointerPosition = 0 : false;
-    pointerPosition > sliderWidth ? pointerPosition = sliderWidth : false;
+  public checkSliderArea(pointerPosition: number, sliderWidth: number) {
+    let cursor = pointerPosition;
+    if (pointerPosition < 0) {
+      cursor = 0;
+    }
 
-    return pointerPosition;
+    if (pointerPosition > sliderWidth) {
+      cursor = sliderWidth;
+    }
+
+    return cursor;
   }
 
   public getValuePercent(sliderWidth: number, currentPx: number) {
-    return Math.round(this.valueTo * currentPx / sliderWidth);
+    return Math.round(this.valueTo * (currentPx / sliderWidth));
   }
 
   public PercentToPx(sliderWidth: number, percentages: number) {
-    return Math.round(sliderWidth / this.valueTo * percentages);
+    return Math.round((sliderWidth / this.valueTo) * percentages);
   }
 }
+
+
+export default Model;

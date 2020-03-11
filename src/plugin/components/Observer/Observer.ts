@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace ObserverInterface {
   export class Observer {
     observers: any;
@@ -12,7 +13,7 @@ export namespace ObserverInterface {
 
     public unsubscribe(fn: any): void {
       this.observers = this.observers.filter(
-        (subscriber: any) => { subscriber !== fn; },
+        (subscriber: any) => subscriber !== fn,
       );
     }
 

@@ -1,9 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace SliderBody {
   export class Body {
     body: any;
-
-    constructor() {
-    }
 
     renderSliderBody(viewType, className, exemplar) {
       if (viewType === 'horizontal') {

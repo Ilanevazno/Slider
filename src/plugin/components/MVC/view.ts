@@ -2,7 +2,7 @@ import { GettingPointer } from '../Pointer/Pointer';
 import { SliderBody } from '../SliderBody/SliderBody';
 import { PointerIndicator } from '../PointerIndicator/PointerIndicator';
 
-export class View {
+class View {
   pointer: any = new GettingPointer.Pointer();
 
   pointerIndicator: any = new PointerIndicator.Indicator();
@@ -57,3 +57,5 @@ export class View {
     this.pointerIndicator.removeIndicator();
   }
 }
+
+export default View;

@@ -33,6 +33,7 @@
     "no-return-await": "off",
     "no-await-in-loop": "off",
     "class-methods-use-this": "off",
+    "max-len": "off",
 
     "import/extensions": [
       "error",
