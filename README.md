@@ -11,6 +11,9 @@ Homework by fullstack development. Here we make JQuery plugin called as "slider"
 - [x] jQuery
 - [x] modular architecture
 
+# Demo page
+You can enter to [Demo page](https://ilanevazno.github.io/Slider/ "Demo page") for looking at this project.
+
 ## NPM scripts
 
 #### To start locally 
