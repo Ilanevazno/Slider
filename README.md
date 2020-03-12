@@ -11,20 +11,30 @@ Homework by fullstack development. Here we make JQuery plugin called as "slider"
 - [x] jQuery
 - [x] modular architecture
 
-# Demo page
+## Demo page
 You can enter to [Demo page](https://ilanevazno.github.io/Slider/ "Demo page") for looking at this project.
+
+## Git
+clone this repository with:
+```https://github.com/Ilanevazno/Slider.git```
 
 ## NPM scripts
 
 #### To start locally 
-- ```npm run dev``` for development environment in watch mode
+```npm run dev``` for development environment in watch mode
 
 #### To build project 
-- ```npm run build``` will create build folder in the project folder
+```npm run build``` will create build folder in the project folder
+
+#### To deploy
+```npm run deploy``` building and deploying project to github pages
+
+#### Eslint
+```npm run eslint``` checking all .js files in 'components' folder on esLint with airBnb preset
 
 #### Tests
-- ```npm run test:single``` start unit tests one time 
-- ```npm run test:watch``` start unit tests in watch mode
+```npm run test:single``` start unit tests one time 
+```npm run test:watch``` start unit tests in watch mode
 
 ## About this plugin and API documentation
 There are various options such as multiple handles and ranges.
