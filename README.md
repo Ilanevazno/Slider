@@ -16,9 +16,12 @@ You can enter to [Demo page](https://ilanevazno.github.io/Slider/ "Demo page") f
 
 ## Git
 clone this repository with:
-```https://github.com/Ilanevazno/Slider.git```
+```git clone https://github.com/Ilanevazno/Slider.git```
 
 ## NPM scripts
+
+#### Install project
+```npm install``` installing dependencies before running
 
 #### To start locally 
 ```npm run dev``` for development environment in watch mode
