@@ -7,10 +7,13 @@ module.exports = {
     resolve: {
       extensions: [".ts", ".js"],
     },
-    entry: './src/index.js',
+    entry: {
+      plugin: './src/plugin/index.js',
+      demoPage: './src/demo-page/main.js',
+    },
     output: {
       path: path.join(__dirname, 'build'),
-      filename: 'bundle.js',
+      filename: '[name].js',
     },
     module: {
     rules: [
@@ -18,7 +21,7 @@ module.exports = {
         test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/
-      },  
+      },
       {
         test: require.resolve('jquery'),
         use: [{
@@ -83,7 +86,7 @@ module.exports = {
       'window.jQuery': 'jquery'
     }),
     new HtmlWebpackPlugin({
-      template: './src/demo-page/index.pug',
+      template: './src/demo-page/main.pug',
     }),
     new MiniCssExtractPlugin({
       filename: "index.css"
