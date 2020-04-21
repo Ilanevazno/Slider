@@ -1,5 +1,6 @@
 import '../plugin/sliderPlugin';
 
-$('.js-slider-one').sliderPlugin();
+const sliderOne = $('.js-slider-one').sliderPlugin();
+sliderOne.setStepSize(25);
 $('.js-slider-two').sliderPlugin();
 $('.js-slider-three').sliderPlugin();

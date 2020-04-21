@@ -21,18 +21,20 @@ class View {
     this.$sliderToolTip = this.drawSliderToolTip();
   }
 
-  public validateNewHandlerPosition (newPosition) {
+  public validateNewHandlerPosition (currentPercent) {
     const maxSliderWidth: number = this.$sliderBody[0].offsetWidth - (this.$sliderHandler[0].offsetWidth / 2);
     const minSliderWidth: number = 0;
-    const currentPercent: number = this.validateView.convertPixelToPercent(this.$sliderBody[0].offsetWidth, newPosition);
+    const newHandlerPosition:number = this.validateView.convertPercentToPixel(this.$sliderBody[0].offsetWidth, currentPercent);
 
-    if (newPosition < maxSliderWidth && newPosition >= minSliderWidth) {
-      this.moveHandler(newPosition);
+    console.log(newHandlerPosition);
+
+    if (newHandlerPosition < maxSliderWidth && newHandlerPosition >= minSliderWidth) {
+      this.moveHandler(newHandlerPosition);
       this.setToolTipValue(currentPercent);
     }
   }
 
-  private moveHandler (newPosition) {
+  private moveHandler (newPosition: number): void {
     this.$sliderHandler.css('left', `${newPosition}px`);
   }
 
@@ -94,12 +96,13 @@ class View {
   private handleDocumentMouseMove (e): number {
     const shift = this.validateView.getPointerShift();
     const newHandlerPosition = e.clientX - shift - this.$sliderBody[0].getBoundingClientRect().left;
+    const newHandlerPercent = this.validateView.convertPixelToPercent(this.$sliderBody[0].offsetWidth, newHandlerPosition);
 
-    this.eventObserver.broadcast({ newHandlerPosition });
+    this.eventObserver.broadcast({ newHandlerPercent });
 
     $(document).on('mouseup.documentMouseUp', this.handleDocumentMouseUp.bind(this));
 
-    return newHandlerPosition;
+    return newHandlerPercent;
   }
 
   private handleDocumentMouseUp (): void {

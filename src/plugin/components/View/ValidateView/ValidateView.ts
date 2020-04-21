@@ -14,7 +14,11 @@ class ValidateView {
   }
 
   public convertPixelToPercent (containerWidth: number, currentPixel: number): number {
-    return Math.ceil((currentPixel * 101) / containerWidth);
+    return Math.ceil((currentPixel * 100) / containerWidth);
+  }
+
+  public convertPercentToPixel (containerWidth: number, currentPecent: number): number {
+    return Math.ceil((currentPecent / 100) * containerWidth);
   }
 }
 

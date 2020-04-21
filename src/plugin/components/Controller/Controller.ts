@@ -25,10 +25,14 @@ class Controller {
     this.view.initEvents ();
   }
 
+  public setStepSize (newStepSize: number): void {
+    this.model.setStepSize(newStepSize);
+  }
+
   private listenToChangeState () {
     const currentState: object = this.model.getState();
 
-    this.view.validateNewHandlerPosition(currentState['newHandlerPosition']);
+    this.view.validateNewHandlerPosition(currentState['newHandlerPercent'])
   }
 }
 
