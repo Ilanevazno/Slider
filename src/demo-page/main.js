@@ -1,4 +1,5 @@
 import '../plugin/sliderPlugin';
+import './main.scss';
 
 const sliderOne = $('.js-slider-one').sliderPlugin();
 sliderOne.setStepSize(25);

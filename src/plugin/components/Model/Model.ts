@@ -4,9 +4,8 @@ class Model {
   public minValue: number;
   public maxValue: number;
   public valueType: string;
-  public stepSize: number | number[];
+  public stepSize: number;
   public breakPoints: Array<number>;
-  private steps: number;
 
   constructor(options: object) {
     this.state = {};
@@ -16,7 +15,6 @@ class Model {
     this.maxValue = 100;
     this.breakPoints = [];
     this.stepSize = this.setStepSize(options['stepSize']);
-    this.steps = 1;
   }
 
   private getOptionList() {
@@ -34,13 +32,21 @@ class Model {
   private validateNewHandlerState(newState): boolean {
     let isReadyToMove: boolean = false;
 
-    if ((newState['newHandlerPercent'] <= this.maxValue || newState['newHandlerPercent'] >= this.minValue)) {
-      isReadyToMove = newState['newHandlerPercent'] % this.steps === 0 ? true : false;
+    const stepsBreakpointList: number[] = [];
+    let breakPoint: number = this.minValue;
+
+    while (breakPoint <= this.maxValue) {
+      stepsBreakpointList.push(breakPoint);
+      breakPoint = breakPoint + this.stepSize;
     }
 
-    if (newState['newHandlerPercent'] >= this.maxValue) {
-      isReadyToMove = true;
-    }
+    stepsBreakpointList.map((breakPoint) => {
+      if (newState['newHandlerPercent'] === breakPoint) {
+        isReadyToMove = true;
+      }
+
+      return newState;
+    })
 
     return isReadyToMove;
   }
@@ -55,7 +61,7 @@ class Model {
     }
   }
 
-  public setStepSize(newStepSize: number | Array<number>): number | Array<number> {
+  public setStepSize(newStepSize: number | Array<number>): number{
     this.stepSize = Number(newStepSize);
 
     const breakPoints: Array<number> = [];

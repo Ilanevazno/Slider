@@ -89,7 +89,7 @@ module.exports = {
       template: './src/demo-page/main.pug',
     }),
     new MiniCssExtractPlugin({
-      filename: "index.css"
+      filename: "[name].css"
     })
   ]
 }

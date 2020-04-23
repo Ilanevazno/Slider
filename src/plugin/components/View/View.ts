@@ -24,11 +24,9 @@ class View {
   public validateNewHandlerPosition (currentPercent) {
     const maxSliderWidth: number = this.$sliderBody[0].offsetWidth - (this.$sliderHandler[0].offsetWidth / 2);
     const minSliderWidth: number = 0;
-    const newHandlerPosition:number = this.validateView.convertPercentToPixel(this.$sliderBody[0].offsetWidth, currentPercent);
+    const newHandlerPosition:number = this.validateView.convertPercentToPixel(maxSliderWidth, currentPercent);
 
-    console.log(newHandlerPosition);
-
-    if (newHandlerPosition < maxSliderWidth && newHandlerPosition >= minSliderWidth) {
+    if (newHandlerPosition <= maxSliderWidth && newHandlerPosition >= minSliderWidth) {
       this.moveHandler(newHandlerPosition);
       this.setToolTipValue(currentPercent);
     }

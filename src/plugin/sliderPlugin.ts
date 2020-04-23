@@ -12,7 +12,7 @@ namespace sliderPlugin {
 
     sliderPlugin () {
       this.model = new Model({
-        stepSize: 1
+        stepSize: 25
       });
       this.view = new View(this.model, this);
       this.controller = new Controller(this.model, this.view);
