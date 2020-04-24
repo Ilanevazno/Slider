@@ -5,8 +5,8 @@ import ValidateView from './ValidateView/ValidateView';
 class View {
   private $sliderContainer: JQuery<HTMLElement>
   private $sliderBody: JQuery<HTMLElement>
-  private $sliderHandler: JQuery<HTMLElement>
-  private $sliderToolTip: JQuery<HTMLElement>
+  private $handlerMinValue: JQuery<HTMLElement>
+  private $handlerMaxValue: JQuery<HTMLElement>
 
   public eventObserver: Observer;
   private validateView: ValidateView;
@@ -17,26 +17,47 @@ class View {
 
     this.$sliderContainer = this.drawSliderContainer(initHtmlElement);
     this.$sliderBody = this.drawSliderBody();
-    this.$sliderHandler = this.drawSliderHandler();
-    this.$sliderToolTip = this.drawSliderToolTip();
+    this.$handlerMinValue = this.drawSliderHandler();
+    this.$handlerMaxValue = this.drawSliderHandler();
+    this.drawSliderToolTip(this.$handlerMinValue);
+    this.drawSliderToolTip(this.$handlerMaxValue);
   }
 
-  public validateNewHandlerPosition (currentPercent) {
-    const maxSliderWidth: number = this.$sliderBody[0].offsetWidth - (this.$sliderHandler[0].offsetWidth / 2);
-    const minSliderWidth: number = 0;
-    const newHandlerPosition:number = this.validateView.convertPercentToPixel(maxSliderWidth, currentPercent);
+  public validateNewHandlerPosition(currentHandler) {
+    Object.values(currentHandler).map((handler: any) => {
+      const $caughtHandler = $(handler.$handler);
+      const newStatePercent: number = handler.value;
+      const maxSliderWidth: number = this.$sliderBody[0].offsetWidth - ($caughtHandler[0].offsetWidth / 2);
+      const minSliderWidth: number = 0;
+      const newHandlerPosition: number = this.validateView.convertPercentToPixel(maxSliderWidth, newStatePercent);
 
-    if (newHandlerPosition <= maxSliderWidth && newHandlerPosition >= minSliderWidth) {
-      this.moveHandler(newHandlerPosition);
-      this.setToolTipValue(currentPercent);
-    }
+      const validateNewPosition = (): boolean => {
+        if (newHandlerPosition <= maxSliderWidth && newHandlerPosition >= minSliderWidth) {
+          return true;
+        }
+
+        return false;
+      }
+
+      if (validateNewPosition()) {
+        this.moveHandler($caughtHandler, newHandlerPosition);
+        this.setToolTipValue($caughtHandler.children(), newStatePercent);
+      }
+    });
   }
 
-  private moveHandler (newPosition: number): void {
-    this.$sliderHandler.css('left', `${newPosition}px`);
+  private checkCollision(): boolean {
+    const handlerMinValue = 0;
+    const handlerMaxValue = 0;
+
+    return false;
   }
 
-  private drawSliderContainer (htmlContainer: JQuery<HTMLElement> | HTMLElement): JQuery<HTMLElement> {
+  private moveHandler($currentHandler: JQuery<HTMLElement>, newPosition: number): void {
+    $currentHandler.css('left', `${newPosition}px`);
+  }
+
+  private drawSliderContainer(htmlContainer: JQuery<HTMLElement> | HTMLElement): JQuery<HTMLElement> {
     this.$sliderContainer = $('<div/>', {
       class: 'slider__container'
     }).appendTo(htmlContainer);
@@ -44,11 +65,11 @@ class View {
     return this.$sliderContainer;
   }
 
-  private setToolTipValue (newValue: number): void {
-    this.$sliderToolTip.text(newValue);
+  private setToolTipValue($tooltipElement: JQuery<HTMLElement>, newValue: number): void {
+    $tooltipElement.text(newValue);
   }
 
-  private drawSliderBody (): JQuery<HTMLElement> {
+  private drawSliderBody(): JQuery<HTMLElement> {
     this.$sliderBody = $('<div/>', {
       class: 'slider__body'
     }).appendTo(this.$sliderContainer);
@@ -56,54 +77,59 @@ class View {
     return this.$sliderBody;
   }
 
-  private drawSliderHandler (): JQuery<HTMLElement> {
-    this.$sliderHandler = $('<div/>', {
+  private drawSliderHandler(): JQuery<HTMLElement> {
+    const $sliderHandler = $('<div/>', {
       class: 'slider__handler'
     }).appendTo(this.$sliderBody);
 
-    return this.$sliderHandler;
+    setTimeout(() => {
+      this.eventObserver.broadcast({ $handler: $sliderHandler, value: this.model.minValue, });
+    }, 0)
+    $sliderHandler.on('mousedown.documentMouseDown', this.handleHandlerMouseDown.bind(this))
+
+    return $sliderHandler;
   }
 
-  private drawSliderToolTip (): JQuery<HTMLElement> {
-    this.$sliderToolTip = $('<div/>', {
+  private drawSliderToolTip($sliderHandler: JQuery<HTMLElement>): JQuery<HTMLElement> {
+    const sliderToolTip = $('<div/>', {
       class: 'slider__tooltip'
     })
-      .appendTo(this.$sliderHandler)
+      .appendTo($sliderHandler)
       .text(this.model.minValue);
 
-    return this.$sliderToolTip;
+    return sliderToolTip;
   }
 
   public initEvents(): void {
-    this.$sliderHandler.on('mousedown.documentMouseDown', this.handleHandlerMouseDown.bind(this));
+
   }
 
-  private setPointerShift (newShift): void {
+  private setPointerShift(newShift): void {
     this.validateView.setPointerShift(newShift);
   }
 
-  private handleHandlerMouseDown (e) {
+  private handleHandlerMouseDown(e) {
     e.preventDefault();
-
-    const shift = e.clientX - this.$sliderHandler[0].getBoundingClientRect().left;
+    const $caughtHandler: JQuery<HTMLElement> = $(e.target);
+    const shift = e.clientX - $caughtHandler[0].getBoundingClientRect().left;
     this.setPointerShift(shift);
 
-    $(document).on('mousemove.documentMouseMove', this.handleDocumentMouseMove.bind(this));
+    $(document).on('mousemove.documentMouseMove', this.handleDocumentMouseMove.bind(this, $caughtHandler));
   }
 
-  private handleDocumentMouseMove (e): number {
+  private handleDocumentMouseMove($handler: JQuery<HTMLElement>, e): number {
     const shift = this.validateView.getPointerShift();
     const newHandlerPosition = e.clientX - shift - this.$sliderBody[0].getBoundingClientRect().left;
-    const newHandlerPercent = this.validateView.convertPixelToPercent(this.$sliderBody[0].offsetWidth, newHandlerPosition);
+    const value = this.validateView.convertPixelToPercent(this.$sliderBody[0].offsetWidth, newHandlerPosition);
 
-    this.eventObserver.broadcast({ newHandlerPercent });
+    this.eventObserver.broadcast({ $handler, value });
 
     $(document).on('mouseup.documentMouseUp', this.handleDocumentMouseUp.bind(this));
 
-    return newHandlerPercent;
+    return value;
   }
 
-  private handleDocumentMouseUp (): void {
+  private handleDocumentMouseUp(): void {
     $(document).off('.documentMouseMove');
   }
 

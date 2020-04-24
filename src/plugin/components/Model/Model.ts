@@ -1,6 +1,7 @@
 class Model {
   public state: object;
   public axis: string;
+  public sliderType: string;
   public minValue: number;
   public maxValue: number;
   public valueType: string;
@@ -11,6 +12,7 @@ class Model {
     this.state = {};
     this.axis = options['axis'];
     this.valueType = options['valueType'];
+    this.sliderType = options['sliderType'];
     this.minValue = 0;
     this.maxValue = 100;
     this.breakPoints = [];
@@ -40,8 +42,8 @@ class Model {
       breakPoint = breakPoint + this.stepSize;
     }
 
-    stepsBreakpointList.map((breakPoint) => {
-      if (newState['newHandlerPercent'] === breakPoint) {
+    stepsBreakpointList.map((breakPoint): boolean => {
+      if (newState.value === breakPoint) {
         isReadyToMove = true;
       }
 
@@ -52,16 +54,40 @@ class Model {
   }
 
   public setState(newState): void {
-    const copyState = {
-      ...this.state,
-      ...newState,
-    };
     if (this.validateNewHandlerState(newState)) {
-      this.state = copyState;
+      const checkIncludes = (targetElement: JQuery<HTMLElement>): boolean => {
+        let isFoundItem: boolean = false;
+
+        Object.values(this.state).map((stateElement) => {
+          if (stateElement.$handler[0] === targetElement[0]) {
+            isFoundItem = true;
+          }
+          return false;
+        });
+
+        return isFoundItem;
+      }
+
+
+      const elem = newState.$handler[0];
+
+      console.log(Object.values(this.state).find(newState))
+      // console.log(Object.values(this.state).find(elem));
+
+
+      if (!checkIncludes(newState.$handler)) {
+        this.state[Object.keys(this.state).length + 1] = newState;
+      }
+
+      Object.values(this.state).map((stateElement) => {
+        if (stateElement.$handler[0] === newState.$handler[0]) {
+          stateElement.value = newState.value;
+        }
+      });
     }
   }
 
-  public setStepSize(newStepSize: number | Array<number>): number{
+  public setStepSize(newStepSize: number | Array<number>): number {
     this.stepSize = Number(newStepSize);
 
     const breakPoints: Array<number> = [];
