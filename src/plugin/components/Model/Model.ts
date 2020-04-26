@@ -6,6 +6,7 @@ class Model {
   public maxValue: number;
   public valueType: string;
   public stepSize: number;
+  public isEnabledTooltip: boolean;
   public breakPoints: Array<number>;
 
   constructor(options: object) {
@@ -13,8 +14,9 @@ class Model {
     this.axis = options['axis'];
     this.valueType = options['valueType'];
     this.sliderType = options['sliderType'];
-    this.minValue = 0;
-    this.maxValue = 100;
+    this.isEnabledTooltip = options['tooltip'] || false;
+    this.minValue = options['minValue'] || 0;
+    this.maxValue = options['maxValue'] || 100;
     this.breakPoints = [];
     this.stepSize = this.setStepSize(options['stepSize']);
   }
@@ -31,8 +33,8 @@ class Model {
     return optionList;
   }
 
-  private validateNewHandlerState(newState): boolean {
-    let isReadyToMove: boolean = false;
+  private checkBreakpoints(newState): boolean {
+    let isReadyToChange: boolean = false;
 
     const stepsBreakpointList: number[] = [];
     let breakPoint: number = this.minValue;
@@ -44,39 +46,43 @@ class Model {
 
     stepsBreakpointList.map((breakPoint): boolean => {
       if (newState.value === breakPoint) {
-        isReadyToMove = true;
+        isReadyToChange = true;
       }
 
       return newState;
     })
 
-    return isReadyToMove;
+    return isReadyToChange;
   }
 
   public setState(newState): void {
-    if (this.validateNewHandlerState(newState)) {
-      const checkIncludes = (targetElement: JQuery<HTMLElement>): boolean => {
-        let isFoundItem: boolean = false;
+    const checkIncludes = (targetElement: JQuery<HTMLElement>): boolean => {
+      let isFoundItem: boolean = false;
 
-        Object.values(this.state).map((stateElement) => {
-          if (stateElement.$handler[0] === targetElement[0]) {
-            isFoundItem = true;
-          }
-          return false;
-        });
+      Object.values(this.state).map((stateElement) => {
+        if (stateElement.$handler[0] === targetElement[0]) {
+          isFoundItem = true;
+        }
+        return false;
+      });
 
-        return isFoundItem;
-      }
+      return isFoundItem;
+    }
 
-
-      const elem = newState.$handler[0];
-
-      console.log(Object.values(this.state).find(newState))
-      // console.log(Object.values(this.state).find(elem));
-
-
+    if (this.checkBreakpoints(newState)) {
       if (!checkIncludes(newState.$handler)) {
         this.state[Object.keys(this.state).length + 1] = newState;
+      }
+
+      let minValue = this.state[1].value;
+      let maxValue = this.state[Object.keys(this.state).length].value;
+
+      if (minValue > maxValue) {
+        this.state[Object.keys(this.state).length].value = minValue;
+      }
+
+      if (maxValue < minValue) {
+        this.state[1].value = maxValue
       }
 
       Object.values(this.state).map((stateElement) => {

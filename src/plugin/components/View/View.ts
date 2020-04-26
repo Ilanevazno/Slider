@@ -1,60 +1,36 @@
 import Model from '../Model/Model';
 import Observer from '../Observer/Observer';
 import ValidateView from './ValidateView/ValidateView';
+import SliderBodyView from './SliderBodyView/SliderBodyView';
+import HandlerView from './HandlerView/HandlerView';
+import TooltipView from './TooltipView/TooltipView';
 
 class View {
   private $sliderContainer: JQuery<HTMLElement>
-  private $sliderBody: JQuery<HTMLElement>
-  private $handlerMinValue: JQuery<HTMLElement>
-  private $handlerMaxValue: JQuery<HTMLElement>
+  private $sliderBody: SliderBodyView | JQuery<HTMLElement>;
+  private handlerMinValue: object
+  private handlerMaxValue: object
 
   public eventObserver: Observer;
   private validateView: ValidateView;
 
-  constructor(private model: Model, initHtmlElement: HTMLElement) {
+  constructor(private model: Model, private initHtmlElement: HTMLElement) {
     this.eventObserver = new Observer();
     this.validateView = new ValidateView();
-
     this.$sliderContainer = this.drawSliderContainer(initHtmlElement);
-    this.$sliderBody = this.drawSliderBody();
-    this.$handlerMinValue = this.drawSliderHandler();
-    this.$handlerMaxValue = this.drawSliderHandler();
-    this.drawSliderToolTip(this.$handlerMinValue);
-    this.drawSliderToolTip(this.$handlerMaxValue);
-  }
+    this.$sliderBody = this.drawSliderBody(this.$sliderContainer);
+    this.handlerMinValue = {
+      name: 'min-value',
+      instances: this.drawHandlerInstances(this.$sliderBody),
+    };
 
-  public validateNewHandlerPosition(currentHandler) {
-    Object.values(currentHandler).map((handler: any) => {
-      const $caughtHandler = $(handler.$handler);
-      const newStatePercent: number = handler.value;
-      const maxSliderWidth: number = this.$sliderBody[0].offsetWidth - ($caughtHandler[0].offsetWidth / 2);
-      const minSliderWidth: number = 0;
-      const newHandlerPosition: number = this.validateView.convertPercentToPixel(maxSliderWidth, newStatePercent);
+    this.handlerMaxValue = {
+      name: 'max-value',
+      instances: this.drawHandlerInstances(this.$sliderBody)
+    };
 
-      const validateNewPosition = (): boolean => {
-        if (newHandlerPosition <= maxSliderWidth && newHandlerPosition >= minSliderWidth) {
-          return true;
-        }
-
-        return false;
-      }
-
-      if (validateNewPosition()) {
-        this.moveHandler($caughtHandler, newHandlerPosition);
-        this.setToolTipValue($caughtHandler.children(), newStatePercent);
-      }
-    });
-  }
-
-  private checkCollision(): boolean {
-    const handlerMinValue = 0;
-    const handlerMaxValue = 0;
-
-    return false;
-  }
-
-  private moveHandler($currentHandler: JQuery<HTMLElement>, newPosition: number): void {
-    $currentHandler.css('left', `${newPosition}px`);
+    this.initHandlerEvents(this.handlerMinValue);
+    this.initHandlerEvents(this.handlerMaxValue);
   }
 
   private drawSliderContainer(htmlContainer: JQuery<HTMLElement> | HTMLElement): JQuery<HTMLElement> {
@@ -65,39 +41,77 @@ class View {
     return this.$sliderContainer;
   }
 
-  private setToolTipValue($tooltipElement: JQuery<HTMLElement>, newValue: number): void {
-    $tooltipElement.text(newValue);
+  private drawSliderBody($HtmlContainer): JQuery<HTMLElement> {
+    const sliderBody = new SliderBodyView($HtmlContainer);
+    return sliderBody.$htmlContainer;
   }
 
-  private drawSliderBody(): JQuery<HTMLElement> {
-    this.$sliderBody = $('<div/>', {
-      class: 'slider__body'
-    }).appendTo(this.$sliderContainer);
+  private drawHandlerInstances($HtmlContainer): object {
+    const sliderHandler = new HandlerView($HtmlContainer);
+    let handlerTooltip: TooltipView | null = null;
 
-    return this.$sliderBody;
+    if (this.model.isEnabledTooltip) {
+      handlerTooltip = new TooltipView(sliderHandler.$html);
+
+      handlerTooltip.setValue(this.model.minValue);
+    }
+
+    return {
+      handler: sliderHandler,
+      tooltip: handlerTooltip
+    };
   }
 
-  private drawSliderHandler(): JQuery<HTMLElement> {
-    const $sliderHandler = $('<div/>', {
-      class: 'slider__handler'
-    }).appendTo(this.$sliderBody);
-
+  private initHandlerEvents(parent): void {
     setTimeout(() => {
-      this.eventObserver.broadcast({ $handler: $sliderHandler, value: this.model.minValue, });
-    }, 0)
-    $sliderHandler.on('mousedown.documentMouseDown', this.handleHandlerMouseDown.bind(this))
+      this.eventObserver.broadcast({ $handler: parent.instances.handler.$html, value: this.model.minValue, name: parent.name });
+    }, 0);
 
-    return $sliderHandler;
+    parent.instances.handler.observer.subscribe((handler) => {
+      if (handler.eventType === this.validateView.mouseDownEvent) {
+        this.handleHandlerMouseDown(handler.event);
+      } else if (handler.eventType === this.validateView.mouseMoveEvent) {
+        this.handleHandlerMove({
+          $handler: parent.instances.handler.$html,
+          e: handler.event,
+          name: parent.name,
+        });
+      }
+    });
   }
 
-  private drawSliderToolTip($sliderHandler: JQuery<HTMLElement>): JQuery<HTMLElement> {
-    const sliderToolTip = $('<div/>', {
-      class: 'slider__tooltip'
-    })
-      .appendTo($sliderHandler)
-      .text(this.model.minValue);
+  public validateNewHandlerPosition(currentHandler) {
+    Object.values(currentHandler).map((handler: any) => {
+      const $caughtHandler = $(handler.$handler);
+      const newStatePercent: number = handler.value;
+      const maxSliderWidth: number = this.$sliderBody[0].offsetWidth - ($caughtHandler[0].offsetWidth / 2);
+      const newHandlerPosition: number = this.validateView.convertPercentToPixel(maxSliderWidth, newStatePercent);
 
-    return sliderToolTip;
+      switch (handler.name) {
+        case 'min-value':
+          this.handlerMinValue['instances'].handler.moveHandler(newHandlerPosition);
+
+          if (this.isEnabledTooltip()) {
+            this.handlerMinValue['instances'].tooltip.setValue(newStatePercent);
+          }
+
+          break
+        case 'max-value':
+          this.handlerMaxValue['instances'].handler.moveHandler(newHandlerPosition);
+
+          if (this.isEnabledTooltip()) {
+            this.handlerMaxValue['instances'].tooltip.setValue(newStatePercent);
+          }
+
+          break
+        default:
+          return false;
+      }
+    });
+  }
+
+  private isEnabledTooltip (): boolean {
+    return this.model.isEnabledTooltip ? true : false;
   }
 
   public initEvents(): void {
@@ -113,26 +127,16 @@ class View {
     const $caughtHandler: JQuery<HTMLElement> = $(e.target);
     const shift = e.clientX - $caughtHandler[0].getBoundingClientRect().left;
     this.setPointerShift(shift);
-
-    $(document).on('mousemove.documentMouseMove', this.handleDocumentMouseMove.bind(this, $caughtHandler));
   }
 
-  private handleDocumentMouseMove($handler: JQuery<HTMLElement>, e): number {
+  private handleHandlerMove({ $handler, e, name }): number {
     const shift = this.validateView.getPointerShift();
     const newHandlerPosition = e.clientX - shift - this.$sliderBody[0].getBoundingClientRect().left;
     const value = this.validateView.convertPixelToPercent(this.$sliderBody[0].offsetWidth, newHandlerPosition);
-
-    this.eventObserver.broadcast({ $handler, value });
-
-    $(document).on('mouseup.documentMouseUp', this.handleDocumentMouseUp.bind(this));
+    this.eventObserver.broadcast({ $handler, value, name });
 
     return value;
   }
-
-  private handleDocumentMouseUp(): void {
-    $(document).off('.documentMouseMove');
-  }
-
 }
 
 export default View;

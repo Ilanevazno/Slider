@@ -18,8 +18,8 @@ class Controller {
   }
 
   private subscribeViewObserver () {
-    this.view.eventObserver.subscribe(handlerPosition => {
-      this.model.setState(handlerPosition);
+    this.view.eventObserver.subscribe(handlerProps => {
+      this.model.setState(handlerProps);
       this.listenToChangeState();
     })
   }

@@ -12,7 +12,8 @@ namespace sliderPlugin {
 
     sliderPlugin () {
       this.model = new Model({
-        stepSize: 1
+        stepSize: 1,
+        tooltip: true,
       });
       this.view = new View(this.model, this);
       this.controller = new Controller(this.model, this.view);
