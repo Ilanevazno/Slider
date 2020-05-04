@@ -1,24 +1,31 @@
+import Observer from '../Observer/Observer';
+import ValidateModel from './ValidateModel/ValidateModel';
+
 class Model {
   public state: object;
   public axis: string;
-  public sliderType: string;
   public minValue: number;
   public maxValue: number;
   public valueType: string;
   public stepSize: number;
   public isEnabledTooltip: boolean;
   public breakPoints: Array<number>;
+  public eventObserver: Observer;
+  public isShowLabels: boolean;
+  public validate: ValidateModel;
 
   constructor(options: object) {
+    this.validate = new ValidateModel;
+    this.eventObserver = new Observer();
     this.state = {};
-    this.axis = options['axis'];
-    this.valueType = options['valueType'];
-    this.sliderType = options['sliderType'];
-    this.isEnabledTooltip = options['tooltip'] || false;
+    this.isShowLabels = options['showLabels'];
+    this.axis = options['axis'] || this.validate.axisX;
+    this.valueType = options['valueType'] || this.validate.singleValue;
+    this.isEnabledTooltip = options['tooltip'];
     this.minValue = options['minValue'] || 0;
-    this.maxValue = options['maxValue'] || 100;
-    this.breakPoints = [];
+    this.maxValue = options['maxValue'] || 500;
     this.stepSize = this.setStepSize(options['stepSize']);
+    this.breakPoints = this.setBreakPointList();
   }
 
   private getOptionList() {
@@ -28,83 +35,81 @@ class Model {
       minValue: this.minValue,
       maxValue: this.maxValue,
       stepSize: this.stepSize,
+      breakpoints: this.breakPoints,
+      isEnabledTooltip: this.isEnabledTooltip,
+      isShowLabels: this.isShowLabels,
     }
 
     return optionList;
   }
 
-  private checkBreakpoints(newState): boolean {
-    let isReadyToChange: boolean = false;
-
+  public setBreakPointList(): number[] {
     const stepsBreakpointList: number[] = [];
-    let breakPoint: number = this.minValue;
+    let breakPoint: number = 1;
 
     while (breakPoint <= this.maxValue) {
       stepsBreakpointList.push(breakPoint);
       breakPoint = breakPoint + this.stepSize;
     }
 
-    stepsBreakpointList.map((breakPoint): boolean => {
-      if (newState.value === breakPoint) {
-        isReadyToChange = true;
+    this.breakPoints = stepsBreakpointList;
+    return this.breakPoints;
+  }
+
+  private checkIncludeStateValue(targetElement: JQuery<HTMLElement>): boolean {
+    let isFoundItem: boolean = false;
+
+    Object.values(this.state).map((stateElement) => {
+      if (stateElement.$handler[0] === targetElement[0]) {
+        isFoundItem = true;
       }
+      return false;
+    });
 
-      return newState;
-    })
+    return isFoundItem;
+  }
 
-    return isReadyToChange;
+  private checkCollision (): void {
+    let minValue = this.state[0].value;
+    let maxValue = this.state[Object.keys(this.state).length - 1].value;
+
+    if (minValue > maxValue) {
+      this.state[Object.keys(this.state).length - 1].value = minValue;
+    }
+
+    if (maxValue < minValue) {
+      this.state[0].value = maxValue
+    }
+  }
+
+  private isAvailableRange (newState): boolean {
+    return newState <= this.maxValue && newState >= this.minValue;
+  }
+
+  private calculateNewState (newState): number {
+    const nextStep = Math.min(...this.breakPoints.filter((step) => step >= (newState - Math.floor(this.stepSize / 2))));
+    return isFinite(nextStep) ? nextStep : this.breakPoints[this.breakPoints.length];
   }
 
   public setState(newState): void {
-    const checkIncludes = (targetElement: JQuery<HTMLElement>): boolean => {
-      let isFoundItem: boolean = false;
-
-      Object.values(this.state).map((stateElement) => {
-        if (stateElement.$handler[0] === targetElement[0]) {
-          isFoundItem = true;
-        }
-        return false;
-      });
-
-      return isFoundItem;
+    if (!this.checkIncludeStateValue(newState.$handler)) {
+      this.state[Object.keys(this.state).length] = newState;
     }
+    this.checkCollision();
 
-    if (this.checkBreakpoints(newState)) {
-      if (!checkIncludes(newState.$handler)) {
-        this.state[Object.keys(this.state).length + 1] = newState;
+    Object.values(this.state).map((stateElement) => {
+      const isReadyToMoveHandler =
+        this.isAvailableRange(newState.value) && stateElement.$handler[0] === newState.$handler[0];
+      if (isReadyToMoveHandler) {
+        stateElement.value = this.calculateNewState(newState.value);
       }
+    });
 
-      let minValue = this.state[1].value;
-      let maxValue = this.state[Object.keys(this.state).length].value;
-
-      if (minValue > maxValue) {
-        this.state[Object.keys(this.state).length].value = minValue;
-      }
-
-      if (maxValue < minValue) {
-        this.state[1].value = maxValue
-      }
-
-      Object.values(this.state).map((stateElement) => {
-        if (stateElement.$handler[0] === newState.$handler[0]) {
-          stateElement.value = newState.value;
-        }
-      });
-    }
+    this.eventObserver.broadcast({ state: this.state });
   }
 
   public setStepSize(newStepSize: number | Array<number>): number {
     this.stepSize = Number(newStepSize);
-
-    const breakPoints: Array<number> = [];
-    let breakPoint: number = this.minValue;
-
-    while (breakPoint < this.maxValue) {
-      breakPoint = breakPoint + Number(newStepSize);
-      breakPoints.push(Number(breakPoint));
-    }
-
-    this.breakPoints = breakPoints;
 
     return this.stepSize;
   }

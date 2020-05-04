@@ -7,11 +7,21 @@
   }
 
   &__body {
-    width: 99%;
-    height: 5px;
     background-color: #858585;
     border-radius: 6px;
     position: relative;
+
+    &_type {
+      &_horizontal {
+        width: 99%;
+        height: 5px;
+      }
+
+      &_vertical {
+        width: 5px;
+        min-height: 20rem;
+      }
+    }
   }
 
   &__handler {
@@ -22,6 +32,16 @@
     position: absolute;
     top: -1rem;
     cursor: pointer;
+
+    &_type{
+      &_horizontal {
+
+      }
+
+      &_vertical {
+        transform: translate(-0.8rem);
+      }
+    }
   }
 
   &__tooltip {
@@ -29,12 +49,29 @@
     align-items: center;
     justify-content: center;
     font-family: cursive;
-    width: 2rem;
+    min-width: 2rem;
     height: 1.5rem;
     background: darkorange;
     color: white;
     border-radius: 10px;
     position: absolute;
     top: -90%;
+  }
+
+  &__breakpoint {
+    color: gray;
+    font-weight: bold;
+    position: absolute;
+
+    &_direction {
+      &_left {
+        top: 1rem;
+      }
+
+      &_top {
+        left: 1.5rem;
+        transform: translate(0rem, -0.5rem);
+      }
+    }
   }
 }

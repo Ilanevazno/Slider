@@ -10,23 +10,24 @@ class Controller {
     this.model = model;
     this.view = view;
 
-    this.subscribeViewObserver ();
+    this.subscribeViewObserver();
+    this.subscribeModelObserver();
   }
 
   public setStepSize (newStepSize: number): void {
     this.model.setStepSize(newStepSize);
   }
 
-  private subscribeViewObserver () {
-    this.view.eventObserver.subscribe(handlerProps => {
+  private subscribeViewObserver (): void {
+    this.view.eventObserver.subscribe((handlerProps) => {
       this.model.setState(handlerProps);
-      this.listenToChangeState();
     })
   }
 
-  private listenToChangeState () {
-    const currentState: object = this.model.getState();
-    this.view.validateNewHandlerPosition(currentState)
+  private subscribeModelObserver (): void {
+    this.model.eventObserver.subscribe((event) => {
+      this.view.prepareToMoveHandler(event.state)
+    })
   }
 }
 

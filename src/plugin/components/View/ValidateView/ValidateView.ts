@@ -17,12 +17,25 @@ class ValidateView {
     return this.currentPointerShift;
   }
 
-  public convertPixelToPercent (containerWidth: number, currentPixel: number): number {
-    return Math.ceil((currentPixel * 100) / containerWidth);
+  public convertPixelToPercent (data: any = {}): any {
+    const {
+      currentPixel,
+      containerWidth,
+      maxPercent,
+      minPercent,
+    } = data;
+    return Math.ceil((currentPixel * (maxPercent - minPercent)) / containerWidth);
   }
 
-  public convertPercentToPixel (containerWidth: number, currentPecent: number): number {
-    return Math.ceil((currentPecent / 100) * containerWidth);
+  public convertPercentToPixel (data: any = {}): any {
+    const {
+      minPercent,
+      maxPercent,
+      currentPercent,
+      maxContainerWidth
+    } = data;
+
+    return ((currentPercent - minPercent) / (maxPercent - minPercent)) * maxContainerWidth;
   }
 }
 
