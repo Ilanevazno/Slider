@@ -1,0 +1,27 @@
+mixin panel ()
+  -
+    const labels = [
+      { title: 'Размер шага', name: 'step-size', tag: 'input', type: 'number' },
+      { title: 'Вид', name: 'view-type', tag: 'select', options: ['Горизонтальный', 'Вертикальный'] },
+      { title: 'Тип значения', name: 'value-type', tag: 'select', options: ['Одиночное', 'Интервал'] },
+      { title: 'Минимальное значение', name: 'min-value', tag: 'input', type: 'number'},
+      { title: 'Максимальное значение', name: 'max-value', tag: 'input', type: 'number'},
+      { title: 'Показать значение', name: 'tooltip', tag: 'input', type: 'checkbox'},
+      { title: 'Показать шкалу', name: 'labels', tag: 'input', type: 'checkbox'},
+    ];
+  section.panel.js-panel
+    each label in labels
+      -
+        const {
+          title,
+          name,
+          tag,
+          type,
+          options,
+        } = label;
+      .panel__label
+        p.panel-label__title= title
+        #{tag}.panel__label-item(name= name, type= type)
+          if (options)
+            each option in options
+              option= option

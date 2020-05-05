@@ -1,3 +1,17 @@
+type percentToPixelConverting = {
+  minPercent: number,
+  maxPercent: number,
+  currentPercent: number,
+  maxContainerWidth: number,
+}
+
+type pixelToPercentConverting = {
+  currentPixel: number,
+  containerWidth: number,
+  minPercent: number,
+  maxPercent: number,
+}
+
 class ValidateView {
   private currentPointerShift: number;
   public mouseDownEvent: string;
@@ -9,7 +23,7 @@ class ValidateView {
     this.mouseMoveEvent = 'mousemove';
   }
 
-  public setPointerShift (newShift): void {
+  public setPointerShift (newShift: number): void {
     this.currentPointerShift = newShift;
   }
 
@@ -17,7 +31,7 @@ class ValidateView {
     return this.currentPointerShift;
   }
 
-  public convertPixelToPercent (data: any = {}): any {
+  public convertPixelToPercent (data: pixelToPercentConverting): any {
     const {
       currentPixel,
       containerWidth,
@@ -27,7 +41,7 @@ class ValidateView {
     return Math.ceil((currentPixel * (maxPercent - minPercent)) / containerWidth);
   }
 
-  public convertPercentToPixel (data: any = {}): any {
+  public convertPercentToPixel (data: percentToPixelConverting): any {
     const {
       minPercent,
       maxPercent,

@@ -14,8 +14,28 @@ class Controller {
     this.subscribeModelObserver();
   }
 
+  public showTooltip (): void {
+    this.model.showTooltip();
+  }
+
+  public hideTooltip (): void {
+    this.model.hideTooltip();
+  }
+
+  public setAxis(axis: string) {
+    this.model.setAxis(axis);
+  }
+
   public setStepSize (newStepSize: number): void {
     this.model.setStepSize(newStepSize);
+  }
+
+  public setMinValue(value: number): void {
+    this.model.setMinValue(value);
+  }
+
+  public setMaxValue(value: number): void {
+    this.model.setMaxValue(value);
   }
 
   private subscribeViewObserver (): void {
@@ -26,7 +46,27 @@ class Controller {
 
   private subscribeModelObserver (): void {
     this.model.eventObserver.subscribe((event) => {
-      this.view.prepareToMoveHandler(event.state)
+
+      switch (event.name) {
+        case 'SET_STATE':
+          this.view.prepareToMoveHandler(event.state);
+          break;
+        case 'SET_MIN_VALUE':
+          this.view.drawSliderBreakpoints();
+          break;
+        case 'SET_MAX_VALUE':
+          this.view.drawSliderBreakpoints();
+          break;
+        case 'SET_STEP_SIZE':
+          this.view.drawSliderBreakpoints();
+          break;
+        case 'SET_AXIS':
+          this.view.setAxis(event.axis);
+        case 'SET_TOOLTIP_ACTIVE':
+          this.view.setTooltipActivity(event.isEnabledTooltip)
+        default:
+          return;
+      }
     })
   }
 }

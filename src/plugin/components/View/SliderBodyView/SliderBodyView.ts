@@ -1,10 +1,20 @@
 class SliderBodyView {
   public $mainHtml: JQuery<HTMLElement>;
   private axis: string;
+  private breakpoints: any[];
 
   constructor ($htmlContainer: JQuery<HTMLElement>, axis) {
     this.axis = axis;
     this.$mainHtml = this.drawSliderBody($htmlContainer);
+    this.breakpoints = [];
+  }
+
+  public setAxis(axis: string): string {
+    return this.axis = axis;
+  }
+
+  public removeSliderBody() {
+    this.$mainHtml.remove();
   }
 
   public getSliderBodyParams (): number {
@@ -15,15 +25,22 @@ class SliderBodyView {
   }
 
   public drawBreakPoints (breakpoints: number[]): void {
+    this.removeBreakpoints();
     const direction = this.axis === 'X' ? 'left' : 'top';
     const icon = this.axis === 'X' ? '|' : '-';
-    breakpoints.map((breakpoint) => {
-      $('<div/>', {
+    this.breakpoints = breakpoints.map((breakpoint) => {
+      return $('<div/>', {
         class: `slider__breakpoint slider__breakpoint_direction_${direction}`
       })
         .css(direction, `${breakpoint}px`)
         .text(icon)
         .appendTo(this.$mainHtml);
+    });
+  }
+
+  public removeBreakpoints (): void {
+    this.breakpoints.forEach($element => {
+      $element.remove();
     });
   }
 

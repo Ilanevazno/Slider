@@ -1,3 +1,6 @@
+include ../components/panel/panel
+include ../components/slider/slider
+
 doctype html
 html
   head
@@ -12,6 +15,8 @@ html
     link(rel="icon" sizes="any" mask href="./assets/favicons/safari-pinned-tab.svg")
     title Страница со слайдером
   body
-    .slider-one.js-slider-one
-    .slider-two.js-slider-two
-    .slider-three.js-slider-three
+    .example
+    - for (let i = 0; i < 3; i += 1)
+      .example__item
+        +slider()
+        +panel()

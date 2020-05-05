@@ -7,7 +7,7 @@ import TooltipView from './TooltipView/TooltipView';
 
 class View {
   private $sliderContainer: JQuery<HTMLElement>
-  private sliderBody: SliderBodyView;
+  private sliderBody: any;
   private handlerMinValue: object
   private handlerMaxValue: object
 
@@ -18,6 +18,40 @@ class View {
     this.eventObserver = new Observer();
     this.validateView = new ValidateView();
     this.$sliderContainer = this.drawSliderContainer(initHtmlElement);
+    this.sliderBody = null;
+    this.handlerMinValue = {}
+    this.handlerMaxValue = {}
+
+    this.drawSliderInstances();
+  }
+
+  public setTooltipActivity(isTooltipActive): void {
+    [this.handlerMinValue, this.handlerMaxValue].map((currentHandler) => {
+      // currentHandler['instances'].tooltip.$tooltip.remove();
+      // currentHandler['instances'].tooltip.eventObserver.broadcast({ isTooltipActive });
+      const $handlerHtml = currentHandler['instances'].handler.$html;
+      console.log(currentHandler);
+      currentHandler['instances'].tooltip = new TooltipView($handlerHtml, this.model.getOption('axis'));
+      console.log(currentHandler);
+    });
+    isTooltipActive
+    // if (isTooltipActive) {
+    //   [this.handlerMinValue, this.handlerMaxValue].map((currentHandler) => {
+    //     const $handlerHtml = currentHandler['instances'].handler.$html;
+    //     const tooltip = currentHandler['instances'].tooltip = new TooltipView($handlerHtml, this.model.getOption('axis'))
+
+    //     tooltip.setValue(this.model.getOption('minValue'));
+    //   });
+    // } else {
+    //   [this.handlerMinValue, this.handlerMaxValue].map((currentHandler) => {
+    //     console.log(currentHandler['instances'].tooltip);
+    //     currentHandler['instances'].tooltip.removeTooltip();
+    //     currentHandler['instances'].tooltip = null;
+    //   });
+    // }
+  }
+
+  private drawSliderInstances() {
     this.sliderBody = this.drawSliderBody(this.$sliderContainer);
     this.handlerMinValue = {
       name: 'min-value',
@@ -50,11 +84,11 @@ class View {
     return sliderBody;
   }
 
-  private drawSliderBreakpoints ():void {
+  public drawSliderBreakpoints(): void {
     const pointerWidth: number = this.handlerMaxValue['instances'].handler.getHandlerWidth();
     const maxContainerWidth: number = this.sliderBody.getSliderBodyParams() - (pointerWidth / 2);
 
-    const breakpoints = this.model.setBreakPointList().map((currentPercent) => {
+    const breakpoints = this.model.getOption('breakpoints').map((currentPercent) => {
       const optionList = {
         minPercent: this.model.getOption('minValue'),
         maxPercent: this.model.getOption('maxValue'),
@@ -73,7 +107,7 @@ class View {
     let handlerTooltip: TooltipView | null = null;
 
     if (this.model.getOption('isEnabledTooltip')) {
-      handlerTooltip = new TooltipView(sliderHandler.$html);
+      handlerTooltip = new TooltipView(sliderHandler.$html, this.model.getOption('axis'));
 
       handlerTooltip.setValue(this.model.getOption('minValue'));
     }
@@ -109,6 +143,12 @@ class View {
           return false;
       };
     });
+  }
+
+  public setAxis(axis: string): void {
+    this.sliderBody.removeSliderBody();
+    this.sliderBody.setAxis(axis);
+    this.drawSliderInstances();
   }
 
   public prepareToMoveHandler(currentHandler) {
@@ -147,7 +187,7 @@ class View {
     });
   }
 
-  private isEnabledTooltip (): boolean {
+  private isEnabledTooltip(): boolean {
     return this.model.getOption('isEnabledTooltip');
   }
 
@@ -165,9 +205,9 @@ class View {
   private handleHandlerMove({ $handler, event, name }): number {
     const shift = this.validateView.getPointerShift();
     const currentPixel = this.model.axis === 'X' ?
-    event.clientX - shift - this.sliderBody.$mainHtml[0].getBoundingClientRect().left
-    :
-    event.clientY - shift - this.sliderBody.$mainHtml[0].getBoundingClientRect().top;
+      event.clientX - shift - this.sliderBody.$mainHtml[0].getBoundingClientRect().left
+      :
+      event.clientY - shift - this.sliderBody.$mainHtml[0].getBoundingClientRect().top;
     const optionsToConvert = {
       containerWidth: this.sliderBody.getSliderBodyParams(),
       minPercent: this.model.getOption('minValue'),

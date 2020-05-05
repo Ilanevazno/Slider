@@ -1,6 +1,16 @@
 import Observer from '../Observer/Observer';
 import ValidateModel from './ValidateModel/ValidateModel';
 
+type modelOptions = {
+  isShowLabels: boolean,
+  isEnabledTooltip: boolean,
+  axis: string,
+  valueType: string,
+  minValue: number,
+  maxValue: number,
+  stepSize: number,
+}
+
 class Model {
   public state: object;
   public axis: string;
@@ -14,18 +24,36 @@ class Model {
   public isShowLabels: boolean;
   public validate: ValidateModel;
 
-  constructor(options: object) {
+  constructor(options: modelOptions) {
     this.validate = new ValidateModel;
     this.eventObserver = new Observer();
     this.state = {};
-    this.isShowLabels = options['showLabels'];
-    this.axis = options['axis'] || this.validate.axisX;
-    this.valueType = options['valueType'] || this.validate.singleValue;
-    this.isEnabledTooltip = options['tooltip'];
-    this.minValue = options['minValue'] || 0;
-    this.maxValue = options['maxValue'] || 500;
-    this.stepSize = this.setStepSize(options['stepSize']);
-    this.breakPoints = this.setBreakPointList();
+    this.isShowLabels = options.isShowLabels;
+    this.axis = options.axis || this.validate.axisX;
+    this.valueType = options.valueType || this.validate.singleValue;
+    this.isEnabledTooltip = options.isEnabledTooltip;
+    this.minValue = options.minValue || 0;
+    this.maxValue = options.maxValue || 100;
+    this.stepSize = this.setStepSize(options.stepSize);
+    this.breakPoints = this.updateBreakpointList();
+  }
+
+  public setAxis(axis: string) {
+    this.axis = axis;
+
+    this.eventObserver.broadcast({ axis: this.axis, name: 'SET_AXIS' });
+  }
+
+  public showTooltip  (): void {
+    this.isEnabledTooltip = true;
+
+    this.eventObserver.broadcast({ isEnabledTooltip: this.isEnabledTooltip, name: 'SET_TOOLTIP_ACTIVE' });
+  }
+
+  public hideTooltip (): void {
+    this.isEnabledTooltip = false;
+
+    this.eventObserver.broadcast({ isEnabledTooltip: this.isEnabledTooltip, name: 'SET_TOOLTIP_ACTIVE' });
   }
 
   private getOptionList() {
@@ -43,9 +71,23 @@ class Model {
     return optionList;
   }
 
-  public setBreakPointList(): number[] {
+  public setMinValue(value: number): void {
+    this.minValue = value;
+    this.updateBreakpointList();
+
+    this.eventObserver.broadcast({ minValue: this.minValue, name: 'SET_MIN_VALUE' });
+  }
+
+  public setMaxValue(value: number): void {
+    this.maxValue = value;
+    this.updateBreakpointList();
+
+    this.eventObserver.broadcast({ maxValue: this.maxValue, name: 'SET_MAX_VALUE' });
+  }
+
+  public updateBreakpointList(): number[] {
     const stepsBreakpointList: number[] = [];
-    let breakPoint: number = 1;
+    let breakPoint: number = this.minValue;
 
     while (breakPoint <= this.maxValue) {
       stepsBreakpointList.push(breakPoint);
@@ -56,11 +98,11 @@ class Model {
     return this.breakPoints;
   }
 
-  private checkIncludeStateValue(targetElement: JQuery<HTMLElement>): boolean {
+  private checkIncludeStateValue($targetElement: JQuery<HTMLElement>): boolean {
     let isFoundItem: boolean = false;
 
     Object.values(this.state).map((stateElement) => {
-      if (stateElement.$handler[0] === targetElement[0]) {
+      if (stateElement.$handler[0] === $targetElement[0]) {
         isFoundItem = true;
       }
       return false;
@@ -105,11 +147,14 @@ class Model {
       }
     });
 
-    this.eventObserver.broadcast({ state: this.state });
+    this.eventObserver.broadcast({ state: this.state, name: 'SET_STATE' });
   }
 
-  public setStepSize(newStepSize: number | Array<number>): number {
+  public setStepSize(newStepSize: number): number {
     this.stepSize = Number(newStepSize);
+    this.updateBreakpointList();
+
+    this.eventObserver.broadcast({ newBreakpoints: this.breakPoints, name: 'SET_STEP_SIZE' });
 
     return this.stepSize;
   }

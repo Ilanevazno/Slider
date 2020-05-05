@@ -34,10 +34,6 @@
     cursor: pointer;
 
     &_type{
-      &_horizontal {
-
-      }
-
       &_vertical {
         transform: translate(-0.8rem);
       }
@@ -55,7 +51,18 @@
     color: white;
     border-radius: 10px;
     position: absolute;
-    top: -90%;
+    padding: 0.1rem;
+
+    &_type{
+      &_horizontal {
+        top: -2rem;
+      }
+
+      &_vertical {
+        left: -2.5rem;
+        top: 0.2rem;
+      }
+    }
   }
 
   &__breakpoint {

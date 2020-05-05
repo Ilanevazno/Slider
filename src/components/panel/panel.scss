@@ -1,0 +1,19 @@
+.panel {
+  border: 1px dashed darkorange;
+  padding: 2rem;
+  box-shadow: 1px 1px 1px darkorange;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  font-family: cursive;
+  background: whitesmoke;
+
+  &__label {
+    text-align: center;
+
+    &-item {
+      border: 1px solid gainsboro;
+      font-family: cursive;
+    }
+  }
+}
