@@ -6,7 +6,7 @@ class Controller {
   private model: Model;
   private view: View;
 
-  constructor (model: Model, view: View) {
+  constructor(model: Model, view: View) {
     this.model = model;
     this.view = view;
 
@@ -14,11 +14,19 @@ class Controller {
     this.subscribeModelObserver();
   }
 
-  public showTooltip (): void {
+  public showLabels(): void {
+    this.model.setLabelsActivity(true);
+  }
+
+  public hideLabels(): void {
+    this.model.setLabelsActivity(false);
+  }
+
+  public showTooltip(): void {
     this.model.showTooltip();
   }
 
-  public hideTooltip (): void {
+  public hideTooltip(): void {
     this.model.hideTooltip();
   }
 
@@ -26,7 +34,7 @@ class Controller {
     this.model.setAxis(axis);
   }
 
-  public setStepSize (newStepSize: number): void {
+  public setStepSize(newStepSize: number): void {
     this.model.setStepSize(newStepSize);
   }
 
@@ -38,13 +46,23 @@ class Controller {
     this.model.setMaxValue(value);
   }
 
-  private subscribeViewObserver (): void {
-    this.view.eventObserver.subscribe((handlerProps) => {
-      this.model.setState(handlerProps);
+  private subscribeViewObserver(): void {
+    this.view.eventObserver.subscribe((event) => {
+      // console.log(event);
+      switch (event.type) {
+        case 'SET_STATE':
+          this.model.setState(event.data);
+          break;
+        case 'REFRESH_STATE':
+          this.model.refreshState();
+          break;
+        default:
+          break;
+      }
     })
   }
 
-  private subscribeModelObserver (): void {
+  private subscribeModelObserver(): void {
     this.model.eventObserver.subscribe((event) => {
 
       switch (event.name) {
@@ -52,18 +70,20 @@ class Controller {
           this.view.prepareToMoveHandler(event.state);
           break;
         case 'SET_MIN_VALUE':
-          this.view.drawSliderBreakpoints();
+          this.view.changeBreakpointsActivity();
           break;
         case 'SET_MAX_VALUE':
-          this.view.drawSliderBreakpoints();
+          this.view.changeBreakpointsActivity();
           break;
         case 'SET_STEP_SIZE':
-          this.view.drawSliderBreakpoints();
+          this.view.changeBreakpointsActivity();
           break;
         case 'SET_AXIS':
           this.view.setAxis(event.axis);
         case 'SET_TOOLTIP_ACTIVE':
           this.view.setTooltipActivity(event.isEnabledTooltip)
+        case 'SET_LABELS_ACTIVITY':
+          this.view.changeBreakpointsActivity();
         default:
           return;
       }

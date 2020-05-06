@@ -12,8 +12,18 @@
     text-align: center;
 
     &-item {
-      border: 1px solid gainsboro;
+      border: 1px solid #cacaca;
+      box-shadow: 3px 3px 1px 0px #cacaca;
       font-family: cursive;
+      text-align: center;
+      font-size: 1.1rem;
+      transition: 0.2s cubic-bezier(0, 0, 0.2, 1) all;
+      cursor: pointer;
+      padding: 1rem;
+
+      &:hover {
+        transform: scale(1.1);
+      }
     }
   }
 }

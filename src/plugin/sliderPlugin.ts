@@ -15,21 +15,24 @@ namespace sliderPlugin {
     controller: null,
     observer: new Observer,
 
-    sliderPlugin (args) {
+    sliderPlugin(args) {
       // console.log(args);
       const {
         stepSize = 10,
         minValue = 5,
         maxValue = 100,
         axis = 'X',
+        isShowLabels = true,
+        isEnabledTooltip = true,
+        valueType = 'singleValue',
       } = args;
 
       const options = {
-        isShowLabels: true,
-        isEnabledTooltip: false,
+        isShowLabels: isShowLabels,
+        isEnabledTooltip: isEnabledTooltip,
         axis: axis,
         stepSize,
-        valueType: 'singleValue',
+        valueType: valueType,
         minValue: minValue,
         maxValue: maxValue,
       }
@@ -41,27 +44,35 @@ namespace sliderPlugin {
       return this;
     },
 
-    setStepSize (stepSize: number | Array<number>): void {
+    showLabels(): void {
+      this.controller.showLabels();
+    },
+
+    hideLabels(): void {
+      this.controller.hideLabels();
+    },
+
+    setStepSize(stepSize: number | Array<number>): void {
       this.controller.setStepSize(stepSize);
     },
 
-    setMinValue (value: number): void {
+    setMinValue(value: number): void {
       this.controller.setMinValue(value);
     },
 
-    setMaxValue (value: number): void {
+    setMaxValue(value: number): void {
       this.controller.setMaxValue(value);
     },
 
-    setAxis (axis: string): void {
+    setAxis(axis: string): void {
       this.controller.setAxis(axis);
     },
 
-    showTooltip (): void {
+    showTooltip(): void {
       this.controller.showTooltip();
     },
 
-    hideTooltip (): void {
+    hideTooltip(): void {
       this.controller.hideTooltip();
     }
   });

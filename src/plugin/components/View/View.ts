@@ -8,8 +8,8 @@ import TooltipView from './TooltipView/TooltipView';
 class View {
   private $sliderContainer: JQuery<HTMLElement>
   private sliderBody: any;
-  private handlerMinValue: object
-  private handlerMaxValue: object
+  private handlerMinValue: any
+  private handlerMaxValue: any
 
   public eventObserver: Observer;
   private validateView: ValidateView;
@@ -19,36 +19,17 @@ class View {
     this.validateView = new ValidateView();
     this.$sliderContainer = this.drawSliderContainer(initHtmlElement);
     this.sliderBody = null;
-    this.handlerMinValue = {}
-    this.handlerMaxValue = {}
+    this.handlerMinValue = null
+    this.handlerMaxValue = null
 
     this.drawSliderInstances();
   }
 
   public setTooltipActivity(isTooltipActive): void {
     [this.handlerMinValue, this.handlerMaxValue].map((currentHandler) => {
-      // currentHandler['instances'].tooltip.$tooltip.remove();
-      // currentHandler['instances'].tooltip.eventObserver.broadcast({ isTooltipActive });
-      const $handlerHtml = currentHandler['instances'].handler.$html;
-      console.log(currentHandler);
-      currentHandler['instances'].tooltip = new TooltipView($handlerHtml, this.model.getOption('axis'));
-      console.log(currentHandler);
+      const tooltipPercent = currentHandler.statePercent;
+      currentHandler.instances.tooltip.eventObserver.broadcast({ isTooltipActive, tooltipPercent });
     });
-    isTooltipActive
-    // if (isTooltipActive) {
-    //   [this.handlerMinValue, this.handlerMaxValue].map((currentHandler) => {
-    //     const $handlerHtml = currentHandler['instances'].handler.$html;
-    //     const tooltip = currentHandler['instances'].tooltip = new TooltipView($handlerHtml, this.model.getOption('axis'))
-
-    //     tooltip.setValue(this.model.getOption('minValue'));
-    //   });
-    // } else {
-    //   [this.handlerMinValue, this.handlerMaxValue].map((currentHandler) => {
-    //     console.log(currentHandler['instances'].tooltip);
-    //     currentHandler['instances'].tooltip.removeTooltip();
-    //     currentHandler['instances'].tooltip = null;
-    //   });
-    // }
   }
 
   private drawSliderInstances() {
@@ -64,11 +45,25 @@ class View {
     };
 
     if (this.model.getOption('isShowLabels')) {
-      this.drawSliderBreakpoints();
+      this.changeBreakpointsActivity();
     }
 
     this.initHandlerEvents(this.handlerMinValue);
     this.initHandlerEvents(this.handlerMaxValue);
+    this.initSliderBodyEvents();
+  }
+
+  private initSliderBodyEvents(): void {
+    this.sliderBody.eventObserver.subscribe((event) => {
+      switch (event.type) {
+        case 'WINDOW_RESIZE':
+          this.changeBreakpointsActivity();
+          this.eventObserver.broadcast({ type: 'REFRESH_STATE' });
+          break;
+        default:
+          break;
+      }
+    });
   }
 
   private drawSliderContainer(htmlContainer: JQuery<HTMLElement> | HTMLElement): JQuery<HTMLElement> {
@@ -84,11 +79,11 @@ class View {
     return sliderBody;
   }
 
-  public drawSliderBreakpoints(): void {
+  private getConvertedBreakpoints() {
     const pointerWidth: number = this.handlerMaxValue['instances'].handler.getHandlerWidth();
     const maxContainerWidth: number = this.sliderBody.getSliderBodyParams() - (pointerWidth / 2);
 
-    const breakpoints = this.model.getOption('breakpoints').map((currentPercent) => {
+    return this.model.getOption('breakpoints').map((currentPercent) => {
       const optionList = {
         minPercent: this.model.getOption('minValue'),
         maxPercent: this.model.getOption('maxValue'),
@@ -98,18 +93,31 @@ class View {
 
       return this.validateView.convertPercentToPixel(optionList) + (pointerWidth / 2);
     })
+  }
 
-    this.sliderBody.drawBreakPoints(breakpoints);
+  public changeBreakpointsActivity(): void {
+    const availableBreakpoints = this.getConvertedBreakpoints();
+
+    const isActiveBreakpoints = this.model.getOption('isShowLabels');
+
+    const broadcastingData = {
+      isActiveBreakpoints,
+      breakpoints: isActiveBreakpoints ? availableBreakpoints : false,
+      type: 'SET_BREAKPOINTS_ACTIVITY',
+    };
+
+    this.sliderBody.eventObserver.broadcast(broadcastingData);
   }
 
   private drawHandlerInstances($HtmlContainer): object {
     const sliderHandler = new HandlerView($HtmlContainer, this.model.getOption('axis'));
-    let handlerTooltip: TooltipView | null = null;
+    const handlerTooltip: TooltipView = new TooltipView(sliderHandler.$html, this.model.getOption('axis'));
 
-    if (this.model.getOption('isEnabledTooltip')) {
-      handlerTooltip = new TooltipView(sliderHandler.$html, this.model.getOption('axis'));
+    const isTooltipActive = this.model.getOption('isEnabledTooltip');
+    const tooltipPercent = this.model.getOption('minValue');
 
-      handlerTooltip.setValue(this.model.getOption('minValue'));
+    if (isTooltipActive) {
+      handlerTooltip['eventObserver'].broadcast({ isTooltipActive, tooltipPercent });
     }
 
     return {
@@ -166,18 +174,20 @@ class View {
 
       switch (handler.name) {
         case 'min-value':
-          this.handlerMinValue['instances'].handler.moveHandler(newHandlerPosition);
+          this.handlerMinValue.instances.handler.moveHandler(newHandlerPosition);
+          this.handlerMinValue.statePercent = currentPercent;
 
           if (this.isEnabledTooltip()) {
-            this.handlerMinValue['instances'].tooltip.setValue(currentPercent);
+            this.handlerMinValue.instances.tooltip.setValue(currentPercent);
           }
 
           break
         case 'max-value':
-          this.handlerMaxValue['instances'].handler.moveHandler(newHandlerPosition);
+          this.handlerMaxValue.instances.handler.moveHandler(newHandlerPosition);
+          this.handlerMaxValue.statePercent = currentPercent;
 
           if (this.isEnabledTooltip()) {
-            this.handlerMaxValue['instances'].tooltip.setValue(currentPercent);
+            this.handlerMaxValue.instances.tooltip.setValue(currentPercent);
           }
 
           break
@@ -215,7 +225,15 @@ class View {
       currentPixel,
     };
     const value = this.validateView.convertPixelToPercent(optionsToConvert) + this.model.minValue;
-    this.eventObserver.broadcast({ $handler, value, name });
+    const dataForBroadcasting = {
+      type: 'SET_STATE',
+      data: {
+        $handler,
+        value,
+        name,
+      }
+    }
+    this.eventObserver.broadcast(dataForBroadcasting);
 
     return value;
   }

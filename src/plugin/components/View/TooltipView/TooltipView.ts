@@ -1,24 +1,24 @@
 import Observer from '../../Observer/Observer';
 
 class TooltipView {
-  private $tooltip: JQuery<HTMLElement>;
+  private $tooltip: any;
   private $htmlParent: JQuery<HTMLElement>;
   private axis: string;
   private eventObserver: Observer;
 
   constructor($htmlcontainer, axis) {
+    this.$tooltip = null;
     this.$htmlParent = $htmlcontainer;
     this.eventObserver = new Observer();
     this.listenEvents();
     this.axis = axis;
-    this.$tooltip = this.drawTooltip($htmlcontainer);
   }
 
   private listenEvents() {
     this.eventObserver.subscribe((event) => {
       if (event.isTooltipActive) {
-        this.drawTooltip(this.$htmlParent)
-        // this.setValue(event.currentValue)
+        this.drawTooltip()
+        this.setValue(event.tooltipPercent)
       } else {
         this.removeTooltip();
       }
@@ -29,13 +29,13 @@ class TooltipView {
     this.$tooltip.text(percent);
   }
 
-  private drawTooltip($htmlContainer): JQuery<HTMLElement> {
+  public drawTooltip(): JQuery<HTMLElement> {
     this.$tooltip = $('<div/>', {
       class: this.axis === 'X' ?
         'slider__tooltip slider__tooltip_type_horizontal'
         :
         'slider__tooltip slider__tooltip_type_vertical'
-    }).appendTo($htmlContainer);
+    }).appendTo(this.$htmlParent);
     return this.$tooltip;
   }
 

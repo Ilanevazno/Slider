@@ -44,13 +44,19 @@ class Model {
     this.eventObserver.broadcast({ axis: this.axis, name: 'SET_AXIS' });
   }
 
-  public showTooltip  (): void {
+  public setLabelsActivity(isLabelsActive: boolean): void {
+    this.isShowLabels = isLabelsActive;
+
+    this.eventObserver.broadcast({ isLabelsActive, name: 'SET_LABELS_ACTIVITY' });
+  }
+
+  public showTooltip(): void {
     this.isEnabledTooltip = true;
 
     this.eventObserver.broadcast({ isEnabledTooltip: this.isEnabledTooltip, name: 'SET_TOOLTIP_ACTIVE' });
   }
 
-  public hideTooltip (): void {
+  public hideTooltip(): void {
     this.isEnabledTooltip = false;
 
     this.eventObserver.broadcast({ isEnabledTooltip: this.isEnabledTooltip, name: 'SET_TOOLTIP_ACTIVE' });
@@ -111,7 +117,7 @@ class Model {
     return isFoundItem;
   }
 
-  private checkCollision (): void {
+  private checkCollision(): void {
     let minValue = this.state[0].value;
     let maxValue = this.state[Object.keys(this.state).length - 1].value;
 
@@ -124,11 +130,11 @@ class Model {
     }
   }
 
-  private isAvailableRange (newState): boolean {
+  private isAvailableRange(newState): boolean {
     return newState <= this.maxValue && newState >= this.minValue;
   }
 
-  private calculateNewState (newState): number {
+  private calculateNewState(newState): number {
     const nextStep = Math.min(...this.breakPoints.filter((step) => step >= (newState - Math.floor(this.stepSize / 2))));
     return isFinite(nextStep) ? nextStep : this.breakPoints[this.breakPoints.length];
   }
@@ -150,9 +156,20 @@ class Model {
     this.eventObserver.broadcast({ state: this.state, name: 'SET_STATE' });
   }
 
+  public refreshState(): void {
+    const currentState = this.getState();
+    Object.values(currentState).map((item, _index) => {
+      this.setState(item);
+    });
+
+    this.eventObserver.broadcast({ state: this.state, name: 'SET_STATE' });
+  }
+
   public setStepSize(newStepSize: number): number {
     this.stepSize = Number(newStepSize);
     this.updateBreakpointList();
+
+    this.refreshState();
 
     this.eventObserver.broadcast({ newBreakpoints: this.breakPoints, name: 'SET_STEP_SIZE' });
 
