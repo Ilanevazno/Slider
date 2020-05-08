@@ -4,3 +4,27 @@
   width: 491px;
   margin: 0 auto; }
 
+.panel {
+  border: 1px dashed darkorange;
+  padding: 2rem;
+  box-shadow: 1px 1px 1px darkorange;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  font-family: cursive;
+  background: whitesmoke; }
+  .panel__label {
+    text-align: center; }
+    .panel__label-item {
+      border: 1px solid #cacaca;
+      box-shadow: 3px 3px 1px 0px #cacaca;
+      font-family: cursive;
+      text-align: center;
+      font-size: 1.1rem;
+      transition: 0.2s cubic-bezier(0, 0, 0.2, 1) all;
+      cursor: pointer;
+      padding: 1rem; }
+      .panel__label-item:hover {
+        transform: scale(1.1); }
+
+

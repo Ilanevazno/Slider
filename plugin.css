@@ -37,7 +37,12 @@
   color: white;
   border-radius: 10px;
   position: absolute;
-  top: -90%; }
+  padding: 0.1rem; }
+  .slider__tooltip_type_horizontal {
+    top: -2rem; }
+  .slider__tooltip_type_vertical {
+    left: -2.5rem;
+    top: 0.2rem; }
 
 .slider__breakpoint {
   color: gray;
