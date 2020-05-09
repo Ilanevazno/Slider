@@ -1,2 +1,20 @@
-mixin slider ()
-  section.slider.js-slider
+mixin slider (data)
+  -
+    const {
+      minValue = 0,
+      maxValue = 100,
+      stepSize = 10,
+      axis = 'X',
+      valueType = 'singleValue',
+      isShowTooltip = true,
+      isShowLabels = true,
+    } = data;
+  section.slider.js-slider(
+    data-minValue= minValue
+    data-maxValue= maxValue
+    data-stepSize= stepSize
+    data-axis= axis
+    data-valueType= valueType
+    data-isShowTooltip= isShowTooltip
+    data-isShowLabels= isShowLabels
+  )

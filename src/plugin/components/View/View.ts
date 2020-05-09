@@ -25,31 +25,65 @@ class View {
     this.drawSliderInstances();
   }
 
+  public refreshView(): void {
+    // this.handlerMinValue = null;
+    // this.handlerMaxValue = null
+  }
+
+  public setState(handler: string): void {
+    const caughtHandlerIndex = handler === 'min-value' || handler === 'value' ? 0 : 1;
+    const caughtHandlerInstance = [this.handlerMinValue, this.handlerMaxValue][caughtHandlerIndex];
+    const caughtHandlerName = caughtHandlerInstance.name;
+    const $caughtHandlerHtml = caughtHandlerInstance.instances.handler.$html;
+    const minValue = this.model.getOption('minValue');
+
+    // console.log($caughtHandlerHtml);
+
+    const dataForBroadcasting = {
+      type: 'SET_STATE',
+      data: {
+        $handler: $caughtHandlerHtml,
+        name: caughtHandlerName,
+        value: minValue,
+      }
+    }
+    this.eventObserver.broadcast(dataForBroadcasting);
+  }
+
   public setTooltipActivity(isTooltipActive): void {
     [this.handlerMinValue, this.handlerMaxValue].map((currentHandler) => {
-      const tooltipPercent = currentHandler.statePercent;
-      currentHandler.instances.tooltip.eventObserver.broadcast({ isTooltipActive, tooltipPercent });
+      if (currentHandler) {
+        const tooltipPercent = currentHandler.statePercent || this.model.getOption('minValue');
+        currentHandler.instances.tooltip.eventObserver.broadcast({ isTooltipActive, tooltipPercent });
+      }
     });
   }
 
   private drawSliderInstances() {
+    const valueType = this.model.getOption('valueType');
     this.sliderBody = this.drawSliderBody(this.$sliderContainer);
     this.handlerMinValue = {
-      name: 'min-value',
+      name: valueType === 'singleValue' ? 'value' : 'min-value',
       instances: this.drawHandlerInstances(this.sliderBody.$mainHtml),
     };
 
-    this.handlerMaxValue = {
-      name: 'max-value',
-      instances: this.drawHandlerInstances(this.sliderBody.$mainHtml)
-    };
+    this.initHandlerEvents(this.handlerMinValue);
+    setTimeout(() => { this.setState('min-value') }, 0)
+
+    if (valueType === 'doubleValue') {
+      this.handlerMaxValue = {
+        name: 'max-value',
+        instances: this.drawHandlerInstances(this.sliderBody.$mainHtml)
+      };
+
+      this.initHandlerEvents(this.handlerMaxValue);
+      setTimeout(() => { this.setState('max-value') }, 0)
+    }
 
     if (this.model.getOption('isShowLabels')) {
       this.changeBreakpointsActivity();
     }
 
-    this.initHandlerEvents(this.handlerMinValue);
-    this.initHandlerEvents(this.handlerMaxValue);
     this.initSliderBodyEvents();
   }
 
@@ -60,6 +94,48 @@ class View {
           this.changeBreakpointsActivity();
           this.eventObserver.broadcast({ type: 'REFRESH_STATE' });
           break;
+        case 'SLIDER_BODY_CLICK':
+          const targetPercent = this.convertPxToPercent(event.caughtCoords);
+          const currentState = this.model.getState();
+          let availableHandlerValues: any = [];
+
+          for (let currentHandlerValue in currentState) {
+            availableHandlerValues.push(currentState[currentHandlerValue].value);
+          }
+
+          const findTheClosest = (array, base) => {
+            let theClosest = Infinity;
+            let temp, arrayElement;
+
+            array.map((_element, i) => {
+              temp = Math.abs(array[i] - base);
+
+              if (temp < theClosest) {
+                theClosest = temp;
+                arrayElement = array[i];
+              }
+            });
+
+            return arrayElement;
+          }
+
+          const findAvailableHandler = findTheClosest(availableHandlerValues, targetPercent);
+
+          console.log(findAvailableHandler)
+
+          Object.values(currentState).map((handler) => {
+            if (handler.value === findAvailableHandler) {
+              const dataForBroadcasting = {
+                type: 'SET_STATE',
+                data: {
+                  $handler: handler.$handler,
+                  name: handler.name,
+                  value: targetPercent,
+                }
+              }
+            this.eventObserver.broadcast(dataForBroadcasting);
+            }
+          });
         default:
           break;
       }
@@ -80,7 +156,7 @@ class View {
   }
 
   private getConvertedBreakpoints() {
-    const pointerWidth: number = this.handlerMaxValue['instances'].handler.getHandlerWidth();
+    const pointerWidth: number = this.handlerMinValue.instances.handler.getHandlerWidth();
     const maxContainerWidth: number = this.sliderBody.getSliderBodyParams() - (pointerWidth / 2);
 
     return this.model.getOption('breakpoints').map((currentPercent) => {
@@ -127,13 +203,13 @@ class View {
   }
 
   private initHandlerEvents(parent): void {
-    setTimeout(() => {
-      this.eventObserver.broadcast({
-        $handler: parent.instances.handler.$html,
-        value: this.model.getOption('minValue'),
-        name: parent.name
-      });
-    }, 0);
+    // setTimeout(() => {
+    //   this.eventObserver.broadcast({
+    //     $handler: parent.instances.handler.$html,
+    //     value: this.model.getOption('minValue'),
+    //     name: parent.name
+    //   });
+    // }, 0);
 
     parent.instances.handler.observer.subscribe((handler) => {
       switch (handler.eventType) {
@@ -160,6 +236,7 @@ class View {
   }
 
   public prepareToMoveHandler(currentHandler) {
+    // console.log(currentHandler)
     Object.values(currentHandler).map((handler: any) => {
       const $caughtHandler: JQuery<HTMLElement> = $(handler.$handler);
       const currentPercent: number = handler.value;
@@ -172,8 +249,13 @@ class View {
       };
       const newHandlerPosition: number = this.validateView.convertPercentToPixel(optionList);
 
+      const valueType = this.model.getOption('valueType');
+
+      const minValueHandlerName = valueType === 'singleValue' ? 'value' : 'min-value';
+      const maxValueHandlerName = 'max-value';
+
       switch (handler.name) {
-        case 'min-value':
+        case minValueHandlerName:
           this.handlerMinValue.instances.handler.moveHandler(newHandlerPosition);
           this.handlerMinValue.statePercent = currentPercent;
 
@@ -182,7 +264,7 @@ class View {
           }
 
           break
-        case 'max-value':
+        case maxValueHandlerName:
           this.handlerMaxValue.instances.handler.moveHandler(newHandlerPosition);
           this.handlerMaxValue.statePercent = currentPercent;
 
@@ -212,19 +294,24 @@ class View {
     this.setPointerShift(shift);
   }
 
-  private handleHandlerMove({ $handler, event, name }): number {
-    const shift = this.validateView.getPointerShift();
-    const currentPixel = this.model.axis === 'X' ?
-      event.clientX - shift - this.sliderBody.$mainHtml[0].getBoundingClientRect().left
-      :
-      event.clientY - shift - this.sliderBody.$mainHtml[0].getBoundingClientRect().top;
+  private convertPxToPercent(currentPixel: number): number {
     const optionsToConvert = {
       containerWidth: this.sliderBody.getSliderBodyParams(),
       minPercent: this.model.getOption('minValue'),
       maxPercent: this.model.getOption('maxValue'),
       currentPixel,
     };
-    const value = this.validateView.convertPixelToPercent(optionsToConvert) + this.model.minValue;
+    return this.validateView.convertPixelToPercent(optionsToConvert) + this.model.getOption('minValue');
+  }
+
+  private handleHandlerMove({ $handler, event, name }): number {
+    const shift = this.validateView.getPointerShift();
+    const currentPixel = this.model.axis === 'X' ?
+      event.clientX - shift - this.sliderBody.$mainHtml[0].getBoundingClientRect().left
+      :
+      event.clientY - shift - this.sliderBody.$mainHtml[0].getBoundingClientRect().top;
+
+    const value = this.convertPxToPercent(currentPixel);
     const dataForBroadcasting = {
       type: 'SET_STATE',
       data: {

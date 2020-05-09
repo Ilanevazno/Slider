@@ -38,6 +38,12 @@ class Model {
     this.breakPoints = this.updateBreakpointList();
   }
 
+  public setValueType(valueType: string): void {
+    this.valueType = valueType;
+
+    this.eventObserver.broadcast({ axis: this.valueType, name: 'SET_VALUE_TYPE' });
+  }
+
   public setAxis(axis: string) {
     this.axis = axis;
 
@@ -140,6 +146,7 @@ class Model {
   }
 
   public setState(newState): void {
+    // console.log(newState);
     if (!this.checkIncludeStateValue(newState.$handler)) {
       this.state[Object.keys(this.state).length] = newState;
     }
@@ -152,6 +159,8 @@ class Model {
         stateElement.value = this.calculateNewState(newState.value);
       }
     });
+
+    // console.log(this.state);
 
     this.eventObserver.broadcast({ state: this.state, name: 'SET_STATE' });
   }

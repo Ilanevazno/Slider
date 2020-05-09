@@ -4,7 +4,8 @@ type sliderOptions = {
   maxValue: number,
   axis: string,
   isEnabledTooltip: boolean,
-  isShowLabels: true,
+  isShowLabels: boolean,
+  valueType: string;
 }
 
 class Panel {
@@ -13,6 +14,7 @@ class Panel {
   private slider: any;
   private $setTooltipActivity: JQuery<HTMLElement> | undefined;
   private $viewTypeSelect: JQuery<HTMLElement> | undefined;
+  private $valueTypeSelect: JQuery<HTMLElement> | undefined;
   private $minValueInput: JQuery<HTMLElement> | undefined;
   private $maxValueInput: JQuery<HTMLElement> | undefined;
   private $stepSizeInput: JQuery<HTMLElement> | undefined;
@@ -21,13 +23,15 @@ class Panel {
   constructor(htmlContainer) {
     this.$panelHtml = $(htmlContainer);
     this.slider = this.$panelHtml.prev();
+
     this.sliderOptions = {
-      stepSize: 10,
-      minValue: 0,
-      maxValue: 100,
-      axis: 'X',
-      isEnabledTooltip: true,
-      isShowLabels: true,
+      stepSize: this.slider.data('stepsize'),
+      minValue: this.slider.data('minvalue'),
+      maxValue: this.slider.data('maxvalue'),
+      valueType: this.slider.data('valuetype'),
+      axis: this.slider.data('axis'),
+      isEnabledTooltip: this.slider.data('isshowtooltip') !== undefined,
+      isShowLabels: this.slider.data('isshowlabels') !== undefined,
     };
 
     this.drawSlider();
@@ -42,6 +46,7 @@ class Panel {
   private connectLabels() {
     this.$setTooltipActivity = this.$panelHtml.find('[name=tooltip]');
     this.$viewTypeSelect = this.$panelHtml.find('[name=view-type]');
+    this.$valueTypeSelect = this.$panelHtml.find('[name=value-type]');
     this.$minValueInput = this.$panelHtml.find('[name=min-value]');
     this.$maxValueInput = this.$panelHtml.find('[name=max-value]');
     this.$setLabelsActivity = this.$panelHtml.find('[name=labels-activity]');
@@ -66,8 +71,9 @@ class Panel {
 
   private initEvents() {
     this.$setTooltipActivity?.on('change', this.handleLabelChange.bind(this, 'setTooltipActivity'));
-    this.$setLabelsActivity?.on('change', this.handleLabelChange.bind(this, 'setLabelsActivity'))
+    this.$setLabelsActivity?.on('change', this.handleLabelChange.bind(this, 'setLabelsActivity'));
     this.$viewTypeSelect?.on('change', this.handleLabelChange.bind(this, 'changeAxis'));
+    this.$valueTypeSelect?.on('change', this.handleLabelChange.bind(this, 'changeValueType'));
     this.$minValueInput?.on('focusout', this.handleLabelChange.bind(this, 'setMinValue'));
     this.$maxValueInput?.on('blur', this.handleLabelChange.bind(this, 'setMaxValue'));
     this.$stepSizeInput?.on('blur', this.handleLabelChange.bind(this, 'setStepSize'))
@@ -86,6 +92,9 @@ class Panel {
       case 'changeAxis':
         this.changeAxis($caughtElement);
         break
+      case 'changeValueType':
+        this.changeValueType($caughtElement);
+        break;
       case 'setMinValue':
         this.setMinValue($caughtElement);
         break;
@@ -98,6 +107,21 @@ class Panel {
       default:
         break
     }
+  }
+
+  private changeValueType ($targetLabel: JQuery<HTMLElement>): void {
+    const $options: JQuery<HTMLElement> = $targetLabel.find('.js-panel__label-item-option');
+    const selectedOption = $targetLabel.val();
+
+    $options.each((_idx, item) => {
+      const $currentOptionElement = $(item);
+      const currentElementText = $currentOptionElement.text();
+
+      if (selectedOption === currentElementText) {
+        const caughtValueType = $currentOptionElement.data('code');
+        this.slider.setValueType(caughtValueType);
+      }
+    });
   }
 
   private setLabelsActivity($targetLabel: JQuery<HTMLElement>): void {

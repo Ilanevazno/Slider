@@ -16,7 +16,6 @@ namespace sliderPlugin {
     observer: new Observer,
 
     sliderPlugin(args) {
-      // console.log(args);
       const {
         stepSize = 10,
         minValue = 5,
@@ -42,6 +41,10 @@ namespace sliderPlugin {
       this.controller = new Controller(this.model, this.view);
 
       return this;
+    },
+
+    setValueType(valueType: string): void {
+      this.controller.setValueType(valueType);
     },
 
     showLabels(): void {

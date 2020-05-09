@@ -14,6 +14,10 @@ class Controller {
     this.subscribeModelObserver();
   }
 
+  public setValueType(valueType): void {
+    this.model.setValueType(valueType);
+  }
+
   public showLabels(): void {
     this.model.setLabelsActivity(true);
   }
@@ -69,6 +73,9 @@ class Controller {
         case 'SET_STATE':
           this.view.prepareToMoveHandler(event.state);
           break;
+        case 'SET_VALUE_TYPE':
+          this.view.refreshView();
+          break
         case 'SET_MIN_VALUE':
           this.view.changeBreakpointsActivity();
           break;

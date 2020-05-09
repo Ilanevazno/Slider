@@ -80,16 +80,24 @@ class SliderBodyView {
 
   private handleWindowResize(): void {
     this.eventObserver.broadcast({ type: 'WINDOW_RESIZE' });
-    // const fullWidth = window.innerWidth;
-    // const minusPercent = (100 * window.innerWidth) / fullWidth;
-    // console.log(fullWidth);
-    // this.$breakpoints.map((item, _index) => {
-    //   console.log(item.position().left);
-    // })
+  }
+
+  private handleSliderBodyClick(e): void {
+    const caughtTarget = e.target;
+    const caughtCoords = this.axis === 'X' ?
+      e.offsetX
+      :
+      e.offsetY;
+
+    if (caughtTarget === this.$mainHtml[0]) {
+      this.eventObserver.broadcast({ type: 'SLIDER_BODY_CLICK', caughtCoords });
+    }
+
   }
 
   private bindActions(): void {
     $(window).on('resize.windowResize', this.handleWindowResize.bind(this));
+    this.$mainHtml.on('click', this.handleSliderBodyClick.bind(this));
   }
 }
 

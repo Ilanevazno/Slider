@@ -8,8 +8,8 @@ html
     meta(name="viewport" content="initial-scale=1.0, width=device-width")
     meta(name="description" content="UI-kit")
     meta(name="keywords" content="PUG, SCSS, webpack, ui-kit, BEM")
-    meta(name="msapplication-TileColor", content="#da532c")
-    meta(name="theme-color", content="#ffffff")
+    meta(name="msapplication-TileColor" content="#da532c")
+    meta(name="theme-color" content="#ffffff")
     link(rel="apple-touch-icon" sizes="180x180" href="./assets/favicons/apple-touch-icon.png")
     link(rel="icon" type="image/png" sizes="32x32" href="./assets/favicons/favicon-32x32.png")
     link(rel="icon" sizes="any" mask href="./assets/favicons/safari-pinned-tab.svg")
@@ -18,5 +18,13 @@ html
     .example
     - for (let i = 0; i < 3; i += 1)
       .example__item
-        +slider()
+        +slider({
+          minValue: 100,
+          maxValue: 500,
+          stepSize: 10,
+          axis: 'X',
+          valueType: 'doubleValue',
+          isShowTooltip: true,
+          isShowLabels: true,
+        })
         +panel()
