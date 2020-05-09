@@ -199,7 +199,7 @@ class Model {
   }
 
   public setStepSize(newStepSize: number): object {
-    if (newStepSize < this.maxValue) {
+    if (newStepSize <= this.maxValue) {
       this.stepSize = Number(newStepSize);
       this.updateBreakpointList();
 
