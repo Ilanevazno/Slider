@@ -19,6 +19,7 @@ class Panel {
   private $maxValueInput: JQuery<HTMLElement> | undefined;
   private $stepSizeInput: JQuery<HTMLElement> | undefined;
   private $setLabelsActivity: JQuery<HTMLElement> | undefined;
+  private $errorNotify: JQuery<HTMLElement> | undefined;
 
   constructor(htmlContainer) {
     this.$panelHtml = $(htmlContainer);
@@ -70,13 +71,26 @@ class Panel {
   }
 
   private initEvents() {
+    $(document).on('mousedown', this.handleDocumentMouseDown.bind(this));
     this.$setTooltipActivity?.on('change', this.handleLabelChange.bind(this, 'setTooltipActivity'));
     this.$setLabelsActivity?.on('change', this.handleLabelChange.bind(this, 'setLabelsActivity'));
     this.$viewTypeSelect?.on('change', this.handleLabelChange.bind(this, 'changeAxis'));
     this.$valueTypeSelect?.on('change', this.handleLabelChange.bind(this, 'changeValueType'));
     this.$minValueInput?.on('focusout', this.handleLabelChange.bind(this, 'setMinValue'));
     this.$maxValueInput?.on('blur', this.handleLabelChange.bind(this, 'setMaxValue'));
-    this.$stepSizeInput?.on('blur', this.handleLabelChange.bind(this, 'setStepSize'))
+    this.$stepSizeInput?.on('blur', this.handleLabelChange.bind(this, 'setStepSize'));
+  }
+
+  private getErrorNotify(errorMessage: string, $label: JQuery<HTMLElement>): void {
+    this.$errorNotify = $('<div/>', {
+      class: 'panel__modal_type_error',
+      text: errorMessage
+    })
+      .appendTo($label);
+  }
+
+  private handleDocumentMouseDown(): void {
+    this.$errorNotify?.remove();
   }
 
   private handleLabelChange(target, event) {
@@ -109,7 +123,7 @@ class Panel {
     }
   }
 
-  private changeValueType ($targetLabel: JQuery<HTMLElement>): void {
+  private changeValueType($targetLabel: JQuery<HTMLElement>): void {
     const $options: JQuery<HTMLElement> = $targetLabel.find('.js-panel__label-item-option');
     const selectedOption = $targetLabel.val();
 
@@ -119,6 +133,7 @@ class Panel {
 
       if (selectedOption === currentElementText) {
         const caughtValueType = $currentOptionElement.data('code');
+        // console.log(caughtValueType);
         this.slider.setValueType(caughtValueType);
       }
     });
@@ -130,17 +145,32 @@ class Panel {
 
   private setStepSize($targetLabel: JQuery<HTMLElement>): void {
     const caughtNewValue: number = Number($targetLabel.val());
-    this.slider.setStepSize(caughtNewValue);
+    const $targetLabelParent = $targetLabel.parent();
+    const setStepSize = this.slider.setStepSize(caughtNewValue);
+
+    if (setStepSize.response === 'error') {
+      this.getErrorNotify(setStepSize.message, $targetLabelParent);
+    }
   }
 
   private setMinValue($targetLabel: JQuery<HTMLElement>): void {
     const caughtNewValue: number = Number($targetLabel.val());
-    this.slider.setMinValue(caughtNewValue);
+    const $targetLabelParent = $targetLabel.parent();
+    const setNewValue = this.slider.setMinValue(caughtNewValue);
+
+    if (setNewValue.response === 'error') {
+      this.getErrorNotify(setNewValue.message, $targetLabelParent);
+    }
   }
 
   private setMaxValue($targetLabel: JQuery<HTMLElement>): void {
     const caughtNewValue: number = Number($targetLabel.val());
-    this.slider.setMaxValue(caughtNewValue);
+    const $targetLabelParent = $targetLabel.parent();
+    const setMaxValue = this.slider.setMaxValue(caughtNewValue);
+
+    if (setMaxValue.response === 'error') {
+      this.getErrorNotify(setMaxValue.message, $targetLabelParent);
+    }
   }
 
   private setActivityTooltip($targetLabel: JQuery<HTMLElement>): void {

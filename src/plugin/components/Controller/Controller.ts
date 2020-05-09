@@ -38,27 +38,29 @@ class Controller {
     this.model.setAxis(axis);
   }
 
-  public setStepSize(newStepSize: number): void {
-    this.model.setStepSize(newStepSize);
+  public setStepSize(newStepSize: number): object {
+    return this.model.setStepSize(newStepSize);
   }
 
-  public setMinValue(value: number): void {
-    this.model.setMinValue(value);
+  public setMinValue(value: number): void | object {
+    return this.model.setMinValue(value);
   }
 
-  public setMaxValue(value: number): void {
-    this.model.setMaxValue(value);
+  public setMaxValue(value: number): object {
+    return this.model.setMaxValue(value);
   }
 
   private subscribeViewObserver(): void {
     this.view.eventObserver.subscribe((event) => {
-      // console.log(event);
       switch (event.type) {
         case 'SET_STATE':
           this.model.setState(event.data);
           break;
         case 'REFRESH_STATE':
           this.model.refreshState();
+          break;
+        case 'CLEAR_STATE':
+          this.model.clearState();
           break;
         default:
           break;
@@ -68,7 +70,6 @@ class Controller {
 
   private subscribeModelObserver(): void {
     this.model.eventObserver.subscribe((event) => {
-
       switch (event.name) {
         case 'SET_STATE':
           this.view.prepareToMoveHandler(event.state);
@@ -87,10 +88,13 @@ class Controller {
           break;
         case 'SET_AXIS':
           this.view.setAxis(event.axis);
-        case 'SET_TOOLTIP_ACTIVE':
-          this.view.setTooltipActivity(event.isEnabledTooltip)
+          break;
+        case 'SET_TOOLTIP_ACTIVITY':
+          this.view.setTooltipActivity(event.isEnabledTooltip);
+          break;
         case 'SET_LABELS_ACTIVITY':
           this.view.changeBreakpointsActivity();
+          break;
         default:
           return;
       }

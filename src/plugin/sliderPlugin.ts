@@ -27,13 +27,13 @@ namespace sliderPlugin {
       } = args;
 
       const options = {
-        isShowLabels: isShowLabels,
-        isEnabledTooltip: isEnabledTooltip,
-        axis: axis,
+        isShowLabels,
+        isEnabledTooltip,
+        axis,
         stepSize,
-        valueType: valueType,
-        minValue: minValue,
-        maxValue: maxValue,
+        valueType,
+        minValue,
+        maxValue,
       }
 
       this.model = new Model(options);
@@ -56,15 +56,15 @@ namespace sliderPlugin {
     },
 
     setStepSize(stepSize: number | Array<number>): void {
-      this.controller.setStepSize(stepSize);
+      return this.controller.setStepSize(stepSize);
     },
 
     setMinValue(value: number): void {
-      this.controller.setMinValue(value);
+      return this.controller.setMinValue(value);
     },
 
     setMaxValue(value: number): void {
-      this.controller.setMaxValue(value);
+      return this.controller.setMaxValue(value);
     },
 
     setAxis(axis: string): void {

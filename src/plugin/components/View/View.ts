@@ -26,8 +26,10 @@ class View {
   }
 
   public refreshView(): void {
-    // this.handlerMinValue = null;
-    // this.handlerMaxValue = null
+    this.sliderBody.removeSliderBody();
+    this.eventObserver.broadcast({ type: 'CLEAR_STATE' });
+    this.drawSliderInstances();
+    this.eventObserver.broadcast({ type: 'REFRESH_STATE' });
   }
 
   public setState(handler: string): void {
@@ -36,8 +38,6 @@ class View {
     const caughtHandlerName = caughtHandlerInstance.name;
     const $caughtHandlerHtml = caughtHandlerInstance.instances.handler.$html;
     const minValue = this.model.getOption('minValue');
-
-    // console.log($caughtHandlerHtml);
 
     const dataForBroadcasting = {
       type: 'SET_STATE',
@@ -60,6 +60,7 @@ class View {
   }
 
   private drawSliderInstances() {
+    console.log(this.model.getState());
     const valueType = this.model.getOption('valueType');
     this.sliderBody = this.drawSliderBody(this.$sliderContainer);
     this.handlerMinValue = {
@@ -68,7 +69,9 @@ class View {
     };
 
     this.initHandlerEvents(this.handlerMinValue);
-    setTimeout(() => { this.setState('min-value') }, 0)
+    setTimeout(() => {
+      this.setState('min-value');
+     }, 0)
 
     if (valueType === 'doubleValue') {
       this.handlerMaxValue = {
@@ -77,7 +80,9 @@ class View {
       };
 
       this.initHandlerEvents(this.handlerMaxValue);
-      setTimeout(() => { this.setState('max-value') }, 0)
+      setTimeout(() => {
+        this.setState('max-value');
+      }, 0)
     }
 
     if (this.model.getOption('isShowLabels')) {
@@ -95,49 +100,52 @@ class View {
           this.eventObserver.broadcast({ type: 'REFRESH_STATE' });
           break;
         case 'SLIDER_BODY_CLICK':
-          const targetPercent = this.convertPxToPercent(event.caughtCoords);
-          const currentState = this.model.getState();
-          let availableHandlerValues: any = [];
-
-          for (let currentHandlerValue in currentState) {
-            availableHandlerValues.push(currentState[currentHandlerValue].value);
-          }
-
-          const findTheClosest = (array, base) => {
-            let theClosest = Infinity;
-            let temp, arrayElement;
-
-            array.map((_element, i) => {
-              temp = Math.abs(array[i] - base);
-
-              if (temp < theClosest) {
-                theClosest = temp;
-                arrayElement = array[i];
-              }
-            });
-
-            return arrayElement;
-          }
-
-          const findAvailableHandler = findTheClosest(availableHandlerValues, targetPercent);
-
-          console.log(findAvailableHandler)
-
-          Object.values(currentState).map((handler) => {
-            if (handler.value === findAvailableHandler) {
-              const dataForBroadcasting = {
-                type: 'SET_STATE',
-                data: {
-                  $handler: handler.$handler,
-                  name: handler.name,
-                  value: targetPercent,
-                }
-              }
-            this.eventObserver.broadcast(dataForBroadcasting);
-            }
-          });
+          this.moveHandlerByBodyClick(event);
+          break
         default:
           break;
+      }
+    });
+  }
+
+  private moveHandlerByBodyClick(event): void {
+    const targetPercent = this.convertPxToPercent(event.caughtCoords);
+    const currentState = this.model.getState();
+    let availableHandlerValues: any = [];
+
+    for (let handler in currentState) {
+      availableHandlerValues.push(currentState[handler].value);
+    }
+
+    const findTheClosest = (array, base) => {
+      let theClosest = Infinity;
+      let temp, arrayElement;
+
+      array.map((_element, i) => {
+        temp = Math.abs(array[i] - base);
+
+        if (temp < theClosest) {
+          theClosest = temp;
+          arrayElement = array[i];
+        }
+      });
+
+      return arrayElement;
+    }
+
+    const findAvailableHandler = findTheClosest(availableHandlerValues, targetPercent);
+
+    Object.values(currentState).map((handler) => {
+      if (handler.value === findAvailableHandler) {
+        const dataForBroadcasting = {
+          type: 'SET_STATE',
+          data: {
+            $handler: handler.$handler,
+            name: handler.name,
+            value: targetPercent,
+          }
+        }
+        this.eventObserver.broadcast(dataForBroadcasting);
       }
     });
   }
@@ -203,14 +211,6 @@ class View {
   }
 
   private initHandlerEvents(parent): void {
-    // setTimeout(() => {
-    //   this.eventObserver.broadcast({
-    //     $handler: parent.instances.handler.$html,
-    //     value: this.model.getOption('minValue'),
-    //     name: parent.name
-    //   });
-    // }, 0);
-
     parent.instances.handler.observer.subscribe((handler) => {
       switch (handler.eventType) {
         case this.validateView.mouseDownEvent:
@@ -230,13 +230,11 @@ class View {
   }
 
   public setAxis(axis: string): void {
-    this.sliderBody.removeSliderBody();
     this.sliderBody.setAxis(axis);
-    this.drawSliderInstances();
+    this.refreshView();
   }
 
   public prepareToMoveHandler(currentHandler) {
-    // console.log(currentHandler)
     Object.values(currentHandler).map((handler: any) => {
       const $caughtHandler: JQuery<HTMLElement> = $(handler.$handler);
       const currentPercent: number = handler.value;
