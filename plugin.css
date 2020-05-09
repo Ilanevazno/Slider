@@ -7,7 +7,8 @@
 .slider__body {
   background-color: #858585;
   border-radius: 6px;
-  position: relative; }
+  position: relative;
+  cursor: pointer; }
   .slider__body_type_horizontal {
     width: 99%;
     height: 5px; }
