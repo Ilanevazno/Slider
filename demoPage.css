@@ -13,12 +13,20 @@
   flex-wrap: wrap;
   font-family: cursive;
   background: whitesmoke; }
-  .panel__label {
+  .panel__block {
     text-align: center;
     position: relative; }
+  .panel__label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative; }
+    .panel__label-title {
+      text-align: center; }
     .panel__label-item {
       border: 1px solid #cacaca;
-      box-shadow: 3px 3px 1px 0px #cacaca;
+      min-height: 2rem;
+      min-width: 3rem;
       font-family: cursive;
       text-align: center;
       font-size: 1.1rem;
