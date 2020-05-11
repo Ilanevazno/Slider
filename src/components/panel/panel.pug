@@ -1,9 +1,13 @@
 mixin panel ()
   -
+    const viewTypeOptions = [{ name: 'Горизонтальный', code: 'X' }, { name:'Вертикальный', code: 'Y' }];
+    const valueTypeOptions = [{ name: 'Одиночное', code: 'singleValue' }, { name: 'Интервал', code: 'doubleValue' }];
     const labels = [
+      { title: 'Вид', name: 'view-type', tag: 'select', options: viewTypeOptions },
+      { title: 'Тип значения', name: 'value-type', tag: 'select', options: valueTypeOptions },
       { title: 'Размер шага', name: 'step-size', tag: 'input', type: 'number' },
-      { title: 'Вид', name: 'view-type', tag: 'select', options: [{ name: 'Горизонтальный', code: 'X' }, { name:'Вертикальный', code: 'Y' }] },
-      { title: 'Тип значения', name: 'value-type', tag: 'select', options: [{ name: 'Одиночное', code: 'singleValue' }, { name: 'Интервал', code: 'doubleValue' }] },
+      { title: 'Состояние ползунка', name: 'min-value-handler', tag: 'input', type: 'number'},
+      { title: 'Состояние ползунка 2', name: 'max-value-handler', tag: 'input', type: 'number'},
       { title: 'Минимальное значение', name: 'min-value', tag: 'input', type: 'number'},
       { title: 'Максимальное значение', name: 'max-value', tag: 'input', type: 'number'},
       { title: 'Показать значение', name: 'tooltip', tag: 'input', type: 'checkbox'},
@@ -19,8 +23,8 @@ mixin panel ()
           type,
           options,
         } = label;
-      .panel__label
-        p.panel-label__title= title
+      label.panel__label(for= name)
+        p.panel__label-title= title
         #{tag}.panel__label-item(name= name, type= type)
           if (options)
             each option in options

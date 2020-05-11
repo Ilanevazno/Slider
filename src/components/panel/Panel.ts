@@ -8,18 +8,22 @@ type sliderOptions = {
   valueType: string;
 }
 
+type panelJQueryElement = JQuery<HTMLElement> | undefined;
+
 class Panel {
   private sliderOptions: sliderOptions;
   private $panelHtml: any;
   private slider: any;
-  private $setTooltipActivity: JQuery<HTMLElement> | undefined;
-  private $viewTypeSelect: JQuery<HTMLElement> | undefined;
-  private $valueTypeSelect: JQuery<HTMLElement> | undefined;
-  private $minValueInput: JQuery<HTMLElement> | undefined;
-  private $maxValueInput: JQuery<HTMLElement> | undefined;
-  private $stepSizeInput: JQuery<HTMLElement> | undefined;
-  private $setLabelsActivity: JQuery<HTMLElement> | undefined;
-  private $errorNotify: JQuery<HTMLElement> | undefined;
+  private $setTooltipActivity: panelJQueryElement;
+  private $viewTypeSelect: panelJQueryElement;
+  private $valueTypeSelect: panelJQueryElement;
+  private $minValueInput: panelJQueryElement;
+  private $maxValueInput: panelJQueryElement;
+  private $minValueHandlerInput: panelJQueryElement;
+  private $maxValueHandlerInput: panelJQueryElement;
+  private $stepSizeInput: panelJQueryElement;
+  private $setLabelsActivity: panelJQueryElement;
+  private $errorNotify: panelJQueryElement;
 
   constructor(htmlContainer) {
     this.$panelHtml = $(htmlContainer);
@@ -52,6 +56,8 @@ class Panel {
     this.$maxValueInput = this.$panelHtml.find('[name=max-value]');
     this.$setLabelsActivity = this.$panelHtml.find('[name=labels-activity]');
     this.$stepSizeInput = this.$panelHtml.find('[name=step-size]');
+    this.$minValueHandlerInput = this.$panelHtml.find('[name=min-value-handler]');
+    this.$maxValueHandlerInput = this.$panelHtml.find('[name=max-value-handler]');
 
     this.prepareLabelsData();
   }
@@ -65,9 +71,27 @@ class Panel {
       this.$setLabelsActivity?.prop('checked', true);
     }
 
+    this.changeViewTypeInputState(this.sliderOptions.valueType);
+
+    this.slider.subscribeToChangeState();
+    this.slider.eventObserver.subscribe((event) => {
+      try {
+        this.$minValueHandlerInput?.val(event.state[0].value);
+        this.$maxValueHandlerInput?.val(event.state[Object.values(event.state).length - 1].value);
+      } catch (err) {}
+    });
+
     this.$stepSizeInput?.val(this.sliderOptions.stepSize);
     this.$minValueInput?.val(this.sliderOptions.minValue);
     this.$maxValueInput?.val(this.sliderOptions.maxValue);
+  }
+
+  private changeViewTypeInputState(viewType: string): void {
+    if (viewType === 'singleValue') {
+      this.$maxValueHandlerInput?.parent().hide();
+    } else {
+      this.$maxValueHandlerInput?.parent().show();
+    }
   }
 
   private initEvents() {
@@ -79,9 +103,13 @@ class Panel {
     this.$minValueInput?.on('focusout', this.handleLabelChange.bind(this, 'setMinValue'));
     this.$maxValueInput?.on('blur', this.handleLabelChange.bind(this, 'setMaxValue'));
     this.$stepSizeInput?.on('blur', this.handleLabelChange.bind(this, 'setStepSize'));
+    this.$minValueHandlerInput?.on('blur', this.handleLabelChange.bind(this, 'setMinValueHandler'));
+    this.$maxValueHandlerInput?.on('blur', this.handleLabelChange.bind(this, 'setMaxValueHandler'));
   }
 
   private getErrorNotify(errorMessage: string, $label: JQuery<HTMLElement>): void {
+    const errorSound = new Audio('src/assets/sounds/sound__error.mp3');
+    errorSound.play();
     this.$errorNotify = $('<div/>', {
       class: 'panel__modal_type_error',
       text: errorMessage
@@ -118,9 +146,25 @@ class Panel {
       case 'setStepSize':
         this.setStepSize($caughtElement);
         break;
+      case 'setMinValueHandler':
+        this.setMinValueHandler($caughtElement);
+        break;
+      case 'setMaxValueHandler':
+        this.setMaxValueHandler($caughtElement);
+        break
       default:
         break
     }
+  }
+
+  private setMinValueHandler($targetLabel: JQuery<HTMLElement>): void {
+    const newStateValue = $targetLabel.val();
+    this.slider.changeHandlerState('min-value', newStateValue);
+  }
+
+  private setMaxValueHandler($targetLabel: JQuery<HTMLElement>): void {
+    const newStateValue = $targetLabel.val();
+    this.slider.changeHandlerState('max-value', newStateValue);
   }
 
   private changeValueType($targetLabel: JQuery<HTMLElement>): void {
@@ -133,8 +177,8 @@ class Panel {
 
       if (selectedOption === currentElementText) {
         const caughtValueType = $currentOptionElement.data('code');
-        // console.log(caughtValueType);
         this.slider.setValueType(caughtValueType);
+        this.changeViewTypeInputState(caughtValueType);
       }
     });
   }
@@ -144,12 +188,14 @@ class Panel {
   }
 
   private setStepSize($targetLabel: JQuery<HTMLElement>): void {
+    const prevValue = $targetLabel.val();
     const caughtNewValue: number = Number($targetLabel.val());
     const $targetLabelParent = $targetLabel.parent();
     const setStepSize = this.slider.setStepSize(caughtNewValue);
 
     if (setStepSize.response === 'error') {
       this.getErrorNotify(setStepSize.message, $targetLabelParent);
+      $targetLabel.val('');
     }
   }
 
@@ -160,6 +206,7 @@ class Panel {
 
     if (setNewValue.response === 'error') {
       this.getErrorNotify(setNewValue.message, $targetLabelParent);
+      $targetLabel.val('');
     }
   }
 
@@ -170,6 +217,7 @@ class Panel {
 
     if (setMaxValue.response === 'error') {
       this.getErrorNotify(setMaxValue.message, $targetLabelParent);
+      $targetLabel.val('');
     }
   }
 

@@ -13,7 +13,7 @@ namespace sliderPlugin {
     model: null,
     view: null,
     controller: null,
-    observer: new Observer,
+    eventObserver: new Observer(),
 
     sliderPlugin(args) {
       const {
@@ -77,7 +77,21 @@ namespace sliderPlugin {
 
     hideTooltip(): void {
       this.controller.hideTooltip();
-    }
+    },
+
+    changeHandlerState(handlerName: string, newValue: number): void {
+      this.controller.changeHandlerState(handlerName, newValue);
+    },
+
+    subscribeToChangeState(): any {
+      this.controller.subscribeToChangeState();
+
+      this.controller.eventObserver.subscribe((event) => {
+        if (event.type === 'SET_STATE') {
+          this.eventObserver.broadcast({ type: 'SET_STATE', state: event.state });
+        }
+      })
+    },
   });
 
   export interface jQuery {

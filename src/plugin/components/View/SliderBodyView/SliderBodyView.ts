@@ -51,6 +51,7 @@ class SliderBodyView {
     this.removeBreakpoints();
     const direction = this.axis === 'X' ? 'left' : 'top';
     const icon = this.axis === 'X' ? '|' : '-';
+    console.log(breakpoints);
     this.$breakpoints = breakpoints.map((breakpoint) => {
       return $('<div/>', {
         class: `slider__breakpoint slider__breakpoint_direction_${direction}`

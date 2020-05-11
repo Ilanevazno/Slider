@@ -5,13 +5,27 @@ import Observer from '../Observer/Observer';
 class Controller {
   private model: Model;
   private view: View;
+  private eventObserver: Observer;
 
   constructor(model: Model, view: View) {
     this.model = model;
     this.view = view;
+    this.eventObserver = new Observer();
 
     this.subscribeViewObserver();
     this.subscribeModelObserver();
+  }
+
+  public subscribeToChangeState(): any {
+    return this.model.eventObserver.subscribe((event) => {
+      if (event.name === 'SET_STATE') {
+        this.eventObserver.broadcast({ type: 'SET_STATE', state: event.state });
+      }
+    });
+  }
+
+  public changeHandlerState(handlerName: string, value: number):void {
+    this.model.changeStateByName(handlerName, value);
   }
 
   public setValueType(valueType): void {

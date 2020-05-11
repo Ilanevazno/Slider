@@ -88,7 +88,7 @@ class Model {
   }
 
   public setMinValue(value: number): object {
-    if (value < this.maxValue) {
+    if (value <= this.maxValue) {
       this.minValue = value;
       this.updateBreakpointList();
       this.refreshState();
@@ -101,7 +101,7 @@ class Model {
   }
 
   public setMaxValue(value: number): object {
-    if (value > this.minValue) {
+    if (value >= this.minValue) {
       this.maxValue = value;
       this.updateBreakpointList();
       this.refreshState();
@@ -145,9 +145,6 @@ class Model {
 
     if (minValue > maxValue) {
       this.state[Object.keys(this.state).length - 1].value = minValue;
-    }
-
-    if (maxValue < minValue) {
       this.state[0].value = maxValue
     }
   }
@@ -166,6 +163,18 @@ class Model {
     });
 
     return arrayElement;
+  }
+
+  public changeStateByName(handlerName, value): void {
+    Object.values(this.state).map((stateElement) => {
+      if (stateElement.name === handlerName) {
+        stateElement.value = this.calculateNewState(Number(value));
+      }
+    });
+
+    this.checkCollision();
+
+    this.eventObserver.broadcast({ state: this.state, name: 'SET_STATE' });
   }
 
   public setState(newState): void {
