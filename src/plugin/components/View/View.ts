@@ -60,7 +60,7 @@ class View {
   }
 
   private drawSliderInstances() {
-    console.log(this.model.getState());
+    // console.log(this.model.getState());
     const valueType = this.model.getOption('valueType');
     this.sliderBody = this.drawSliderBody(this.$sliderContainer);
     this.handlerMinValue = {
@@ -99,7 +99,7 @@ class View {
           this.changeBreakpointsActivity();
           this.eventObserver.broadcast({ type: 'REFRESH_STATE' });
           break;
-        case 'SLIDER_BODY_CLICK':
+        case 'CHANGE_STATE_BY_CLICK':
           this.moveHandlerByBodyClick(event);
           break
         default:
@@ -109,6 +109,7 @@ class View {
   }
 
   private moveHandlerByBodyClick(event): void {
+    console.log(event)
     const targetPercent = this.convertPxToPercent(event.caughtCoords);
     const currentState = this.model.getState();
     let availableHandlerValues: any = [];
@@ -165,7 +166,7 @@ class View {
 
   private getConvertedBreakpoints() {
     const pointerWidth: number = this.handlerMinValue.instances.handler.getHandlerWidth();
-    const maxContainerWidth: number = this.sliderBody.getSliderBodyParams() - (pointerWidth / 2);
+    const maxContainerWidth: number = this.sliderBody.getSliderBodyParams();
 
     return this.model.getOption('breakpoints').map((currentPercent) => {
       const optionList = {
@@ -175,7 +176,10 @@ class View {
         maxContainerWidth,
       };
 
-      return this.validateView.convertPercentToPixel(optionList) + (pointerWidth / 2);
+      return {
+        currentPercent,
+        pixelPosition: this.validateView.convertPercentToPixel(optionList)
+      };
     })
   }
 

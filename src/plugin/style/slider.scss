@@ -61,8 +61,14 @@
       }
 
       &_vertical {
-        left: -2.5rem;
-        top: 0.2rem;
+        left: -4rem;
+        top: -0.2rem;
+        width: 2.6rem;
+        height: fit-content;
+        white-space: pre-wrap;
+        word-break: break-all;
+        padding: 0.6rem;
+        border: 1px solid #261a00;
       }
     }
   }

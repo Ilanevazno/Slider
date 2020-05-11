@@ -48,18 +48,51 @@ class SliderBodyView {
   }
 
   public drawBreakPoints(breakpoints: number[]): void {
+    type sliderBreakpoint = {
+      currentPercent: number;
+      pixelPosition: number;
+    }
     this.removeBreakpoints();
+    const mainHtmlParams: number = this.getSliderBodyParams();
     const direction = this.axis === 'X' ? 'left' : 'top';
-    const icon = this.axis === 'X' ? '|' : '-';
-    console.log(breakpoints);
+
+    console.log(typeof breakpoints[0]['currentPercent'])
+
+    const minPercent: sliderBreakpoint = breakpoints[0]['currentPercent'];
+    const maxPercent = breakpoints[breakpoints.length - 1]['currentPercent'];
+    const partOfTheMaxPercent = maxPercent / 10;
+    let stepCounter = 0;
+    const shortBreakpoints: any = [];
+
+    while (stepCounter <= maxPercent) {
+      const shortBreakpointsArray = breakpoints.map((breakpoint) => {
+        return stepCounter === breakpoint['currentPercent'] ? breakpoint : null;
+      }).filter((breakpoint) => breakpoint != null);
+
+      if (shortBreakpointsArray.length > 0) {
+        shortBreakpoints.push(shortBreakpointsArray[0]);
+      }
+
+      stepCounter = stepCounter + partOfTheMaxPercent;
+    }
+
+    breakpoints = shortBreakpoints;
+
     this.$breakpoints = breakpoints.map((breakpoint) => {
+      console.log(breakpoint)
+      const icon = breakpoint['currentPercent'];
       return $('<div/>', {
         class: `slider__breakpoint slider__breakpoint_direction_${direction}`
       })
-        .css(direction, `${breakpoint}px`)
+        .css(direction, `${breakpoint['pixelPosition']}px`)
         .text(icon)
-        .appendTo(this.$mainHtml);
+        .appendTo(this.$mainHtml)
+        .on('click', this.handleBreakpointClick.bind(this, breakpoint['pixelPosition']));
     });
+  }
+
+  private handleBreakpointClick(breakpointPercent): void {
+    this.eventObserver.broadcast({ type: 'CHANGE_STATE_BY_CLICK', caughtCoords: breakpointPercent });
   }
 
   public removeBreakpoints(): void {
@@ -91,7 +124,7 @@ class SliderBodyView {
       e.offsetY;
 
     if (caughtTarget === this.$mainHtml[0]) {
-      this.eventObserver.broadcast({ type: 'SLIDER_BODY_CLICK', caughtCoords });
+      this.eventObserver.broadcast({ type: 'CHANGE_STATE_BY_CLICK', caughtCoords });
     }
 
   }
