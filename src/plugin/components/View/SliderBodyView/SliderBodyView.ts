@@ -1,42 +1,26 @@
 import Observer from '../../Observer/Observer';
+import ViewTypes from '../types/ViewTypes'
 
 class SliderBodyView {
   public $mainHtml: JQuery<HTMLElement>;
-  private axis: string;
-  private $breakpoints: any[];
+  private breakpointElements: Array<JQuery<HTMLElement>>;
   private eventObserver: Observer;
 
-  constructor($htmlContainer: JQuery<HTMLElement>, axis) {
+  constructor($htmlContainer: JQuery<HTMLElement>, private axis: string) {
     this.eventObserver = new Observer();
     this.axis = axis;
     this.$mainHtml = this.drawSliderBody($htmlContainer);
-    this.$breakpoints = [];
+    this.breakpointElements = [];
 
     this.bindActions();
     this.listenEvents();
-  }
-
-  private listenEvents(): void {
-    this.eventObserver.subscribe((event) => {
-      switch (event.type) {
-        case 'SET_BREAKPOINTS_ACTIVITY':
-          if (event.isActiveBreakpoints) {
-            this.drawBreakPoints(event.breakpoints)
-          } else {
-            this.removeBreakpoints()
-          }
-          break
-        default:
-          break
-      }
-    });
   }
 
   public setAxis(axis: string): string {
     return this.axis = axis;
   }
 
-  public removeSliderBody() {
+  public removeSliderBody(): void {
     this.$mainHtml.remove();
   }
 
@@ -47,58 +31,63 @@ class SliderBodyView {
       this.$mainHtml[0].offsetHeight
   }
 
-  public drawBreakPoints(breakpoints: number[]): void {
-    type sliderBreakpoint = {
-      currentPercent: number;
-      pixelPosition: number;
-    }
+  public drawBreakPoints(breakpoints: ViewTypes.sliderBreakpoint[]): void {
     this.removeBreakpoints();
-    const mainHtmlParams: number = this.getSliderBodyParams();
-    const direction = this.axis === 'X' ? 'left' : 'top';
-
-    console.log(typeof breakpoints[0]['currentPercent'])
-
-    const minPercent: sliderBreakpoint = breakpoints[0]['currentPercent'];
-    const maxPercent = breakpoints[breakpoints.length - 1]['currentPercent'];
-    const partOfTheMaxPercent = maxPercent / 10;
-    let stepCounter = 0;
-    const shortBreakpoints: any = [];
+    const direction: string = this.axis === 'X' ? 'left' : 'top';
+    const maxPercent: number = breakpoints[breakpoints.length - 1].currentPercent;
+    const partOfTheMaxPercent: number = maxPercent / 10;
+    let stepCounter: number = 0;
+    const shortBreakpoints: ViewTypes.sliderBreakpoint[] = [];
 
     while (stepCounter <= maxPercent) {
-      const shortBreakpointsArray = breakpoints.map((breakpoint) => {
-        return stepCounter === breakpoint['currentPercent'] ? breakpoint : null;
+      const shortBreakpointsArray = breakpoints.map((breakpoint: ViewTypes.sliderBreakpoint) => {
+        return stepCounter === breakpoint.currentPercent ? breakpoint : null;
       }).filter((breakpoint) => breakpoint != null);
 
       if (shortBreakpointsArray.length > 0) {
-        shortBreakpoints.push(shortBreakpointsArray[0]);
+        shortBreakpoints.push(shortBreakpointsArray[0] as ViewTypes.sliderBreakpoint);
       }
 
       stepCounter = stepCounter + partOfTheMaxPercent;
     }
 
-    breakpoints = shortBreakpoints;
+    this.breakpointElements = shortBreakpoints.map((breakpoint: ViewTypes.sliderBreakpoint) => {
+      const icon: number = breakpoint.currentPercent;
 
-    this.$breakpoints = breakpoints.map((breakpoint) => {
-      console.log(breakpoint)
-      const icon = breakpoint['currentPercent'];
       return $('<div/>', {
         class: `slider__breakpoint slider__breakpoint_direction_${direction}`
       })
-        .css(direction, `${breakpoint['pixelPosition']}px`)
+        .css(direction, `${breakpoint.pixelPosition}px`)
         .text(icon)
         .appendTo(this.$mainHtml)
-        .on('click', this.handleBreakpointClick.bind(this, breakpoint['pixelPosition']));
+        .on('click', this.handleBreakpointClick.bind(this, breakpoint.pixelPosition));
     });
-  }
-
-  private handleBreakpointClick(breakpointPercent): void {
-    this.eventObserver.broadcast({ type: 'CHANGE_STATE_BY_CLICK', caughtCoords: breakpointPercent });
   }
 
   public removeBreakpoints(): void {
-    this.$breakpoints.forEach($element => {
+    this.breakpointElements.forEach(($element: JQuery<HTMLElement>) => {
       $element.remove();
     });
+  }
+
+  private listenEvents(): void {
+    this.eventObserver.subscribe((event) => {
+      switch (event.type) {
+        case 'SET_BREAKPOINTS_ACTIVITY':
+          if (event.isActiveBreakpoints) {
+            this.drawBreakPoints(event.breakpoints);
+          } else {
+            this.removeBreakpoints();
+          }
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
+  private handleBreakpointClick(breakpointPixelPosition: number): void {
+    this.eventObserver.broadcast({ type: 'CHANGE_STATE_BY_CLICK', caughtCoords: breakpointPixelPosition });
   }
 
   private drawSliderBody($htmlContainer): JQuery<HTMLElement> {
@@ -117,21 +106,20 @@ class SliderBodyView {
   }
 
   private handleSliderBodyClick(e): void {
-    const caughtTarget = e.target;
-    const caughtCoords = this.axis === 'X' ?
+    const htmlEventTarget = e.target;
+    const caughtCoords: number = this.axis === 'X' ?
       e.offsetX
       :
       e.offsetY;
 
-    if (caughtTarget === this.$mainHtml[0]) {
+    if (htmlEventTarget === this.$mainHtml[0]) {
       this.eventObserver.broadcast({ type: 'CHANGE_STATE_BY_CLICK', caughtCoords });
     }
-
   }
 
   private bindActions(): void {
     $(window).on('resize.windowResize', this.handleWindowResize.bind(this));
-    this.$mainHtml.on('click', this.handleSliderBodyClick.bind(this));
+    this.$mainHtml.on('click.mainHtmlClick', this.handleSliderBodyClick.bind(this));
   }
 }
 
