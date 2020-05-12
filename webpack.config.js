@@ -83,7 +83,8 @@ module.exports = {
     new webpack.ProvidePlugin({
       '$': 'jquery',
       'jQuery': 'jquery',
-      'window.jQuery': 'jquery'
+      'window.jQuery': 'jquery',
+      'useAutoBind': 'auto-bind',
     }),
     new HtmlWebpackPlugin({
       template: './src/demo-page/main.pug',

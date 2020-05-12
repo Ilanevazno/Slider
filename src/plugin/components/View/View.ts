@@ -215,15 +215,15 @@ class View {
   }
 
   private initHandlerEvents(parent): void {
-    parent.instances.handler.observer.subscribe((handler) => {
-      switch (handler.eventType) {
+    parent.instances.handler.observer.subscribe((event) => {
+      switch (event.type) {
         case this.validateView.mouseDownEvent:
-          this.handleHandlerMouseDown(handler.event);
+          this.handleHandlerMouseDown(event.data);
           break;
         case this.validateView.mouseMoveEvent:
           this.handleHandlerMove({
             $handler: parent.instances.handler.$html,
-            event: handler.event,
+            event: event.data,
             name: parent.name,
           });
           break;

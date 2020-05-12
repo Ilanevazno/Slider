@@ -12,13 +12,14 @@ class SliderBodyView {
     this.$mainHtml = this.drawSliderBody($htmlContainer);
     this.breakpointElements = [];
 
+    useAutoBind(this);
     this.bindActions();
     this.listenEvents();
   }
 
-  public setAxis(axis: string): string {
-    return this.axis = axis;
-  }
+  // public setAxis(_axis: string): any {
+    // return this.axis = axis;
+  // }
 
   public removeSliderBody(): void {
     this.$mainHtml.remove();
@@ -60,7 +61,7 @@ class SliderBodyView {
         .css(direction, `${breakpoint.pixelPosition}px`)
         .text(icon)
         .appendTo(this.$mainHtml)
-        .on('click', this.handleBreakpointClick.bind(this, breakpoint.pixelPosition));
+        .on('click', this.handleBreakpointClick.bind(null, breakpoint.pixelPosition));
     });
   }
 
@@ -118,8 +119,8 @@ class SliderBodyView {
   }
 
   private bindActions(): void {
-    $(window).on('resize.windowResize', this.handleWindowResize.bind(this));
-    this.$mainHtml.on('click.mainHtmlClick', this.handleSliderBodyClick.bind(this));
+    $(window).on('resize.windowResize', this.handleWindowResize);
+    this.$mainHtml.on('click.mainHtmlClick', this.handleSliderBodyClick);
   }
 }
 

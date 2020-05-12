@@ -9,6 +9,7 @@ class HandlerView {
     this.$html = this.drawHandler($htmlContainer);
     this.observer = new Observer();
 
+    useAutoBind(this);
     this.initEvents();
   }
 
@@ -23,27 +24,26 @@ class HandlerView {
 
   private drawHandler($htmlContainer: JQuery<HTMLElement>): JQuery<HTMLElement> {
     const handler: JQuery<HTMLElement> = $('<div/>', {
-      class: this.axis === 'X' ?
-      'slider__handler slider__handler_type_horizontal'
-      :
-      'slider__handler slider__handler_type_vertical'
+      class: this.axis === 'X'
+      ? 'slider__handler slider__handler_type_horizontal'
+      : 'slider__handler slider__handler_type_vertical'
     }).appendTo($htmlContainer);
 
     return handler;
   }
 
   private initEvents (): void {
-    this.$html.on('mousedown.handlerMouseDown', this.handleHandlerMouseDown.bind(this));
+    this.$html.on('mousedown.handlerMouseDown', this.handleHandlerMouseDown);
   }
 
   private handleHandlerMouseDown (event): void {
-    this.observer.broadcast({ eventType: event.type, event });
-    $(document).on('mousemove.documentMouseMove', this.handleDocumentMouseMove.bind(this));
-    $(document).on('mouseup.documentMouseUp', this.handleDocumentMouseUp.bind(this));
+    this.observer.broadcast({ type: event.type, data: event });
+    $(document).on('mousemove.documentMouseMove', this.handleDocumentMouseMove);
+    $(document).on('mouseup.documentMouseUp', this.handleDocumentMouseUp);
   }
 
   private handleDocumentMouseMove (event): void {
-    this.observer.broadcast({ eventType: event.type, event });
+    this.observer.broadcast({ type: event.type, data: event });
   }
 
   private handleDocumentMouseUp (): void {

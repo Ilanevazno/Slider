@@ -50,6 +50,7 @@
   "dependencies": {
     "@types/jquery": "^3.3.31",
     "@types/node": "^12.7.4",
+    "auto-bind": "^4.0.0",
     "git": "^0.1.5",
     "typescript": "^3.5.3"
   },
