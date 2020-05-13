@@ -1,6 +1,7 @@
 import Model from '../Model/Model';
 import View from '../View/View';
 import Observer from '../Observer/Observer';
+import * as customEvent from '../Observer/customEvents';
 
 class Controller {
   private model: Model;
@@ -18,8 +19,8 @@ class Controller {
 
   public subscribeToChangeState(): any {
     return this.model.eventObserver.subscribe((event) => {
-      if (event.name === 'SET_STATE') {
-        this.eventObserver.broadcast({ type: 'SET_STATE', state: event.state });
+      if (event.name === customEvent.setState) {
+        this.eventObserver.broadcast({ type: customEvent.setState, state: event.state });
       }
     });
   }
@@ -67,13 +68,13 @@ class Controller {
   private subscribeViewObserver(): void {
     this.view.eventObserver.subscribe((event) => {
       switch (event.type) {
-        case 'SET_STATE':
+        case customEvent.setState:
           this.model.setState(event.data);
           break;
-        case 'REFRESH_STATE':
+        case customEvent.refreshState:
           this.model.refreshState();
           break;
-        case 'CLEAR_STATE':
+        case customEvent.clearState:
           this.model.clearState();
           break;
         default:
@@ -85,28 +86,28 @@ class Controller {
   private subscribeModelObserver(): void {
     this.model.eventObserver.subscribe((event) => {
       switch (event.name) {
-        case 'SET_STATE':
+        case customEvent.setState:
           this.view.prepareToMoveHandler(event.state);
           break;
-        case 'SET_VALUE_TYPE':
+        case customEvent.setValueType:
           this.view.refreshView();
           break
-        case 'SET_MIN_VALUE':
+        case customEvent.setMinValue:
           this.view.changeBreakpointsActivity();
           break;
-        case 'SET_MAX_VALUE':
+        case customEvent.setMaxValue:
           this.view.changeBreakpointsActivity();
           break;
-        case 'SET_STEP_SIZE':
+        case customEvent.setStepSize:
           this.view.changeBreakpointsActivity();
           break;
-        case 'SET_AXIS':
+        case customEvent.setAxis:
           this.view.setAxis(event.axis);
           break;
-        case 'SET_TOOLTIP_ACTIVITY':
+        case customEvent.setTooltipActivity:
           this.view.setTooltipActivity(event.isEnabledTooltip);
           break;
-        case 'SET_LABELS_ACTIVITY':
+        case customEvent.setLabelsActivity:
           this.view.changeBreakpointsActivity();
           break;
         default:

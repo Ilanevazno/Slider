@@ -14,13 +14,9 @@ type pixelToPercentConverting = {
 
 class ValidateView {
   private currentPointerShift: number;
-  public mouseDownEvent: string;
-  public mouseMoveEvent: string;
 
   constructor () {
     this.currentPointerShift = 0;
-    this.mouseDownEvent = 'mousedown';
-    this.mouseMoveEvent = 'mousemove';
   }
 
   public setPointerShift (newShift: number): void {

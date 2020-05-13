@@ -1,13 +1,14 @@
 import Observer from '../../Observer/Observer';
+import * as customEvent from '../../Observer/customEvents';
 
 class TooltipView {
   private $tooltip: any;
   private $htmlParent: JQuery<HTMLElement>;
-  private eventObserver: Observer;
+  public eventObserver: Observer;
 
-  constructor($htmlcontainer, private axis: string) {
+  constructor($HTMLContainer, private axis: string) {
     this.$tooltip = null;
-    this.$htmlParent = $htmlcontainer;
+    this.$htmlParent = $HTMLContainer;
     this.eventObserver = new Observer();
     this.listenEvents();
     this.axis = axis;
@@ -15,12 +16,20 @@ class TooltipView {
 
   private listenEvents() {
     this.eventObserver.subscribe((event) => {
-      console.log(event);
-      if (event.isTooltipActive) {
-        this.drawTooltip()
-        this.setValue(event.tooltipPercent)
-      } else {
-        this.removeTooltip();
+      switch (event.type) {
+        case customEvent.setTooltipActivity:
+          if (event.data.isTooltipActive) {
+            this.drawTooltip();
+            this.setValue(event.data);
+          } else {
+            this.removeTooltip();
+          }
+          break;
+        case customEvent.setTooltipValue:
+          this.setValue(event.data);
+          break;
+        default:
+          break;
       }
     });
   }
@@ -31,10 +40,9 @@ class TooltipView {
 
   public drawTooltip(): JQuery<HTMLElement> {
     this.$tooltip = $('<div/>', {
-      class: this.axis === 'X' ?
-        'slider__tooltip slider__tooltip_type_horizontal'
-        :
-        'slider__tooltip slider__tooltip_type_vertical'
+      class: this.axis === 'X'
+        ? 'slider__tooltip slider__tooltip_type_horizontal'
+        : 'slider__tooltip slider__tooltip_type_vertical'
     }).appendTo(this.$htmlParent);
     return this.$tooltip;
   }

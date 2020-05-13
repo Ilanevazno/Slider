@@ -2,6 +2,7 @@ import View from './components/View/View';
 import Model from './components/Model/Model';
 import Controller from './components/Controller/Controller';
 import Observer from './components/Observer/Observer';
+import * as customEvent from './components/Observer/customEvents';
 
 type argsForDrawSlider = {
   stepSize: number,
@@ -87,8 +88,8 @@ namespace sliderPlugin {
       this.controller.subscribeToChangeState();
 
       this.controller.eventObserver.subscribe((event) => {
-        if (event.type === 'SET_STATE') {
-          this.eventObserver.broadcast({ type: 'SET_STATE', state: event.state });
+        if (event.type === customEvent.setState) {
+          this.eventObserver.broadcast({ type: customEvent.setState, state: event.state });
         }
       })
     },

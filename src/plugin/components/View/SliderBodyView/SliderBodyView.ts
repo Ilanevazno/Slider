@@ -1,5 +1,6 @@
 import Observer from '../../Observer/Observer';
-import ViewTypes from '../types/ViewTypes'
+import ViewTypes from '../types/ViewTypes';
+import * as customEvent from '../../Observer/customEvents';
 
 class SliderBodyView {
   public $mainHtml: JQuery<HTMLElement>;
@@ -17,23 +18,23 @@ class SliderBodyView {
     this.listenEvents();
   }
 
-  // public setAxis(_axis: string): any {
-    // return this.axis = axis;
-  // }
+  public setAxis(axis: string): string {
+    return this.axis = axis;
+  }
 
   public removeSliderBody(): void {
     this.$mainHtml.remove();
   }
 
   public getSliderBodyParams(): number {
-    return this.axis === 'X' ?
-      this.$mainHtml[0].offsetWidth
-      :
-      this.$mainHtml[0].offsetHeight
+    return this.axis === 'X'
+      ? this.$mainHtml[0].offsetWidth
+      : this.$mainHtml[0].offsetHeight;
   }
 
   public drawBreakPoints(breakpoints: ViewTypes.sliderBreakpoint[]): void {
     this.removeBreakpoints();
+
     const direction: string = this.axis === 'X' ? 'left' : 'top';
     const maxPercent: number = breakpoints[breakpoints.length - 1].currentPercent;
     const partOfTheMaxPercent: number = maxPercent / 10;
@@ -74,9 +75,9 @@ class SliderBodyView {
   private listenEvents(): void {
     this.eventObserver.subscribe((event) => {
       switch (event.type) {
-        case 'SET_BREAKPOINTS_ACTIVITY':
-          if (event.isActiveBreakpoints) {
-            this.drawBreakPoints(event.breakpoints);
+        case customEvent.setBreakpointsActivity:
+          if (event.data.isActiveBreakpoints) {
+            this.drawBreakPoints(event.data.breakpoints);
           } else {
             this.removeBreakpoints();
           }
@@ -88,33 +89,31 @@ class SliderBodyView {
   }
 
   private handleBreakpointClick(breakpointPixelPosition: number): void {
-    this.eventObserver.broadcast({ type: 'CHANGE_STATE_BY_CLICK', caughtCoords: breakpointPixelPosition });
+    this.eventObserver.broadcast({ type: customEvent.changeStateByClick, caughtCoords: breakpointPixelPosition });
   }
 
   private drawSliderBody($htmlContainer): JQuery<HTMLElement> {
     const sliderBody: JQuery<HTMLElement> = $('<div/>', {
-      class: this.axis === 'X' ?
-        'slider__body slider__body_type_horizontal'
-        :
-        'slider__body slider__body_type_vertical'
+      class: this.axis === 'X'
+      ? 'slider__body slider__body_type_horizontal'
+      : 'slider__body slider__body_type_vertical'
     }).appendTo($htmlContainer);
 
     return sliderBody;
   }
 
   private handleWindowResize(): void {
-    this.eventObserver.broadcast({ type: 'WINDOW_RESIZE' });
+    this.eventObserver.broadcast({ type: customEvent.windowResize });
   }
 
-  private handleSliderBodyClick(e): void {
-    const htmlEventTarget = e.target;
-    const caughtCoords: number = this.axis === 'X' ?
-      e.offsetX
-      :
-      e.offsetY;
+  private handleSliderBodyClick(event): void {
+    const htmlEventTarget = event.target;
+    const caughtCoords: number = this.axis === 'X'
+      ? event.offsetX
+      : event.offsetY;
 
     if (htmlEventTarget === this.$mainHtml[0]) {
-      this.eventObserver.broadcast({ type: 'CHANGE_STATE_BY_CLICK', caughtCoords });
+      this.eventObserver.broadcast({ type: customEvent.changeStateByClick, caughtCoords });
     }
   }
 
