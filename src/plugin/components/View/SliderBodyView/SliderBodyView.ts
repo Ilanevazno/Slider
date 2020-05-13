@@ -36,21 +36,13 @@ class SliderBodyView {
     this.removeBreakpoints();
 
     const direction: string = this.axis === 'X' ? 'left' : 'top';
-    const maxPercent: number = breakpoints[breakpoints.length - 1].currentPercent;
-    const partOfTheMaxPercent: number = maxPercent / 10;
-    let stepCounter: number = 0;
+    let shortStepCounter: number = Math.ceil(breakpoints.length / 10);
     const shortBreakpoints: ViewTypes.sliderBreakpoint[] = [];
 
-    while (stepCounter <= maxPercent) {
-      const shortBreakpointsArray = breakpoints.map((breakpoint: ViewTypes.sliderBreakpoint) => {
-        return stepCounter === breakpoint.currentPercent ? breakpoint : null;
-      }).filter((breakpoint) => breakpoint != null);
+    while (shortStepCounter <= breakpoints.length) {
+      shortBreakpoints.push(breakpoints[shortStepCounter - 1] as ViewTypes.sliderBreakpoint);
 
-      if (shortBreakpointsArray.length > 0) {
-        shortBreakpoints.push(shortBreakpointsArray[0] as ViewTypes.sliderBreakpoint);
-      }
-
-      stepCounter = stepCounter + partOfTheMaxPercent;
+      shortStepCounter = shortStepCounter + Math.ceil(breakpoints.length / 10);
     }
 
     this.breakpointElements = shortBreakpoints.map((breakpoint: ViewTypes.sliderBreakpoint) => {
