@@ -2,6 +2,7 @@ import Model from '../Model/Model';
 import View from '../View/View';
 import Observer from '../Observer/Observer';
 import * as customEvent from '../Observer/customEvents';
+import { observerEvent, modelListener } from '../types/types';
 
 class Controller {
   private model: Model;
@@ -17,19 +18,23 @@ class Controller {
     this.subscribeModelObserver();
   }
 
-  public subscribeToChangeState(): any {
-    return this.model.eventObserver.subscribe((event) => {
-      if (event.name === customEvent.setState) {
-        this.eventObserver.broadcast({ type: customEvent.setState, state: event.state });
+  public subscribeToChangeState(): void {
+    return this.model.eventObserver.subscribe((event: observerEvent<modelListener>) => {
+      switch (event.type) {
+        case customEvent.setState:
+          this.eventObserver.broadcast({ type: customEvent.setState, data: { state: event.data.state } });
+          break;
+        default:
+          break;
       }
     });
   }
 
-  public changeHandlerState(handlerName: string, value: number):void {
-    this.model.changeStateByName(handlerName, value);
+  public changeStateByHandlerName(handlerName: string, value: number): void {
+    this.model.changeStateByHandlerName(handlerName, value);
   }
 
-  public setValueType(valueType): void {
+  public setValueType(valueType: string): void {
     this.model.setValueType(valueType);
   }
 
@@ -53,7 +58,7 @@ class Controller {
     this.model.setAxis(axis);
   }
 
-  public setStepSize(newStepSize: number): object {
+  public setStepSize(newStepSize: number): void | object {
     return this.model.setStepSize(newStepSize);
   }
 
@@ -66,7 +71,7 @@ class Controller {
   }
 
   private subscribeViewObserver(): void {
-    this.view.eventObserver.subscribe((event) => {
+    this.view.eventObserver.subscribe((event: observerEvent<never>) => {
       switch (event.type) {
         case customEvent.setState:
           this.model.setState(event.data);
@@ -84,10 +89,10 @@ class Controller {
   }
 
   private subscribeModelObserver(): void {
-    this.model.eventObserver.subscribe((event) => {
-      switch (event.name) {
+    this.model.eventObserver.subscribe((event: observerEvent<modelListener>) => {
+      switch (event.type) {
         case customEvent.setState:
-          this.view.prepareToMoveHandler(event.state);
+          this.view.prepareToMoveHandler(event.data.state);
           break;
         case customEvent.setValueType:
           this.view.refreshView();
@@ -102,10 +107,10 @@ class Controller {
           this.view.changeBreakpointsActivity();
           break;
         case customEvent.setAxis:
-          this.view.setAxis(event.axis);
+          this.view.setAxis(event.data.axis);
           break;
         case customEvent.setTooltipActivity:
-          this.view.setTooltipActivity(event.isEnabledTooltip);
+          this.view.setTooltipActivity(event.data.isEnabledTooltip);
           break;
         case customEvent.setLabelsActivity:
           this.view.changeBreakpointsActivity();

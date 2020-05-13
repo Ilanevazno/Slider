@@ -8,24 +8,24 @@ type sliderOptions = {
   valueType: string;
 }
 
-type panelJQueryElement = JQuery<HTMLElement> | undefined;
+type panelDOMElement = JQuery<HTMLElement> | undefined;
 
 class Panel {
   private sliderOptions: sliderOptions;
-  private $panelHtml: any;
+  private $panelHtml: JQuery<HTMLElement>;
   private slider: any;
-  private $setTooltipActivity: panelJQueryElement;
-  private $viewTypeSelect: panelJQueryElement;
-  private $valueTypeSelect: panelJQueryElement;
-  private $minValueInput: panelJQueryElement;
-  private $maxValueInput: panelJQueryElement;
-  private $minValueHandlerInput: panelJQueryElement;
-  private $maxValueHandlerInput: panelJQueryElement;
-  private $stepSizeInput: panelJQueryElement;
-  private $setLabelsActivity: panelJQueryElement;
-  private $errorNotify: panelJQueryElement;
+  private $setTooltipActivity: panelDOMElement;
+  private $viewTypeSelect: panelDOMElement;
+  private $valueTypeSelect: panelDOMElement;
+  private $minValueInput: panelDOMElement;
+  private $maxValueInput: panelDOMElement;
+  private $minValueHandlerInput: panelDOMElement;
+  private $maxValueHandlerInput: panelDOMElement;
+  private $stepSizeInput: panelDOMElement;
+  private $setLabelsActivity: panelDOMElement;
+  private $errorNotify: panelDOMElement;
 
-  constructor(htmlContainer) {
+  constructor(htmlContainer: JQuery<HTMLElement> | HTMLElement) {
     this.$panelHtml = $(htmlContainer);
     this.slider = this.$panelHtml.prev();
 
@@ -44,11 +44,11 @@ class Panel {
     this.initEvents();
   }
 
-  private drawSlider() {
+  private drawSlider(): void {
     this.slider = this.slider.sliderPlugin(this.sliderOptions);
   }
 
-  private connectLabels() {
+  private connectLabels(): void {
     this.$setTooltipActivity = this.$panelHtml.find('[name=tooltip]');
     this.$viewTypeSelect = this.$panelHtml.find('[name=view-type]');
     this.$valueTypeSelect = this.$panelHtml.find('[name=value-type]');
@@ -73,12 +73,11 @@ class Panel {
 
     this.changeViewTypeInputState(this.sliderOptions.valueType);
 
-    this.slider.subscribeToChangeState();
-    this.slider.eventObserver.subscribe((event) => {
+    this.slider.listenToChangeState((newState) => {
       try {
-        this.$minValueHandlerInput?.val(event.state[0].value);
-        this.$maxValueHandlerInput?.val(event.state[Object.values(event.state).length - 1].value);
-      } catch (err) {}
+        this.$minValueHandlerInput?.val(newState[0].value);
+        this.$maxValueHandlerInput?.val(newState[Object.values(newState).length - 1].value);
+      } catch (err) { }
     });
 
     this.$stepSizeInput?.val(this.sliderOptions.stepSize);
@@ -87,34 +86,37 @@ class Panel {
   }
 
   private changeViewTypeInputState(viewType: string): void {
+    const $maxValueInputContainer: panelDOMElement = this.$maxValueHandlerInput?.parent();
+
     if (viewType === 'singleValue') {
-      this.$maxValueHandlerInput?.parent().hide();
+      $maxValueInputContainer?.hide();
     } else {
-      this.$maxValueHandlerInput?.parent().show();
+      $maxValueInputContainer?.show();
     }
   }
 
   private initEvents() {
-    $(document).on('mousedown', this.handleDocumentMouseDown.bind(this));
-    this.$setTooltipActivity?.on('change', this.handleLabelChange.bind(this, 'setTooltipActivity'));
-    this.$setLabelsActivity?.on('change', this.handleLabelChange.bind(this, 'setLabelsActivity'));
-    this.$viewTypeSelect?.on('change', this.handleLabelChange.bind(this, 'changeAxis'));
-    this.$valueTypeSelect?.on('change', this.handleLabelChange.bind(this, 'changeValueType'));
-    this.$minValueInput?.on('focusout', this.handleLabelChange.bind(this, 'setMinValue'));
-    this.$maxValueInput?.on('blur', this.handleLabelChange.bind(this, 'setMaxValue'));
-    this.$stepSizeInput?.on('blur', this.handleLabelChange.bind(this, 'setStepSize'));
-    this.$minValueHandlerInput?.on('blur', this.handleLabelChange.bind(this, 'setMinValueHandler'));
-    this.$maxValueHandlerInput?.on('blur', this.handleLabelChange.bind(this, 'setMaxValueHandler'));
+    $(document).on('mousedown.documentMousedown', this.handleDocumentMouseDown.bind(this));
+    this.$setTooltipActivity?.on('change.tooltipActivity', this.handleLabelChange.bind(this, 'setTooltipActivity'));
+    this.$setLabelsActivity?.on('change.labelsActivity', this.handleLabelChange.bind(this, 'setLabelsActivity'));
+    this.$viewTypeSelect?.on('change.viewTypeSelect', this.handleLabelChange.bind(this, 'changeAxis'));
+    this.$valueTypeSelect?.on('change.ValueTypeSelect', this.handleLabelChange.bind(this, 'changeValueType'));
+    this.$minValueInput?.on('focusout.minValueInput', this.handleLabelChange.bind(this, 'setMinValue'));
+    this.$maxValueInput?.on('blur.maxValueInput', this.handleLabelChange.bind(this, 'setMaxValue'));
+    this.$stepSizeInput?.on('blur.stepSizeInput', this.handleLabelChange.bind(this, 'setStepSize'));
+    this.$minValueHandlerInput?.on('blur.minValueHandlerInput', this.handleLabelChange.bind(this, 'setMinValueHandler'));
+    this.$maxValueHandlerInput?.on('blur.maxValueHandlerInput', this.handleLabelChange.bind(this, 'setMaxValueHandler'));
   }
 
   private getErrorNotify(errorMessage: string, $label: JQuery<HTMLElement>): void {
     const errorSound = new Audio('src/assets/sounds/sound__error.mp3');
+
     errorSound.play();
+
     this.$errorNotify = $('<div/>', {
       class: 'panel__modal_type_error',
       text: errorMessage
-    })
-      .appendTo($label);
+    }).appendTo($label);
   }
 
   private handleDocumentMouseDown(): void {
@@ -159,12 +161,14 @@ class Panel {
 
   private setMinValueHandler($targetLabel: JQuery<HTMLElement>): void {
     const newStateValue = $targetLabel.val();
-    this.slider.changeHandlerState('min-value', newStateValue);
+
+    this.slider.changeStateByHandlerName('min-value', newStateValue);
   }
 
   private setMaxValueHandler($targetLabel: JQuery<HTMLElement>): void {
     const newStateValue = $targetLabel.val();
-    this.slider.changeHandlerState('max-value', newStateValue);
+
+    this.slider.changeStateByHandlerName('max-value', newStateValue);
   }
 
   private changeValueType($targetLabel: JQuery<HTMLElement>): void {
@@ -177,6 +181,7 @@ class Panel {
 
       if (selectedOption === currentElementText) {
         const caughtValueType = $currentOptionElement.data('code');
+
         this.slider.setValueType(caughtValueType);
         this.changeViewTypeInputState(caughtValueType);
       }
@@ -188,13 +193,12 @@ class Panel {
   }
 
   private setStepSize($targetLabel: JQuery<HTMLElement>): void {
-    const prevValue = $targetLabel.val();
     const caughtNewValue: number = Number($targetLabel.val());
     const $targetLabelParent = $targetLabel.parent();
-    const setStepSize = this.slider.setStepSize(caughtNewValue);
+    const setStepSizeRequest = this.slider.setStepSize(caughtNewValue);
 
-    if (setStepSize.response === 'error') {
-      this.getErrorNotify(setStepSize.message, $targetLabelParent);
+    if (setStepSizeRequest.response === 'error') {
+      this.getErrorNotify(setStepSizeRequest.message, $targetLabelParent);
       $targetLabel.val('');
     }
   }
@@ -202,10 +206,10 @@ class Panel {
   private setMinValue($targetLabel: JQuery<HTMLElement>): void {
     const caughtNewValue: number = Number($targetLabel.val());
     const $targetLabelParent = $targetLabel.parent();
-    const setNewValue = this.slider.setMinValue(caughtNewValue);
+    const setNewValueRequest = this.slider.setMinValue(caughtNewValue);
 
-    if (setNewValue.response === 'error') {
-      this.getErrorNotify(setNewValue.message, $targetLabelParent);
+    if (setNewValueRequest.response === 'error') {
+      this.getErrorNotify(setNewValueRequest.message, $targetLabelParent);
       $targetLabel.val('');
     }
   }
@@ -213,10 +217,10 @@ class Panel {
   private setMaxValue($targetLabel: JQuery<HTMLElement>): void {
     const caughtNewValue: number = Number($targetLabel.val());
     const $targetLabelParent = $targetLabel.parent();
-    const setMaxValue = this.slider.setMaxValue(caughtNewValue);
+    const setMaxValueRequest = this.slider.setMaxValue(caughtNewValue);
 
-    if (setMaxValue.response === 'error') {
-      this.getErrorNotify(setMaxValue.message, $targetLabelParent);
+    if (setMaxValueRequest.response === 'error') {
+      this.getErrorNotify(setMaxValueRequest.message, $targetLabelParent);
       $targetLabel.val('');
     }
   }

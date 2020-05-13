@@ -5,28 +5,15 @@ import SliderBodyView from './SliderBodyView/SliderBodyView';
 import HandlerView from './HandlerView/HandlerView';
 import TooltipView from './TooltipView/TooltipView';
 import * as customEvent from '../Observer/customEvents';
-
-type handlerInstance = {
-  instances: {
-    handler: HandlerView;
-    tooltip: TooltipView;
-  }
-  name: string;
-  statePercent?: number;
-}
-
-type customEvent = {
-  type: string;
-  data: object
-}
+import { handlerInstance, observerEvent, handlerData, breakpointsData } from '../types/types';
 
 class View {
+  public eventObserver: Observer;
+
   private $sliderContainer: JQuery<HTMLElement>
   private sliderBody: any;
   private handlerMinValue: any
   private handlerMaxValue: any
-
-  public eventObserver: Observer;
   private validateView: ValidateView;
 
   constructor(private model: Model, private initHtmlElement: HTMLElement) {
@@ -54,7 +41,7 @@ class View {
     const $caughtHandlerHtml = caughtHandlerInstance.instances.handler.$html;
     const minValue: number = this.model.getOption('minValue');
 
-    const dataForBroadcasting: customEvent = {
+    const dataForBroadcasting: observerEvent<handlerData> = {
       type: customEvent.setState,
       data: {
         $handler: $caughtHandlerHtml,
@@ -65,145 +52,12 @@ class View {
     this.eventObserver.broadcast(dataForBroadcasting);
   }
 
-  public setTooltipActivity(isTooltipActive): void {
-    [this.handlerMinValue, this.handlerMaxValue].map((currentHandler: handlerInstance) => {
-      if (currentHandler) {
-        const tooltipPercent: number = currentHandler.statePercent || this.model.getOption('minValue');
-        currentHandler.instances.tooltip.eventObserver.broadcast({ type: customEvent.setTooltipActivity, data: { isTooltipActive } });
-        currentHandler.instances.tooltip.eventObserver.broadcast({ type: customEvent.setTooltipValue, data: tooltipPercent });
-      }
-    });
-  }
-
-  private drawSliderInstances() {
-    const valueType: string = this.model.getOption('valueType');
-    this.sliderBody = this.drawSliderBody(this.$sliderContainer);
-    this.handlerMinValue = {
-      name: valueType === 'singleValue' ? 'min-value' : 'min-value',
-      instances: this.drawHandlerInstances(this.sliderBody.$mainHtml),
-    };
-
-    this.initHandlerEvents(this.handlerMinValue);
-    setTimeout(() => {
-      this.setState('min-value');
-     }, 0)
-
-    if (valueType === 'doubleValue') {
-      this.handlerMaxValue = {
-        name: 'max-value',
-        instances: this.drawHandlerInstances(this.sliderBody.$mainHtml)
-      };
-
-      this.initHandlerEvents(this.handlerMaxValue);
-      setTimeout(() => {
-        this.setState('max-value');
-      }, 0)
-    }
-
-    if (this.model.getOption('isShowLabels')) {
-      this.changeBreakpointsActivity();
-    }
-
-    this.initSliderBodyEvents();
-  }
-
-  private initSliderBodyEvents(): void {
-    this.sliderBody.eventObserver.subscribe((event: customEvent) => {
-      switch (event.type) {
-        case customEvent.windowResize:
-          this.changeBreakpointsActivity();
-          this.eventObserver.broadcast({ type: customEvent.refreshState });
-          break;
-        case customEvent.changeStateByClick:
-          this.moveHandlerByBodyClick(event);
-          break
-        default:
-          break;
-      }
-    });
-  }
-
-  private moveHandlerByBodyClick(event): void {
-    const targetPercent: number = this.convertPxToPercent(event.caughtCoords);
-    const currentState: object = this.model.getState();
-    let availableHandlerValues: number[] = [];
-
-    for (let handler in currentState) {
-      availableHandlerValues.push(currentState[handler].value);
-    }
-
-    const findTheClosest = (array, base) => {
-      let theClosest = Infinity;
-      let temp, arrayElement;
-
-      array.map((_element, i) => {
-        temp = Math.abs(array[i] - base);
-
-        if (temp < theClosest) {
-          theClosest = temp;
-          arrayElement = array[i];
-        }
-      });
-
-      return arrayElement;
-    }
-
-    const findAvailableHandler: number = findTheClosest(availableHandlerValues, targetPercent);
-
-    Object.values(currentState).map((handler) => {
-      if (handler.value === findAvailableHandler) {
-        const dataForBroadcasting: customEvent = {
-          type: customEvent.setState,
-          data: {
-            $handler: handler.$handler,
-            name: handler.name,
-            value: targetPercent,
-          }
-        }
-        this.eventObserver.broadcast(dataForBroadcasting);
-      }
-    });
-  }
-
-  private drawSliderContainer(htmlContainer: JQuery<HTMLElement> | HTMLElement): JQuery<HTMLElement> {
-    this.$sliderContainer = $('<div/>', {
-      class: 'slider__container'
-    }).appendTo(htmlContainer);
-
-    return this.$sliderContainer;
-  }
-
-  private drawSliderBody($HtmlContainer: JQuery<HTMLElement>): SliderBodyView {
-    const sliderBody: SliderBodyView = new SliderBodyView($HtmlContainer, this.model.axis);
-
-    return sliderBody;
-  }
-
-  private getConvertedBreakpoints() {
-    const pointerWidth: number = this.handlerMinValue.instances.handler.getHandlerWidth();
-    const maxContainerWidth: number = this.sliderBody.getSliderBodyParams();
-
-    return this.model.getOption('breakpoints').map((currentPercent: number) => {
-      const optionList = {
-        minPercent: this.model.getOption('minValue'),
-        maxPercent: this.model.getOption('maxValue'),
-        currentPercent,
-        maxContainerWidth,
-      };
-
-      return {
-        currentPercent,
-        pixelPosition: this.validateView.convertPercentToPixel(optionList)
-      };
-    })
-  }
-
   public changeBreakpointsActivity(): void {
     const availableBreakpoints: number[] = this.getConvertedBreakpoints();
 
     const isActiveBreakpoints: boolean = this.model.getOption('isShowLabels');
 
-    const broadcastingData: customEvent = {
+    const broadcastingData: observerEvent<breakpointsData> = {
       type: customEvent.setBreakpointsActivity,
       data: {
         isActiveBreakpoints,
@@ -214,39 +68,13 @@ class View {
     this.sliderBody.eventObserver.broadcast(broadcastingData);
   }
 
-  private drawHandlerInstances($HtmlContainer): object {
-    const sliderHandler = new HandlerView($HtmlContainer, this.model.getOption('axis'));
-    const handlerTooltip: TooltipView = new TooltipView(sliderHandler.$html, this.model.getOption('axis'));
-
-    const isTooltipActive: boolean = this.model.getOption('isEnabledTooltip');
-    const tooltipPercent: number = this.model.getOption('minValue');
-
-    if (isTooltipActive) {
-      handlerTooltip.eventObserver.broadcast({ type: customEvent.setTooltipActivity, data: { isTooltipActive } });
-    }
-
-    return {
-      handler: sliderHandler,
-      tooltip: handlerTooltip
-    };
-  }
-
-  private initHandlerEvents(parent): void {
-    parent.instances.handler.observer.subscribe((event) => {
-      switch (event.type) {
-        case customEvent.mousedown:
-          this.handleHandlerMouseDown(event.data);
-          break;
-        case customEvent.mousemove:
-          this.handleHandlerMove({
-            $handler: parent.instances.handler.$html,
-            event: event.data,
-            name: parent.name,
-          });
-          break;
-        default:
-          return false;
-      };
+  public setTooltipActivity(isTooltipActive): void {
+    [this.handlerMinValue, this.handlerMaxValue].map((currentHandler: handlerInstance) => {
+      if (currentHandler) {
+        const tooltipPercent: number = currentHandler.statePercent || this.model.getOption('minValue');
+        currentHandler.instances.tooltip.eventObserver.broadcast({ type: customEvent.setTooltipActivity, data: { isTooltipActive } });
+        currentHandler.instances.tooltip.eventObserver.broadcast({ type: customEvent.setTooltipValue, data: tooltipPercent });
+      }
     });
   }
 
@@ -298,6 +126,165 @@ class View {
     });
   }
 
+  private drawSliderInstances() {
+    const valueType: string = this.model.getOption('valueType');
+    this.sliderBody = this.drawSliderBody(this.$sliderContainer);
+    this.handlerMinValue = {
+      name: valueType === 'singleValue' ? 'min-value' : 'min-value',
+      instances: this.drawHandlerInstances(this.sliderBody.$mainHtml),
+    };
+
+    this.initHandlerEvents(this.handlerMinValue);
+    setTimeout(() => {
+      this.setState('min-value');
+    }, 0)
+
+    if (valueType === 'doubleValue') {
+      this.handlerMaxValue = {
+        name: 'max-value',
+        instances: this.drawHandlerInstances(this.sliderBody.$mainHtml)
+      };
+
+      this.initHandlerEvents(this.handlerMaxValue);
+      setTimeout(() => {
+        this.setState('max-value');
+      }, 0)
+    }
+
+    if (this.model.getOption('isShowLabels')) {
+      this.changeBreakpointsActivity();
+    }
+
+    this.initSliderBodyEvents();
+  }
+
+  private initSliderBodyEvents(): void {
+    this.sliderBody.eventObserver.subscribe((event: observerEvent<never>) => {
+      switch (event.type) {
+        case customEvent.windowResize:
+          this.changeBreakpointsActivity();
+          this.eventObserver.broadcast({ type: customEvent.refreshState });
+          break;
+        case customEvent.changeStateByClick:
+          this.moveHandlerByBodyClick(event);
+          break
+        default:
+          break;
+      }
+    });
+  }
+
+  private moveHandlerByBodyClick(event): void {
+    const targetPercent: number = this.convertPxToPercent(event.caughtCoords);
+    const currentState: object = this.model.getState();
+    let availableHandlerValues: number[] = [];
+
+    for (let handler in currentState) {
+      availableHandlerValues.push(currentState[handler].value);
+    }
+
+    const findTheClosest = (array, base) => {
+      let theClosest = Infinity;
+      let temp, arrayElement;
+
+      array.map((_element, i) => {
+        temp = Math.abs(array[i] - base);
+
+        if (temp < theClosest) {
+          theClosest = temp;
+          arrayElement = array[i];
+        }
+      });
+
+      return arrayElement;
+    }
+
+    const findAvailableHandler: number = findTheClosest(availableHandlerValues, targetPercent);
+
+    Object.values(currentState).map((handler) => {
+      if (handler.value === findAvailableHandler) {
+        const dataForBroadcasting: observerEvent<handlerData> = {
+          type: customEvent.setState,
+          data: {
+            $handler: handler.$handler,
+            name: handler.name,
+            value: targetPercent,
+          }
+        }
+        this.eventObserver.broadcast(dataForBroadcasting);
+      }
+    });
+  }
+
+  private drawSliderContainer(htmlContainer: JQuery<HTMLElement> | HTMLElement): JQuery<HTMLElement> {
+    this.$sliderContainer = $('<div/>', {
+      class: 'slider__container'
+    }).appendTo(htmlContainer);
+
+    return this.$sliderContainer;
+  }
+
+  private drawSliderBody($HtmlContainer: JQuery<HTMLElement>): SliderBodyView {
+    const sliderBody: SliderBodyView = new SliderBodyView($HtmlContainer, this.model.axis);
+
+    return sliderBody;
+  }
+
+  private getConvertedBreakpoints() {
+    const pointerWidth: number = this.handlerMinValue.instances.handler.getHandlerWidth();
+    const maxContainerWidth: number = this.sliderBody.getSliderBodyParams();
+
+    return this.model.getOption('breakpoints').map((currentPercent: number) => {
+      const optionList = {
+        minPercent: this.model.getOption('minValue'),
+        maxPercent: this.model.getOption('maxValue'),
+        currentPercent,
+        maxContainerWidth,
+      };
+
+      return {
+        currentPercent,
+        pixelPosition: this.validateView.convertPercentToPixel(optionList)
+      };
+    })
+  }
+
+  private drawHandlerInstances($HtmlContainer): object {
+    const sliderHandler = new HandlerView($HtmlContainer, this.model.getOption('axis'));
+    const handlerTooltip: TooltipView = new TooltipView(sliderHandler.$html, this.model.getOption('axis'));
+
+    const isTooltipActive: boolean = this.model.getOption('isEnabledTooltip');
+    const tooltipPercent: number = this.model.getOption('minValue');
+
+    if (isTooltipActive) {
+      handlerTooltip.eventObserver.broadcast({ type: customEvent.setTooltipActivity, data: { isTooltipActive } });
+    }
+
+    return {
+      handler: sliderHandler,
+      tooltip: handlerTooltip
+    };
+  }
+
+  private initHandlerEvents(parent): void {
+    parent.instances.handler.observer.subscribe((event) => {
+      switch (event.type) {
+        case customEvent.mousedown:
+          this.handleHandlerMouseDown(event.data);
+          break;
+        case customEvent.mousemove:
+          this.handleHandlerMove({
+            $handler: parent.instances.handler.$html,
+            event: event.data,
+            name: parent.name,
+          });
+          break;
+        default:
+          return false;
+      };
+    });
+  }
+
   private isEnabledTooltip(): boolean {
     return this.model.getOption('isEnabledTooltip');
   }
@@ -331,7 +318,7 @@ class View {
       event.clientY - shift - this.sliderBody.$mainHtml[0].getBoundingClientRect().top;
 
     const value: number = this.convertPxToPercent(currentPixel);
-    const dataForBroadcasting: customEvent = {
+    const dataForBroadcasting: observerEvent<handlerData> = {
       type: customEvent.setState,
       data: {
         $handler,

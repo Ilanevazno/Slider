@@ -3,23 +3,14 @@ import Model from './components/Model/Model';
 import Controller from './components/Controller/Controller';
 import Observer from './components/Observer/Observer';
 import * as customEvent from './components/Observer/customEvents';
-
-type argsForDrawSlider = {
-  stepSize: number,
-}
+import { initSlider, observerEvent, stateListener } from './components/types/types';
 
 namespace sliderPlugin {
-  // const model = '';
   jQuery.fn.extend({
-    model: null,
-    view: null,
-    controller: null,
-    eventObserver: new Observer(),
-
-    sliderPlugin(args) {
+    sliderPlugin(args: initSlider) {
       const {
-        stepSize = 10,
-        minValue = 5,
+        stepSize = 1,
+        minValue = 1,
         maxValue = 100,
         axis = 'X',
         isShowLabels = true,
@@ -27,17 +18,15 @@ namespace sliderPlugin {
         valueType = 'singleValue',
       } = args;
 
-      const options = {
-        isShowLabels,
-        isEnabledTooltip,
-        axis,
+      this.model = new Model({
         stepSize,
-        valueType,
         minValue,
         maxValue,
-      }
-
-      this.model = new Model(options);
+        axis,
+        isShowLabels,
+        isEnabledTooltip,
+        valueType,
+      });
       this.view = new View(this.model, this);
       this.controller = new Controller(this.model, this.view);
 
@@ -56,15 +45,15 @@ namespace sliderPlugin {
       this.controller.hideLabels();
     },
 
-    setStepSize(stepSize: number | Array<number>): void {
+    setStepSize(stepSize: number | Array<number>): void | object {
       return this.controller.setStepSize(stepSize);
     },
 
-    setMinValue(value: number): void {
+    setMinValue(value: number): void | object {
       return this.controller.setMinValue(value);
     },
 
-    setMaxValue(value: number): void {
+    setMaxValue(value: number): void | object {
       return this.controller.setMaxValue(value);
     },
 
@@ -80,16 +69,16 @@ namespace sliderPlugin {
       this.controller.hideTooltip();
     },
 
-    changeHandlerState(handlerName: string, newValue: number): void {
-      this.controller.changeHandlerState(handlerName, newValue);
+    changeStateByHandlerName(handlerName: string, newValue: number): void {
+      this.controller.changeStateByHandlerName(handlerName, newValue);
     },
 
-    subscribeToChangeState(): any {
+    listenToChangeState(callback) {
       this.controller.subscribeToChangeState();
 
-      this.controller.eventObserver.subscribe((event) => {
+      this.controller.eventObserver.subscribe((event: observerEvent<stateListener>) => {
         if (event.type === customEvent.setState) {
-          this.eventObserver.broadcast({ type: customEvent.setState, state: event.state });
+          callback(event.data.state)
         }
       })
     },

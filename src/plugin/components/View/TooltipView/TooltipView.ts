@@ -14,6 +14,23 @@ class TooltipView {
     this.axis = axis;
   }
 
+  public setValue(percent): void {
+    this.$tooltip.text(percent);
+  }
+
+  public drawTooltip(): JQuery<HTMLElement> {
+    this.$tooltip = $('<div/>', {
+      class: this.axis === 'X'
+        ? 'slider__tooltip slider__tooltip_type_horizontal'
+        : 'slider__tooltip slider__tooltip_type_vertical'
+    }).appendTo(this.$htmlParent);
+    return this.$tooltip;
+  }
+
+  public removeTooltip(): void {
+    this.$tooltip.remove();
+  }
+
   private listenEvents() {
     this.eventObserver.subscribe((event) => {
       switch (event.type) {
@@ -32,23 +49,6 @@ class TooltipView {
           break;
       }
     });
-  }
-
-  public setValue(percent): void {
-    this.$tooltip.text(percent);
-  }
-
-  public drawTooltip(): JQuery<HTMLElement> {
-    this.$tooltip = $('<div/>', {
-      class: this.axis === 'X'
-        ? 'slider__tooltip slider__tooltip_type_horizontal'
-        : 'slider__tooltip slider__tooltip_type_vertical'
-    }).appendTo(this.$htmlParent);
-    return this.$tooltip;
-  }
-
-  public removeTooltip(): void {
-    this.$tooltip.remove();
   }
 }
 
