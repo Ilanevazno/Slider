@@ -1,4 +1,4 @@
-import View from './components/View/View';
+import MainView from './components/View/MainView';
 import Model from './components/Model/Model';
 import Controller from './components/Controller/Controller';
 import Observer from './components/Observer/Observer';
@@ -27,7 +27,7 @@ namespace sliderPlugin {
         isEnabledTooltip,
         valueType,
       });
-      this.view = new View(this.model, this);
+      this.view = new MainView(this.model, this);
       this.controller = new Controller(this.model, this.view);
 
       return this;

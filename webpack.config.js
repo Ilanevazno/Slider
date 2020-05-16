@@ -18,6 +18,15 @@ module.exports = {
     module: {
     rules: [
       {
+        test: /.spec\.ts$/,
+        include: /tests/,
+        exclude: /(bower_components|node_modules)/,
+        loader: 'babel-loader',
+        options: {
+          presets: ["@babel/preset-env"],
+        },
+      },
+      {
         test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/

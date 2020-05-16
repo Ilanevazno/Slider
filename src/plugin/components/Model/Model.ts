@@ -116,30 +116,30 @@ class Model {
     return this.breakPoints;
   }
 
-  public changeStateByHandlerName(handlerName: string, value: number): void {
+    public changeStateByHandlerName(handlerName: string, value: number): void {
     Object.values(this.state).map((stateElement: handlerData) => {
       if (stateElement.name === handlerName) {
         stateElement.value = this.findTheClosestBreakpoint(Number(value));
       }
     });
 
-    this.checkCollision();
+    this.checkCollision(handlerName);
 
     this.eventObserver.broadcast({ type: customEvent.setState, data: { state: this.state } });
   }
 
-  public setState(newState: handlerData): void {
+  public setState(currentHandler: handlerData): void {
     const stateLength = this.getStateLength();
 
-    if (!this.checkIncludeStateValue(newState.$handler)) {
-      this.state[stateLength] = newState;
+    if (!this.checkIncludeStateValue(currentHandler.$handler)) {
+      this.state[stateLength] = currentHandler;
     }
 
-    this.checkCollision();
+    this.checkCollision(currentHandler.name);
 
     Object.values(this.state).map((stateElement: handlerData) => {
-      if (stateElement.$handler[0] === newState.$handler[0]) {
-        stateElement.value = this.findTheClosestBreakpoint(newState.value);
+      if (stateElement.$handler[0] === currentHandler.$handler[0]) {
+        stateElement.value = this.findTheClosestBreakpoint(currentHandler.value);
       }
     });
 
@@ -161,17 +161,20 @@ class Model {
   }
 
   public setStepSize(newStepSize: number): object {
-    if (newStepSize <= this.maxValue || newStepSize < 1) {
-      this.stepSize = Number(newStepSize);
+    const convertedNewStepSize = Math.abs(newStepSize);
+    const convertedMaxValue = Math.abs(this.maxValue);
+
+    if (convertedNewStepSize <= convertedMaxValue && convertedNewStepSize > 0) {
+      this.stepSize = Number(convertedNewStepSize);
 
       this.updateBreakpointList();
       this.refreshState();
 
       this.eventObserver.broadcast({ type: customEvent.setStepSize, data: { newBreakpoints: this.breakPoints } });
 
-      return { response: 'success', message: `Размер шага установлен на ${newStepSize}` };
+      return { response: 'success', message: `Размер шага установлен на ${convertedNewStepSize}` };
     } else {
-      return { response: 'error', message: `Размер шага должен быть от 1 до ${this.maxValue}` };
+      return { response: 'error', message: `Размер шага должен быть от 1 до ${convertedMaxValue}` };
     }
   }
 
@@ -207,14 +210,18 @@ class Model {
     return Object.keys(this.state).length;
   }
 
-  private checkCollision(): void {
+  private checkCollision(currentHandler): void {
     const stateLength = this.getStateLength();
     const minValue: number = this.state[0].value;
     const maxValue: number = this.state[stateLength - 1].value;
 
-    if (minValue > maxValue) {
-      this.state[stateLength - 1].value = minValue;
-      this.state[0].value = maxValue
+
+    if (currentHandler === 'min-value') {
+      this.state[stateLength - 1].value = minValue > maxValue ? this.state[0].value : this.state[stateLength - 1].value;
+    }
+
+    if (currentHandler === 'max-value') {
+      this.state[0].value = maxValue < minValue ? this.state[stateLength - 1].value : this.state[0].value;
     }
   }
 

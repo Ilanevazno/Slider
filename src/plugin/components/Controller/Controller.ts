@@ -1,15 +1,15 @@
 import Model from '../Model/Model';
-import View from '../View/View';
+import MainView from '../View/MainView';
 import Observer from '../Observer/Observer';
 import * as customEvent from '../Observer/customEvents';
 import { observerEvent, modelListener } from '../types/types';
 
 class Controller {
   private model: Model;
-  private view: View;
+  private view: MainView;
   private eventObserver: Observer;
 
-  constructor(model: Model, view: View) {
+  constructor(model: Model, view: MainView) {
     this.model = model;
     this.view = view;
     this.eventObserver = new Observer();
@@ -107,7 +107,7 @@ class Controller {
           this.view.changeBreakpointsActivity();
           break;
         case customEvent.setAxis:
-          this.view.setAxis(event.data.axis);
+          this.view.changeSliderBodyAxis(event.data.axis);
           break;
         case customEvent.setTooltipActivity:
           this.view.setTooltipActivity(event.data.isEnabledTooltip);

@@ -38,24 +38,26 @@ class SliderBodyView {
     const direction: string = this.axis === 'X' ? 'left' : 'top';
     let shortStepCounter: number = Math.ceil(breakpoints.length / 10);
     const shortBreakpoints: sliderBreakpoint[] = [];
+    shortBreakpoints.push(breakpoints[0] as sliderBreakpoint);
 
     while (shortStepCounter <= breakpoints.length) {
-      shortBreakpoints.push(breakpoints[shortStepCounter - 1] as sliderBreakpoint);
+      shortBreakpoints.push(breakpoints[shortStepCounter] as sliderBreakpoint);
 
       shortStepCounter = shortStepCounter + Math.ceil(breakpoints.length / 10);
     }
 
-    this.breakpointElements = shortBreakpoints.map((breakpoint: sliderBreakpoint) => {
-      const icon: number = breakpoint.currentPercent;
+    this.breakpointElements = shortBreakpoints
+      .filter((breakpoint) => breakpoint != undefined).map((breakpoint: sliderBreakpoint) => {
+        const icon: number = breakpoint.currentPercent;
 
-      return $('<div/>', {
-        class: `slider__breakpoint slider__breakpoint_direction_${direction}`
-      })
-        .css(direction, `${breakpoint.pixelPosition}px`)
-        .text(icon)
-        .appendTo(this.$mainHtml)
-        .on('click', this.handleBreakpointClick.bind(null, breakpoint.pixelPosition));
-    });
+        return $('<div/>', {
+          class: `slider__breakpoint slider__breakpoint_direction_${direction}`
+        })
+          .css(direction, `${breakpoint.pixelPosition}px`)
+          .text(icon)
+          .appendTo(this.$mainHtml)
+          .on('click', this.handleBreakpointClick.bind(null, breakpoint.pixelPosition));
+      });
   }
 
   public removeBreakpoints(): void {
@@ -87,8 +89,8 @@ class SliderBodyView {
   private drawSliderBody($htmlContainer): JQuery<HTMLElement> {
     const sliderBody: JQuery<HTMLElement> = $('<div/>', {
       class: this.axis === 'X'
-      ? 'slider__body slider__body_type_horizontal'
-      : 'slider__body slider__body_type_vertical'
+        ? 'slider__body slider__body_type_horizontal'
+        : 'slider__body slider__body_type_vertical'
     }).appendTo($htmlContainer);
 
     return sliderBody;
