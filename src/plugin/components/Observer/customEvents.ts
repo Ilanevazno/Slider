@@ -15,7 +15,6 @@ export const [
   setStepSize,
   setAxis,
   setLabelsActivity,
-
 ] = [
   'mousedown',
   'mousemove',

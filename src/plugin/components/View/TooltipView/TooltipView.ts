@@ -16,7 +16,7 @@ class TooltipView {
     this.axis = axis;
   }
 
-  public setValue(percent): void {
+  public setValue(percent: number): void {
     this.$tooltip.text(percent);
   }
 

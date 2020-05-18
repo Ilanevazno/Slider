@@ -74,7 +74,7 @@ class MainView {
     this.sliderBody.eventObserver.broadcast(broadcastingData);
   }
 
-  public setTooltipActivity(isTooltipActive): void {
+  public setTooltipActivity(isTooltipActive: boolean): void {
     [this.handlerMinValue, this.handlerMaxValue].map((currentHandler: handlerInstance) => {
       if (currentHandler) {
         const tooltipPercent: number = currentHandler.statePercent || this.model.getOption('minValue');
@@ -88,7 +88,6 @@ class MainView {
 
   public changeSliderBodyAxis(axis: string): void {
     this.sliderBody.setAxis(axis);
-    this.model.axis = axis;
     this.refreshView();
 
     return this.model.getOption('axis');
@@ -159,7 +158,7 @@ class MainView {
     });
   }
 
-  private setPointerShift(newShift): void {
+  private setPointerShift(newShift: number): void {
     this.validateView.setPointerShift(newShift);
   }
 
@@ -182,7 +181,7 @@ class MainView {
 
   private handleHandlerMove({ $handler, event, name }): number {
     const shift: number = this.validateView.getPointerShift();
-    const currentPixel: number = this.model.axis === 'X'
+    const currentPixel: number = this.model.getOption('axis') === 'X'
       ? event.clientX - shift - this.sliderBody.$mainHtml[0].getBoundingClientRect().left
       : event.clientY - shift - this.sliderBody.$mainHtml[0].getBoundingClientRect().top;
 
@@ -305,7 +304,7 @@ class MainView {
   }
 
   private drawSliderBody($HtmlContainer: JQuery<HTMLElement>): SliderBodyView {
-    const sliderBody: SliderBodyView = new SliderBodyView($HtmlContainer, this.model.axis);
+    const sliderBody: SliderBodyView = new SliderBodyView($HtmlContainer, this.model.getOption('axis'));
 
     return sliderBody;
   }

@@ -1,4 +1,5 @@
-# NSlider
+# SliderPlugin
+
 Homework by fullstack development. Here we make JQuery plugin called as "slider".
 
 ## Here we use
@@ -9,7 +10,7 @@ Homework by fullstack development. Here we make JQuery plugin called as "slider"
 * [x] SCSS
 * [x] BEM methodology
 * [x] Webpack
-* [x] unit tests (i will use phantomjs)
+* [x] unit (jest)
 * [x] jQuery
 * [x] modular architecture
 
@@ -20,32 +21,32 @@ You can enter to [Demo page](https://ilanevazno.github.io/Slider/ "Demo page") f
 ## Git
 
 clone this repository with:
-` ` ` git clone https://github.com/Ilanevazno/Slider.git ` ` `
+` `  ` git clone https://github.com/Ilanevazno/Slider.git `  ` `
 
 ## NPM scripts
 
 #### Install project
-` ` ` npm install ` ` ` installing dependencies before running
+` `  ` npm install `  ` ` installing dependencies before running
 
-#### To start locally 
+#### To start locally
 
-` ` ` npm run dev ` ` ` for development environment in watch mode
+` `  ` npm run dev `  ` ` for development environment in watch mode
 
-#### To build project 
+#### To build project
 
-` ` ` npm run build ` ` ` will create build folder in the project folder
+` `  ` npm run build `  ` ` will create build folder in the project folder
 
 #### To deploy
 
-` ` ` npm run deploy ` ` ` building and deploying project to github pages
+` `  ` npm run deploy `  ` ` deploying build folder from project to github pages
 
 #### Eslint
 
-` ` ` npm run eslint ` ` ` checking all .js files in 'plugin' folder on esLint with airBnb preset
+` `  ` npm run eslint `  ` ` checking all .js files in 'plugin' folder on esLint with airBnb preset
 
 #### Tests
 
-` ` ` npm run tests ` ` ` start unit tests one time
+` `  ` npm run tests `  ` ` start unit tests one time
 
 ## About this plugin and API documentation
 
@@ -53,24 +54,24 @@ There are various options such as multiple handles and ranges.
 To start you need make HTML container, for example:
 
 ``` html
-<div id="first_slider"></div>
+<div id="slider"></div>
 ```
 
 Then you can initialize plugin uses:
 
 ``` javascript
-$("#second_slider").sliderPlugin()
+$("#slider").sliderPlugin()
 ```
 
 Or if you need getting slider values you can use variable, for example:
 
 ``` javascript
-const slider = $("#second_slider").sliderPlugin()
+const slider = $("#slider").sliderPlugin()
 ```
 
 #### Option list
 
-**Using:**  ` ` ` const slider = $("#second_slider").createSlider({ option: value }) ` ` `
+**Using:** ` `  ` const slider = $("#second_slider").createSlider({ option: value }) `  ` ` 
 
 | Option  | Values | Type | Default | Description |
 | ------------- | ------------- | ------------- | ------------- | ------------- |
@@ -82,6 +83,22 @@ const slider = $("#second_slider").sliderPlugin()
 | isShowLabels  | true/false  | Boolean  | false  | show/hide number values under slider body   |
 | isEnabledTooltip  | true/false  | Boolean  | false  | show/hide tooltip   |
 
+## Methods
+
+| Method  | Arguments | Arguments examples | Description |
+| ------------- | ------------- | ------------- | ------------- |
+| sliderPlugin  |options: object|{ stepSize: number, minValue: number, maxValue: number, axis: string, isShowLabels: boolean, isEnabledTooltip: boolean, valueType: string, } | generage slider plugin into HTML container|
+| showLabels ||| Show labels under slider body|
+| hideLabels ||| Hide labels under slider body|
+| setStepSize| stepSize: number | -∞ -  +∞ | Hide labels under slider body|
+| setMinValue| value: number | -∞ -  +∞ | Set min slider value|
+| setMaxValue| value: number | -∞ -  +∞ | Set max slider value|
+| setAxis| axis: string | 'X', 'Y' | change slider axis|
+| showTooltip||| show tooltip with current value |
+| hideTooltip||| hide tooltip with current value |
+| changeStateByHandlerName|handlerName: string, newValue: number|'min-value', -∞ -  +∞ or 'max-value', -∞ -  +∞| hide tooltip with current value |
+| setValueType |valueType: string|singleValue, doubleValue| change slider value type|
+
 ## Architecture description
 
 Архитектура данного приложения разбита на 3 слоя:
@@ -90,44 +107,38 @@ const slider = $("#second_slider").sliderPlugin()
 * Слой View
 * Слой Controller
 
-За первичное начало работы со слайдером отвечает метод createSlider(), который предоставлен с помощью интерфейса пользователю, при его вызове происходит цепной вызов функций которые производят первичную настройку слайдера:
+За инициализацию плагина отвечает метод sliderPlugin(), который предоставлен с помощью интерфейса пользователю, при его вызове происходит цепной вызов функций которые производят первичную настройку слайдера:
 
 * Инициализируются все классы приложения; 
 * Устанавливается вариант отображения; 
 * Устанавливается тип слайдера (одиночное / интервал); 
 * Инициализиуется визуальная панель управления; 
-* По необходимости вызывается отображения активного значения.
+* По необходимости вызывается отображения активного значения и значений под 'телом' слайдера.
 
 Основные слои приложения реализованы следующим образом:
 
 #### Controller
 
-Является проводником между View и Model, к нему подключается панель настроек а так же принимает данные от observer.
+Является проводником между MainView и Model, посредством использования паттерна Observer; 
 
 #### Model
 
-В данном классе происходит инициализация, получение и изменение главного State приложения.
-Практически все методы данного класса требуют аргументы для того чтобы совершить расчёты в бизнес логике и вернуть обработанные данные.
-Данный слой приложения не зависит от других слоёв.
+Данный слой необходим для выполнения расчётов связанных исключительно с бизнес логикой. Слой не связан с Controller и MainView, 'общение' с контроллером происходит исключительно посредством паттерна Observer, 
 
-#### View
+#### MainView 
 
-Данный класс используется исключительно для реализации визуальной части приложения.  
-Во view происходит возможность создания либо удаления слайдера, бегунка и индикатора а так же рендеринг трэк лайна. 
+Главный View слой приложений, который выполняет расчёты необходимые для отображения, а так же является связующим звеном всех вьюх, настраивает 'общение' между классами 'HandlerView, SliderBodyView, TooltipView', и отправляет необходимые данные и запросы на изменения данных в собственный Observer.
 
 Ниже предоставлена диаграмма компонентов для визуального представления взаимодействия слоёв приложения:
 
-![](https://i.ibb.co/b2WVMs8/simple-Diagram.jpg)
+## Диаграмма классов приложения:
 
-#### А так же диаграмма классов приложения:
+![enter image description here](https://i.ibb.co/7g00djQ/Untitled-Diagram.jpg)
 
-![](https://i.ibb.co/MMLQzWC/second-Diagram.jpg)
-
-* *Observer* слушает изменение state и отправляет его контроллеру
+* *Observer* позволяет передавать и принимать события между классами; 
 * *Model* Отвечает за расчёты внутри бизнес логики
 * *View* Отвечает за визуальную часть приложения
 * *Controller* Отвечает за взаимодействие между Model и View
-* *SettingsPanel* - отдельный компонент который отвечает за панель настроек, он не зависим от данного приложения, в данном случае он подключён к контроллеру
-* *Pointer* - Компонент для слайдера
-* *PointerIndicator* - Компонент для pointer'a
-* *sliderBody* - "тело" слайдера
+* *HandlerView* - Компонент для слайдера (бегунок)
+* *TooltipView* - Отображаемое значения 'бегунка'
+* *SliderBodyView* - "тело" слайдера
