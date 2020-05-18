@@ -1,6 +1,7 @@
 export const [
   mousedown,
   mousemove,
+  touchmove,
   windowResize,
   setBreakpointsActivity,
   changeStateByClick,
@@ -18,6 +19,7 @@ export const [
 ] = [
   'mousedown',
   'mousemove',
+  'touchmove',
   'windowResize',
   'setBreakpointsActivity',
   'changeStateByClick',

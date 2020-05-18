@@ -338,6 +338,13 @@ class MainView {
             name: parent.name,
           });
           break;
+        case customEvent.touchmove:
+          this.handleHandlerMove({
+            $handler: parent.instances.handler.$html,
+            event: event.data.touches[0],
+            name: parent.name,
+          });
+          break;
         default:
           return false;
       }

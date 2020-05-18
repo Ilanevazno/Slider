@@ -35,13 +35,13 @@ class HandlerView {
   }
 
   private initEvents(): void {
-    this.$html.on('mousedown.handlerMouseDown', this.handleHandlerMouseDown);
+    this.$html.on('touchstart.documentTouchStart mousedown.handlerMouseDown', this.handleHandlerMouseDown);
   }
 
   private handleHandlerMouseDown(event): void {
     this.observer.broadcast({ type: event.type, data: event });
-    $(document).on('mousemove.documentMouseMove', this.handleDocumentMouseMove);
-    $(document).on('mouseup.documentMouseUp', this.handleDocumentMouseUp);
+    $(document).on('touchmove.documentTouchMove mousemove.documentMouseMove', this.handleDocumentMouseMove);
+    $(document).on('touchend.documentTouchEnd mouseup.documentMouseUp', this.handleDocumentMouseUp);
   }
 
   private handleDocumentMouseMove(event): void {
@@ -49,7 +49,7 @@ class HandlerView {
   }
 
   private handleDocumentMouseUp(): void {
-    $(document).off('.documentMouseMove');
+    $(document).off('.documentMouseMove .documentTouchMove');
   }
 }
 
