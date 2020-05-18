@@ -1,4 +1,5 @@
-import SliderBodyView from "../src/plugin/components/View/SliderBodyView/SliderBodyView";
+/* eslint-disable @typescript-eslint/unbound-method */
+import SliderBodyView from '../src/plugin/components/View/SliderBodyView/SliderBodyView';
 
 const $dummyHtmlElement = $(document.createElement('div'));
 document.getElementById = jasmine.createSpy('HTML Element').and.returnValue($dummyHtmlElement);
@@ -10,7 +11,7 @@ describe('Проверка класса SliderBodyView', () => {
   it('Произошла инициализация класса MainView', () => {
     expect(sliderBody).toBeDefined();
     expect(sliderBody).toBeInstanceOf(SliderBodyView);
-  })
+  });
 
   describe('Установка направления тела слайдера и получение его параметров', () => {
     beforeEach(() => {
@@ -20,7 +21,7 @@ describe('Проверка класса SliderBodyView', () => {
 
     it('метод setAxis', () => {
       expect(sliderBody.setAxis).toBeCalledWith(currentAxis);
-    })
+    });
 
     it('метод getSliderBodyParams', () => {
       spyOn(sliderBody, 'getSliderBodyParams').and.callThrough();
@@ -29,7 +30,7 @@ describe('Проверка класса SliderBodyView', () => {
 
       expect(sliderBody.getSliderBodyParams).toBeCalled();
       expect(sliderBodyCurrentParams).toBe(0);
-    })
+    });
   });
 
   describe('Рисуем полосу со значениями', () => {
@@ -38,11 +39,11 @@ describe('Проверка класса SliderBodyView', () => {
 
     it('метод drawBreakPoints, в тестовом элементе должно быть должно быть 10 брейкбоинтов.', () => {
       expect($dummyHtmlElement.find('.slider__breakpoint')).toHaveLength(10);
-    })
+    });
 
     it('Затем, удаляем элементы, и при поиске у нас должен быть результат - 0 элементов.', () => {
       sliderBody.removeBreakpoints();
       expect($dummyHtmlElement.find('.slider__breakpoint')).toHaveLength(0);
-    })
-  })
+    });
+  });
 });

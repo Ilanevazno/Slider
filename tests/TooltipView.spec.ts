@@ -1,4 +1,5 @@
-import TooltipView from "../src/plugin/components/View/TooltipView/TooltipView";
+/* eslint-disable @typescript-eslint/unbound-method */
+import TooltipView from '../src/plugin/components/View/TooltipView/TooltipView';
 
 const dummyHtmlElement = document.createElement('div');
 document.getElementById = jasmine.createSpy('HTML Element').and.returnValue(dummyHtmlElement);
@@ -11,10 +12,10 @@ describe('Проверка класса ValidateView', () => {
   it('Произошла инициализация класса MainView', () => {
     expect(tooltipView).toBeDefined();
     expect(tooltipView).toBeInstanceOf(TooltipView);
-  })
+  });
 
   describe('Создание и удаление HTML элемента', () => {
-    let tooltip: JQuery<HTMLElement> | undefined = undefined;
+    let tooltip: JQuery<HTMLElement> | undefined;
 
     beforeEach(() => {
       spyOn(tooltipView, 'drawTooltip').and.callThrough();
@@ -24,7 +25,7 @@ describe('Проверка класса ValidateView', () => {
 
     it('Создание элемента', () => {
       expect(tooltip).toBeDefined();
-    })
+    });
 
     it('Удаление элемента', () => {
       spyOn(tooltipView, 'removeTooltip').and.callThrough();
@@ -32,8 +33,8 @@ describe('Проверка класса ValidateView', () => {
       tooltipView.removeTooltip();
 
       expect(tooltipView.removeTooltip).toBeCalled();
-    })
-  })
+    });
+  });
 
   describe('Установка текущего значения', () => {
     it('метод setValue', () => {
@@ -42,6 +43,6 @@ describe('Проверка класса ValidateView', () => {
       tooltipView.setValue(10);
 
       expect(tooltipView.setValue).toBeCalledWith(10);
-    })
+    });
   });
 });

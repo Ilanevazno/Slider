@@ -1,18 +1,18 @@
 import { pixelToPercentConverting, percentToPixelConverting } from '../../types/types';
 
 class ValidateView {
-  private currentPointerShift: number;
+  private currentHandlerShift: number;
 
   constructor() {
-    this.currentPointerShift = 0;
+    this.currentHandlerShift = 0;
   }
 
-  public setPointerShift(newShift: number): void {
-    this.currentPointerShift = newShift;
+  public setHandlerShift(newShift: number): void {
+    this.currentHandlerShift = newShift;
   }
 
-  public getPointerShift(): number {
-    return this.currentPointerShift;
+  public getHandlerShift(): number {
+    return this.currentHandlerShift;
   }
 
   public convertPixelToPercent(data: pixelToPercentConverting): any {

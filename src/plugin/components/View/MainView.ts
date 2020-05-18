@@ -159,7 +159,7 @@ class MainView {
   }
 
   private setPointerShift(newShift: number): void {
-    this.validateView.setPointerShift(newShift);
+    this.validateView.setHandlerShift(newShift);
   }
 
   private handleHandlerMouseDown(event) {
@@ -180,7 +180,7 @@ class MainView {
   }
 
   private handleHandlerMove({ $handler, event, name }): number {
-    const shift: number = this.validateView.getPointerShift();
+    const shift: number = this.validateView.getHandlerShift();
     const currentPixel: number = this.model.getOption('axis') === 'X'
       ? event.clientX - shift - this.sliderBody.$mainHtml[0].getBoundingClientRect().left
       : event.clientY - shift - this.sliderBody.$mainHtml[0].getBoundingClientRect().top;

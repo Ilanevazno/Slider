@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/class-name-casing */
-import MainView from './components/View/MainView';
-import Model from './components/Model/Model';
-import Controller from './components/Controller/Controller';
-import * as customEvent from './components/Observer/customEvents';
-import { initSlider, observerEvent, stateListener } from './components/types/types';
+import MainView from './View/MainView';
+import Model from './Model/Model';
+import Controller from './Controller/Controller';
+import * as customEvent from './Observer/customEvents';
+import { initSlider, observerEvent, stateListener } from './types/types';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 namespace sliderPlugin {

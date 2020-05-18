@@ -1,10 +1,12 @@
+/* eslint-disable no-unused-expressions */
+
 type sliderOptions = {
-  stepSize: number,
-  minValue: number,
-  maxValue: number,
-  axis: string,
-  isEnabledTooltip: boolean,
-  isShowLabels: boolean,
+  stepSize: number;
+  minValue: number;
+  maxValue: number;
+  axis: string;
+  isEnabledTooltip: boolean;
+  isShowLabels: boolean;
   valueType: string;
 }
 
@@ -12,17 +14,29 @@ type panelDOMElement = JQuery<HTMLElement> | undefined;
 
 class Panel {
   private sliderOptions: sliderOptions;
+
   private $panelHtml: JQuery<HTMLElement>;
+
   private slider: any;
+
   private $setTooltipActivity: panelDOMElement;
+
   private $viewTypeSelect: panelDOMElement;
+
   private $valueTypeSelect: panelDOMElement;
+
   private $minValueInput: panelDOMElement;
+
   private $maxValueInput: panelDOMElement;
+
   private $minValueHandlerInput: panelDOMElement;
+
   private $maxValueHandlerInput: panelDOMElement;
+
   private $stepSizeInput: panelDOMElement;
+
   private $setLabelsActivity: panelDOMElement;
+
   private $errorNotify: panelDOMElement;
 
   constructor(htmlContainer: JQuery<HTMLElement> | HTMLElement) {
@@ -77,6 +91,7 @@ class Panel {
       try {
         this.$minValueHandlerInput?.val(newState[0].value);
         this.$maxValueHandlerInput?.val(newState[Object.values(newState).length - 1].value);
+      // eslint-disable-next-line no-empty
       } catch (err) { }
     });
 
@@ -115,7 +130,7 @@ class Panel {
 
     this.$errorNotify = $('<div/>', {
       class: 'panel__modal_type_error',
-      text: errorMessage
+      text: errorMessage,
     }).appendTo($label);
   }
 
@@ -129,13 +144,13 @@ class Panel {
     switch (target) {
       case 'setTooltipActivity':
         this.setActivityTooltip($caughtElement);
-        break
+        break;
       case 'setLabelsActivity':
         this.setLabelsActivity($caughtElement);
         break;
       case 'changeAxis':
         this.changeAxis($caughtElement);
-        break
+        break;
       case 'changeValueType':
         this.changeValueType($caughtElement);
         break;
@@ -153,9 +168,9 @@ class Panel {
         break;
       case 'setMaxValueHandler':
         this.setMaxValueHandler($caughtElement);
-        break
+        break;
       default:
-        break
+        break;
     }
   }
 
@@ -193,7 +208,7 @@ class Panel {
   }
 
   private setStepSize($targetLabel: JQuery<HTMLElement>): void {
-    const caughtNewValue: number = Number($targetLabel.val());
+    const caughtNewValue = Number($targetLabel.val());
     const $targetLabelParent = $targetLabel.parent();
     const setStepSizeRequest = this.slider.setStepSize(caughtNewValue);
 
@@ -204,7 +219,7 @@ class Panel {
   }
 
   private setMinValue($targetLabel: JQuery<HTMLElement>): void {
-    const caughtNewValue: number = Number($targetLabel.val());
+    const caughtNewValue = Number($targetLabel.val());
     const $targetLabelParent = $targetLabel.parent();
     const setNewValueRequest = this.slider.setMinValue(caughtNewValue);
 
@@ -215,7 +230,7 @@ class Panel {
   }
 
   private setMaxValue($targetLabel: JQuery<HTMLElement>): void {
-    const caughtNewValue: number = Number($targetLabel.val());
+    const caughtNewValue = Number($targetLabel.val());
     const $targetLabelParent = $targetLabel.parent();
     const setMaxValueRequest = this.slider.setMaxValue(caughtNewValue);
 

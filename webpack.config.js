@@ -4,18 +4,18 @@ const webpack = require('webpack');
 const path = require('path');
 
 module.exports = {
-    resolve: {
-      extensions: [".ts", ".js"],
-    },
-    entry: {
-      plugin: './src/plugin/index.js',
-      demoPage: './src/demo-page/main.js',
-    },
-    output: {
-      path: path.join(__dirname, 'build'),
-      filename: '[name].js',
-    },
-    module: {
+  resolve: {
+    extensions: [".ts", ".js"],
+  },
+  entry: {
+    plugin: './src/plugin/index.js',
+    root: './src/index.js',
+  },
+  output: {
+    path: path.join(__dirname, 'build'),
+    filename: '[name].js',
+  },
+  module: {
     rules: [
       {
         test: /.spec\.ts$/,
@@ -34,23 +34,23 @@ module.exports = {
       {
         test: require.resolve('jquery'),
         use: [{
-            loader: 'expose-loader',
-            options: 'jQuery'
+          loader: 'expose-loader',
+          options: 'jQuery'
         },
-         {
-            loader: 'expose-loader',
-            options: '$'
+        {
+          loader: 'expose-loader',
+          options: '$'
         }]
-    },
-      { 
-        test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" 
-    },
-    {
-      test: /\.mp4$/,
-      use: [{
-        loader: 'file-loader?name=/src/images/[name].[ext]'
-      }]
-    },
+      },
+      {
+        test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"
+      },
+      {
+        test: /\.mp4$/,
+        use: [{
+          loader: 'file-loader?name=/src/images/[name].[ext]'
+        }]
+      },
       {
         test: /\.pug$/,
         use: ['pug-loader']

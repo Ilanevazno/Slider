@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import ValidateView from '../src/plugin/components/View/ValidateView/ValidateView';
 
 const validateView = new ValidateView();
@@ -6,24 +7,24 @@ describe('Проверка класса ValidateView', () => {
   it('Получаем инстанс класса', () => {
     expect(validateView).toBeInstanceOf(ValidateView);
     expect(validateView).toBeDefined();
-  })
+  });
 
   describe('Устанавливаем новый shift для handler', () => {
     const newPointerShift = 100;
 
     beforeEach(() => {
-      spyOn(validateView, 'setPointerShift').and.callThrough();
-      validateView.setPointerShift(newPointerShift);
+      spyOn(validateView, 'setHandlerShift').and.callThrough();
+      validateView.setHandlerShift(newPointerShift);
     });
 
     it(`Установка значения должна быть вызвана со значением ${newPointerShift}`, () => {
-      expect(validateView.setPointerShift).toHaveBeenCalledWith(newPointerShift);
-    })
+      expect(validateView.setHandlerShift).toHaveBeenCalledWith(newPointerShift);
+    });
 
     it(`Полученное значение должно так же равняться ${newPointerShift}`, () => {
-      const currentPointerShift = validateView.getPointerShift();
+      const currentPointerShift = validateView.getHandlerShift();
       expect(currentPointerShift).toBe(newPointerShift);
-    })
+    });
   });
 
   describe('Конверторы пикселей и процентов', () => {
@@ -45,7 +46,7 @@ describe('Проверка класса ValidateView', () => {
 
       expect(validateView.convertPixelToPercent).toHaveBeenCalledWith(data);
       expect(currentPercent).toBe(13);
-    })
+    });
 
     it(`Получившиеся проценты ${currentPercent}, переводим в пиксели`, () => {
       spyOn(validateView, 'convertPercentToPixel').and.callThrough();
@@ -53,7 +54,7 @@ describe('Проверка класса ValidateView', () => {
       const data = {
         minPercent: 0,
         maxPercent: 100,
-        currentPercent: currentPercent,
+        currentPercent,
         maxContainerWidth: maxBlockWidth,
       };
 
@@ -61,6 +62,6 @@ describe('Проверка класса ValidateView', () => {
 
       expect(validateView.convertPercentToPixel).toHaveBeenCalledWith(data);
       expect(currentPixel).toBe(104);
-    })
-  })
+    });
+  });
 });

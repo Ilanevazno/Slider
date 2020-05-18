@@ -1,4 +1,5 @@
-import HandlerView from "../src/plugin/components/View/HandlerView/HandlerView";
+/* eslint-disable @typescript-eslint/unbound-method */
+import HandlerView from '../src/plugin/components/View/HandlerView/HandlerView';
 
 const $dummyHtmlElement = $(document.createElement('div'));
 document.getElementById = jasmine.createSpy('HTML Element').and.returnValue($dummyHtmlElement);
@@ -11,7 +12,7 @@ describe('Проверка класса SliderBodyView', () => {
   it('Произошла инициализация класса MainView', () => {
     expect(handlerView).toBeDefined();
     expect(handlerView).toBeInstanceOf(HandlerView);
-  })
+  });
 
   describe('Проверяем метод получения ширины хандлера', () => {
     const mockHandlerWidth = 200;
@@ -24,8 +25,8 @@ describe('Проверка класса SliderBodyView', () => {
 
       expect(handlerWidth).toBe(mockHandlerWidth);
       expect(handlerView.getHandlerWidth).toBeCalled();
-    })
-  })
+    });
+  });
 
   describe('Попытаемся переместить хандлер на другую позицию', () => {
     const newHandlerPosition = 150;
@@ -37,6 +38,6 @@ describe('Проверка класса SliderBodyView', () => {
 
       expect(handlerView.$html.css('top')).toBe(`${newHandlerPosition}px`);
       expect(handlerView.moveHandler).toBeCalledWith(newHandlerPosition);
-    })
+    });
   });
 });
