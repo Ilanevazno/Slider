@@ -30,7 +30,7 @@ class ValidateView {
       minPercent,
       maxPercent,
       currentPercent,
-      maxContainerWidth
+      maxContainerWidth,
     } = data;
 
     return ((currentPercent - minPercent) / (maxPercent - minPercent)) * maxContainerWidth;

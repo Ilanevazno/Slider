@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import Observer from '../../Observer/Observer';
 
 class HandlerView {
   public $html: JQuery<HTMLElement>;
+
   public observer: Observer;
 
-  constructor ($htmlContainer: JQuery<HTMLElement>, private axis: string) {
+  constructor($htmlContainer: JQuery<HTMLElement>, private axis: string) {
     this.axis = axis;
     this.$html = this.drawHandler($htmlContainer);
     this.observer = new Observer();
@@ -25,28 +27,28 @@ class HandlerView {
   private drawHandler($htmlContainer: JQuery<HTMLElement>): JQuery<HTMLElement> {
     const handler: JQuery<HTMLElement> = $('<div/>', {
       class: this.axis === 'X'
-      ? 'slider__handler slider__handler_type_horizontal'
-      : 'slider__handler slider__handler_type_vertical'
+        ? 'slider__handler slider__handler_type_horizontal'
+        : 'slider__handler slider__handler_type_vertical',
     }).appendTo($htmlContainer);
 
     return handler;
   }
 
-  private initEvents (): void {
+  private initEvents(): void {
     this.$html.on('mousedown.handlerMouseDown', this.handleHandlerMouseDown);
   }
 
-  private handleHandlerMouseDown (event): void {
+  private handleHandlerMouseDown(event): void {
     this.observer.broadcast({ type: event.type, data: event });
     $(document).on('mousemove.documentMouseMove', this.handleDocumentMouseMove);
     $(document).on('mouseup.documentMouseUp', this.handleDocumentMouseUp);
   }
 
-  private handleDocumentMouseMove (event): void {
+  private handleDocumentMouseMove(event): void {
     this.observer.broadcast({ type: event.type, data: event });
   }
 
-  private handleDocumentMouseUp (): void {
+  private handleDocumentMouseUp(): void {
     $(document).off('.documentMouseMove');
   }
 }

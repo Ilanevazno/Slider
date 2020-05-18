@@ -3,7 +3,9 @@ import * as customEvent from '../../Observer/customEvents';
 
 class TooltipView {
   private $tooltip: any;
+
   private $htmlParent: JQuery<HTMLElement>;
+
   public eventObserver: Observer;
 
   constructor($HTMLContainer, private axis: string) {
@@ -22,7 +24,7 @@ class TooltipView {
     this.$tooltip = $('<div/>', {
       class: this.axis === 'X'
         ? 'slider__tooltip slider__tooltip_type_horizontal'
-        : 'slider__tooltip slider__tooltip_type_vertical'
+        : 'slider__tooltip slider__tooltip_type_vertical',
     }).appendTo(this.$htmlParent);
     return this.$tooltip;
   }

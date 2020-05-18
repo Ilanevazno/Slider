@@ -33,4 +33,4 @@ export const [
   'setStepSize',
   'setAxis',
   'setLabelsActivity',
-]
+];

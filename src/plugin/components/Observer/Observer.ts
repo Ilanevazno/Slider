@@ -1,20 +1,20 @@
 class Observer {
   private observers: Array<any>;
 
-  constructor () {
+  constructor() {
     this.observers = [];
   }
 
-  subscribe (fn): void {
+  subscribe(fn): void {
     this.observers.push(fn);
   }
 
-  unsubscribe (fn): void {
-    this.observers = this.observers.filter(subscriber => subscriber !== fn);
+  unsubscribe(fn): void {
+    this.observers = this.observers.filter((subscriber) => subscriber !== fn);
   }
 
-  broadcast (data): void {
-    this.observers.forEach(subscriber => subscriber(data));
+  broadcast(data): void {
+    this.observers.forEach((subscriber) => subscriber(data));
   }
 }
 

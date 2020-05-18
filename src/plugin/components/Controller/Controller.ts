@@ -6,7 +6,9 @@ import { observerEvent, modelListener } from '../types/types';
 
 class Controller {
   private model: Model;
+
   private view: MainView;
+
   private eventObserver: Observer;
 
   constructor(model: Model, view: MainView) {
@@ -85,7 +87,7 @@ class Controller {
         default:
           break;
       }
-    })
+    });
   }
 
   private subscribeModelObserver(): void {
@@ -96,7 +98,7 @@ class Controller {
           break;
         case customEvent.setValueType:
           this.view.refreshView();
-          break
+          break;
         case customEvent.setMinValue:
           this.view.changeBreakpointsActivity();
           break;
@@ -116,9 +118,8 @@ class Controller {
           this.view.changeBreakpointsActivity();
           break;
         default:
-          return;
       }
-    })
+    });
   }
 }
 

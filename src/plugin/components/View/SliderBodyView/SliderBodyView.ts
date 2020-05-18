@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import Observer from '../../Observer/Observer';
 import { sliderBreakpoint } from '../../types/types';
 import * as customEvent from '../../Observer/customEvents';
 
 class SliderBodyView {
   public $mainHtml: JQuery<HTMLElement>;
+
   private breakpointElements: JQuery<HTMLElement>[];
+
   private eventObserver: Observer;
 
   constructor($htmlContainer: JQuery<HTMLElement>, private axis: string) {
@@ -19,7 +22,8 @@ class SliderBodyView {
   }
 
   public setAxis(axis: string): string {
-    return this.axis = axis;
+    this.axis = axis;
+    return this.axis;
   }
 
   public removeSliderBody(): void {
@@ -38,20 +42,20 @@ class SliderBodyView {
     const direction: string = this.axis === 'X' ? 'left' : 'top';
     let shortStepCounter: number = Math.ceil(breakpoints.length / 10);
     const shortBreakpoints: sliderBreakpoint[] = [];
-    shortBreakpoints.push(breakpoints[0] as sliderBreakpoint);
+    shortBreakpoints.push(breakpoints[0]);
 
     while (shortStepCounter <= breakpoints.length) {
-      shortBreakpoints.push(breakpoints[shortStepCounter] as sliderBreakpoint);
+      shortBreakpoints.push(breakpoints[shortStepCounter]);
 
-      shortStepCounter = shortStepCounter + Math.ceil(breakpoints.length / 10);
+      shortStepCounter += Math.ceil(breakpoints.length / 10);
     }
 
     this.breakpointElements = shortBreakpoints
-      .filter((breakpoint) => breakpoint != undefined).map((breakpoint: sliderBreakpoint) => {
+      .filter((breakpoint) => breakpoint !== undefined).map((breakpoint: sliderBreakpoint) => {
         const icon: number = breakpoint.currentPercent;
 
         return $('<div/>', {
-          class: `slider__breakpoint slider__breakpoint_direction_${direction}`
+          class: `slider__breakpoint slider__breakpoint_direction_${direction}`,
         })
           .css(direction, `${breakpoint.pixelPosition}px`)
           .text(icon)
@@ -90,7 +94,7 @@ class SliderBodyView {
     const sliderBody: JQuery<HTMLElement> = $('<div/>', {
       class: this.axis === 'X'
         ? 'slider__body slider__body_type_horizontal'
-        : 'slider__body slider__body_type_vertical'
+        : 'slider__body slider__body_type_vertical',
     }).appendTo($htmlContainer);
 
     return sliderBody;

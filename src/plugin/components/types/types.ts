@@ -2,23 +2,23 @@ import HandlerView from '../View/HandlerView/HandlerView';
 import TooltipView from '../View/TooltipView/TooltipView';
 
 export type initSlider = {
-  stepSize: number,
-  minValue: number,
-  maxValue: number,
-  axis: string,
-  isShowLabels: boolean,
-  isEnabledTooltip: boolean,
-  valueType: string,
+  stepSize: number;
+  minValue: number;
+  maxValue: number;
+  axis: string;
+  isShowLabels: boolean;
+  isEnabledTooltip: boolean;
+  valueType: string;
 }
 
 export type modelOptions = {
-  isShowLabels: boolean,
-  isEnabledTooltip: boolean,
-  axis: string,
-  valueType: string,
-  minValue: number,
-  maxValue: number,
-  stepSize: number,
+  isShowLabels: boolean;
+  isEnabledTooltip: boolean;
+  axis: string;
+  valueType: string;
+  minValue: number;
+  maxValue: number;
+  stepSize: number;
 }
 
 export type sliderBreakpoint = {
@@ -30,20 +30,20 @@ export type handlerInstance = {
   instances: {
     handler: HandlerView;
     tooltip: TooltipView;
-  }
+  };
   name: string;
   statePercent?: number;
 }
 
 export type handlerData = {
-  $handler: JQuery<HTMLElement>,
+  $handler: JQuery<HTMLElement>;
   name: string;
   value: number;
 }
 
 export type breakpointsData = {
-  breakpoints: number[] | boolean,
-  isActiveBreakpoints: boolean,
+  breakpoints: number[] | boolean;
+  isActiveBreakpoints: boolean | void;
 }
 
 export type stateListener = {
@@ -58,19 +58,24 @@ export type modelListener = {
 
 export type observerEvent<T> = {
   type: string;
-  data: T
+  data: T;
 }
 
 export type percentToPixelConverting = {
-  minPercent: number,
-  maxPercent: number,
-  currentPercent: number,
-  maxContainerWidth: number,
+  minPercent: number;
+  maxPercent: number;
+  currentPercent: number;
+  maxContainerWidth: number;
 }
 
 export type pixelToPercentConverting = {
-  currentPixel: number,
-  containerWidth: number,
-  minPercent: number,
-  maxPercent: number,
+  currentPixel: number;
+  containerWidth: number;
+  minPercent: number;
+  maxPercent: number;
+}
+
+export type modelRequestOption = {
+  response: string;
+  message: string;
 }

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import Observer from '../Observer/Observer';
 import * as ValidateModel from './ValidateModel/ValidateModel';
 import * as customEvent from '../Observer/customEvents';
@@ -5,14 +6,23 @@ import { modelOptions, handlerData } from '../types/types';
 
 class Model {
   public isShowLabels: boolean;
+
   public isEnabledTooltip: boolean;
+
   public axis: string;
+
   public valueType: string;
+
   public state: object;
+
   public minValue: number;
+
   public maxValue: number;
+
   public stepSize: number;
+
   public breakPoints: Array<number>;
+
   public eventObserver: Observer;
 
   constructor(options: modelOptions) {
@@ -60,12 +70,10 @@ class Model {
     this.eventObserver.broadcast({ type: customEvent.setTooltipActivity, data: { isEnabledTooltip: this.isEnabledTooltip } });
   }
 
-  public getOption(targetOption: string) {
-    const modelOptions: object = this.getOptionList();
+  public getOption(targetOption: string): any {
+    const availableOptions: object = this.getOptionList();
 
-    for (let option in modelOptions) {
-      return modelOptions[targetOption];
-    }
+    return availableOptions[targetOption];
   }
 
   public getState(): object {
@@ -82,9 +90,8 @@ class Model {
       this.eventObserver.broadcast({ type: customEvent.setMinValue, data: { minValue: this.minValue } });
 
       return { response: 'success', message: `Минимальное значение установлено на ${value}` };
-    } else {
-      return { response: 'error', message: 'Невалидное значения. Минимальное значение не может быть больше чем максимальное.' };
     }
+    return { response: 'error', message: 'Невалидное значения. Минимальное значение не может быть больше чем максимальное.' };
   }
 
   public setMaxValue(value: number): object {
@@ -97,9 +104,8 @@ class Model {
       this.eventObserver.broadcast({ type: customEvent.setMaxValue, data: { maxValue: this.maxValue } });
 
       return { response: 'success', message: `Максимальное значение установлено на ${value}` };
-    } else {
-      return { response: 'error', message: 'Невалидное значения. Максимальное значение не может быть меньше чем минимальное.' };
     }
+    return { response: 'error', message: 'Невалидное значения. Максимальное значение не может быть меньше чем минимальное.' };
   }
 
   public updateBreakpointList(): number[] {
@@ -108,7 +114,7 @@ class Model {
 
     while (breakPoint <= this.maxValue) {
       stepsBreakpointList.push(breakPoint);
-      breakPoint = breakPoint + this.stepSize;
+      breakPoint += this.stepSize;
     }
 
     this.breakPoints = stepsBreakpointList;
@@ -116,11 +122,12 @@ class Model {
     return this.breakPoints;
   }
 
-    public changeStateByHandlerName(handlerName: string, value: number): void {
+  public changeStateByHandlerName(handlerName: string, value: number): void {
     Object.values(this.state).map((stateElement: handlerData) => {
       if (stateElement.name === handlerName) {
         stateElement.value = this.findTheClosestBreakpoint(Number(value));
       }
+      return stateElement;
     });
 
     this.checkCollision(handlerName);
@@ -141,6 +148,8 @@ class Model {
       if (stateElement.$handler[0] === currentHandler.$handler[0]) {
         stateElement.value = this.findTheClosestBreakpoint(currentHandler.value);
       }
+
+      return stateElement;
     });
 
     this.eventObserver.broadcast({ type: customEvent.setState, data: { state: this.state } });
@@ -153,8 +162,9 @@ class Model {
   public refreshState(): void {
     const currentState: object = this.getState();
 
-    Object.values(currentState).map((item, _index) => {
+    Object.values(currentState).map((item) => {
       this.setState(item);
+      return item;
     });
 
     this.eventObserver.broadcast({ type: customEvent.setState, data: { state: this.state } });
@@ -173,9 +183,8 @@ class Model {
       this.eventObserver.broadcast({ type: customEvent.setStepSize, data: { newBreakpoints: this.breakPoints } });
 
       return { response: 'success', message: `Размер шага установлен на ${convertedNewStepSize}` };
-    } else {
-      return { response: 'error', message: `Размер шага должен быть от 1 до ${convertedMaxValue}` };
     }
+    return { response: 'error', message: `Размер шага должен быть от 1 до ${convertedMaxValue}` };
   }
 
   private getOptionList() {
@@ -188,13 +197,13 @@ class Model {
       breakpoints: this.breakPoints,
       isEnabledTooltip: this.isEnabledTooltip,
       isShowLabels: this.isShowLabels,
-    }
+    };
 
     return optionList;
   }
 
   private checkIncludeStateValue($targetElement: JQuery<HTMLElement>): boolean {
-    let isFoundItem: boolean = false;
+    let isFoundItem = false;
 
     Object.values(this.state).map((stateElement: handlerData) => {
       if (stateElement.$handler[0] === $targetElement[0]) {
@@ -227,15 +236,18 @@ class Model {
 
   private findTheClosestBreakpoint(newStateValue: number): number {
     let theClosest = Infinity;
-    let temp, arrayElement;
+    let temp; let
+      arrayElement;
 
-    this.breakPoints.map((_element, index) => {
+    this.breakPoints.map((element, index) => {
       temp = Math.abs(this.breakPoints[index] - newStateValue);
 
       if (temp < theClosest) {
         theClosest = temp;
         arrayElement = this.breakPoints[index];
       }
+
+      return element;
     });
 
     return arrayElement;

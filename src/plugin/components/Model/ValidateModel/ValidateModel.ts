@@ -2,10 +2,10 @@ export const [
   axisX,
   axisY,
   singleValue,
-  doubleValue
+  doubleValue,
 ] = [
   'X',
   'Y',
   'singleValue',
-  'doubleValue'
-]
+  'doubleValue',
+];

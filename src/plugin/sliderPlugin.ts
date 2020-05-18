@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/class-name-casing */
 import MainView from './components/View/MainView';
 import Model from './components/Model/Model';
 import Controller from './components/Controller/Controller';
-import Observer from './components/Observer/Observer';
 import * as customEvent from './components/Observer/customEvents';
 import { initSlider, observerEvent, stateListener } from './components/types/types';
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 namespace sliderPlugin {
   jQuery.fn.extend({
     sliderPlugin(args: initSlider) {
@@ -78,9 +79,9 @@ namespace sliderPlugin {
 
       this.controller.eventObserver.subscribe((event: observerEvent<stateListener>) => {
         if (event.type === customEvent.setState) {
-          callback(event.data.state)
+          callback(event.data.state);
         }
-      })
+      });
     },
   });
 
