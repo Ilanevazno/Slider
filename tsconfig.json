@@ -9,6 +9,7 @@
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "strict": true,
+        "strictNullChecks": false,
         "noUnusedLocals": false,
         "noUnusedParameters": true,
         "noImplicitThis": false,

@@ -16,19 +16,17 @@ class MainView {
 
   private validateView: ValidateView;
 
-  public sliderBody: any;
+  public sliderBody: SliderBodyView;
 
-  public handlerMinValue: any
+  public handlerMinValue!: handlerInstance;
 
-  public handlerMaxValue: any
+  public handlerMaxValue!: handlerInstance;
 
   constructor(public model: Model, private initHtmlElement: HTMLElement) {
     this.eventObserver = new Observer();
     this.validateView = new ValidateView();
     this.$sliderContainer = this.drawSliderContainer(initHtmlElement);
-    this.sliderBody = null;
-    this.handlerMinValue = null;
-    this.handlerMaxValue = null;
+    this.sliderBody = this.drawSliderBody(this.$sliderContainer);
 
     this.drawSliderInstances();
   }
@@ -60,7 +58,6 @@ class MainView {
 
   public changeBreakpointsActivity(): void {
     const availableBreakpoints: number[] = this.getConvertedBreakpoints();
-
     const isActiveBreakpoints: boolean = this.model.getOption('isShowLabels');
 
     const broadcastingData: observerEvent<breakpointsData> = {
@@ -201,7 +198,7 @@ class MainView {
 
   private drawSliderInstances() {
     const valueType: string = this.model.getOption('valueType');
-    this.sliderBody = this.drawSliderBody(this.$sliderContainer);
+    // this.sliderBody = this.drawSliderBody(this.$sliderContainer);
     this.handlerMinValue = {
       name: valueType === 'singleValue' ? 'min-value' : 'min-value',
       instances: this.drawHandlerInstances(this.sliderBody.$mainHtml),

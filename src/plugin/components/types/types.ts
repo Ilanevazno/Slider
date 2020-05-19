@@ -28,8 +28,8 @@ export type sliderBreakpoint = {
 
 export type handlerInstance = {
   instances: {
-    handler: HandlerView;
-    tooltip: TooltipView;
+    handler?: HandlerView;
+    tooltip?: TooltipView;
   };
   name: string;
   statePercent?: number;

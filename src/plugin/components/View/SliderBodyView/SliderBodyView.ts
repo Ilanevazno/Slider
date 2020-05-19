@@ -6,9 +6,9 @@ import * as customEvent from '../../Observer/customEvents';
 class SliderBodyView {
   public $mainHtml: JQuery<HTMLElement>;
 
-  private breakpointElements: JQuery<HTMLElement>[];
+  public eventObserver: Observer;
 
-  private eventObserver: Observer;
+  private breakpointElements: JQuery<HTMLElement>[];
 
   constructor($htmlContainer: JQuery<HTMLElement>, private axis: string) {
     this.eventObserver = new Observer();
