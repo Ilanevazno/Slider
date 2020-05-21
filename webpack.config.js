@@ -8,7 +8,6 @@ module.exports = {
     extensions: [".ts", ".js"],
   },
   entry: {
-    plugin: './src/plugin/index.js',
     root: './src/index.js',
   },
   output: {
