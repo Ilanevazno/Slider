@@ -10,7 +10,7 @@ namespace sliderPlugin {
   jQuery.fn.extend({
     sliderPlugin(args: initSlider) {
       const {
-        stepSize = 1,
+        stepSize = -50,
         minValue = 1,
         maxValue = 100,
         axis = 'X',

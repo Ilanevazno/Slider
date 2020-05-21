@@ -40,14 +40,14 @@ class SliderBodyView {
     this.removeBreakpoints();
 
     const direction: string = this.axis === 'X' ? 'left' : 'top';
-    let shortStepCounter: number = Math.ceil(breakpoints.length / 10);
+    let shortStepCounter: number = Math.trunc((breakpoints.length - 1) / 10);
     const shortBreakpoints: sliderBreakpoint[] = [];
     shortBreakpoints.push(breakpoints[0]);
 
     while (shortStepCounter <= breakpoints.length) {
       shortBreakpoints.push(breakpoints[shortStepCounter]);
 
-      shortStepCounter += Math.ceil(breakpoints.length / 10);
+      shortStepCounter += Math.trunc(breakpoints.length / 10);
     }
 
     this.breakpointElements = shortBreakpoints

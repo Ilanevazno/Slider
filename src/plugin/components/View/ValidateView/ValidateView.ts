@@ -22,7 +22,7 @@ class ValidateView {
       maxPercent,
       minPercent,
     } = data;
-    return Math.ceil((currentPixel * (maxPercent - minPercent)) / containerWidth);
+    return (currentPixel * (maxPercent - minPercent)) / containerWidth;
   }
 
   public convertPercentToPixel(data: percentToPixelConverting): any {

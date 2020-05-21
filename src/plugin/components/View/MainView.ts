@@ -18,15 +18,14 @@ class MainView {
 
   public sliderBody: SliderBodyView;
 
-  public handlerMinValue!: handlerInstance;
+  public handlerMinValue: handlerInstance;
 
-  public handlerMaxValue!: handlerInstance;
+  public handlerMaxValue: handlerInstance;
 
   constructor(public model: Model, private initHtmlElement: HTMLElement) {
     this.eventObserver = new Observer();
     this.validateView = new ValidateView();
     this.$sliderContainer = this.drawSliderContainer(initHtmlElement);
-    this.sliderBody = this.drawSliderBody(this.$sliderContainer);
 
     this.drawSliderInstances();
   }
@@ -198,7 +197,7 @@ class MainView {
 
   private drawSliderInstances() {
     const valueType: string = this.model.getOption('valueType');
-    // this.sliderBody = this.drawSliderBody(this.$sliderContainer);
+    this.sliderBody = this.drawSliderBody(this.$sliderContainer);
     this.handlerMinValue = {
       name: valueType === 'singleValue' ? 'min-value' : 'min-value',
       instances: this.drawHandlerInstances(this.sliderBody.$mainHtml),

@@ -34,7 +34,7 @@ class Model {
     this.isEnabledTooltip = options.isEnabledTooltip || true;
     this.minValue = options.minValue || 0;
     this.maxValue = options.maxValue || 100;
-    this.stepSize = this.minValue;
+    this.stepSize = options.stepSize || 1;
     this.breakPoints = this.updateBreakpointList();
 
     this.setStepSize(options.stepSize);
@@ -114,7 +114,7 @@ class Model {
 
     while (breakPoint <= this.maxValue) {
       stepsBreakpointList.push(breakPoint);
-      breakPoint += this.stepSize;
+      breakPoint += Math.abs(this.stepSize);
     }
 
     this.breakPoints = stepsBreakpointList;

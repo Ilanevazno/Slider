@@ -15,16 +15,37 @@ html
     link(rel="icon" sizes="any" mask href="./assets/favicons/safari-pinned-tab.svg")
     title Страница со слайдером
   body
-    .example
-    - for (let i = 0; i < 3; i += 1)
-      .example__item
-        +slider({
-          minValue: 100,
-          maxValue: 500,
-          stepSize: 10,
+    -
+      const sliderSettings = [
+        {
+          minValue: 0,
+          maxValue: 100,
+          stepSize: 1,
           axis: 'X',
           valueType: 'singleValue',
           isShowTooltip: true,
+          isShowLabels: false,
+        },
+        {
+          minValue: 500,
+          maxValue: 1000,
+          stepSize: 55,
+          axis: 'Y',
+          valueType: 'singleValue',
+          isShowTooltip: false,
           isShowLabels: true,
-        })
+        },
+        {
+          minValue: 5000,
+          maxValue: 15000,
+          stepSize: 1000,
+          axis: 'X',
+          valueType: 'doubleValue',
+          isShowTooltip: true,
+          isShowLabels: true,
+        }
+      ];
+    each settings in sliderSettings
+      .example__item
+        +slider(settings)
         +panel()
