@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import Observer from '../../Observer/Observer';
 import { sliderBreakpoint } from '../../types/types';
-import * as customEvent from '../../Observer/customEvents';
+import CustomEvents from '../../Observer/CustomEvents';
 
 class SliderBodyView {
   public $mainHtml: JQuery<HTMLElement>;
@@ -52,7 +52,7 @@ class SliderBodyView {
 
     this.breakpointElements = shortBreakpoints
       .filter((breakpoint) => breakpoint !== undefined).map((breakpoint: sliderBreakpoint) => {
-        const icon: number = breakpoint.currentPercent;
+        const icon: number = breakpoint.currentValue;
 
         return $('<div/>', {
           class: `slider__breakpoint slider__breakpoint_direction_${direction}`,
@@ -73,7 +73,7 @@ class SliderBodyView {
   private listenEvents(): void {
     this.eventObserver.subscribe((event) => {
       switch (event.type) {
-        case customEvent.setBreakpointsActivity:
+        case CustomEvents.SetBreakpointsActivity:
           if (event.data.isActiveBreakpoints) {
             this.drawBreakPoints(event.data.breakpoints);
           } else {
@@ -87,7 +87,7 @@ class SliderBodyView {
   }
 
   private handleBreakpointClick(breakpointPixelPosition: number): void {
-    this.eventObserver.broadcast({ type: customEvent.changeStateByClick, caughtCoords: breakpointPixelPosition });
+    this.eventObserver.broadcast({ type: CustomEvents.ChangeStateByClick, caughtCoords: breakpointPixelPosition });
   }
 
   private drawSliderBody($htmlContainer): JQuery<HTMLElement> {
@@ -101,7 +101,7 @@ class SliderBodyView {
   }
 
   private handleWindowResize(): void {
-    this.eventObserver.broadcast({ type: customEvent.windowResize });
+    this.eventObserver.broadcast({ type: CustomEvents.WindowResize });
   }
 
   private handleSliderBodyClick(event): void {
@@ -111,7 +111,7 @@ class SliderBodyView {
       : event.offsetY;
 
     if (htmlEventTarget === this.$mainHtml[0]) {
-      this.eventObserver.broadcast({ type: customEvent.changeStateByClick, caughtCoords });
+      this.eventObserver.broadcast({ type: CustomEvents.ChangeStateByClick, caughtCoords });
     }
   }
 

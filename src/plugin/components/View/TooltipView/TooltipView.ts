@@ -1,5 +1,5 @@
 import Observer from '../../Observer/Observer';
-import * as customEvent from '../../Observer/customEvents';
+import СustomEvents from '../../Observer/CustomEvents';
 
 class TooltipView {
   private $tooltip: any;
@@ -36,7 +36,7 @@ class TooltipView {
   private listenEvents() {
     this.eventObserver.subscribe((event) => {
       switch (event.type) {
-        case customEvent.setTooltipActivity:
+        case СustomEvents.SetTooltipActivity:
           if (event.data.isTooltipActive) {
             this.drawTooltip();
             this.setValue(event.data);
@@ -44,7 +44,7 @@ class TooltipView {
             this.removeTooltip();
           }
           break;
-        case customEvent.setTooltipValue:
+        case СustomEvents.SetTooltipValue:
           this.setValue(event.data);
           break;
         default:

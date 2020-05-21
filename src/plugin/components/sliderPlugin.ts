@@ -2,13 +2,13 @@
 import MainView from './View/MainView';
 import Model from './Model/Model';
 import Controller from './Controller/Controller';
-import * as customEvent from './Observer/customEvents';
-import { initSlider, observerEvent, stateListener } from './types/types';
+import СustomEvents from './Observer/CustomEvents';
+import { availableOptions, observerEvent, stateListener } from './types/types';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 namespace sliderPlugin {
   jQuery.fn.extend({
-    sliderPlugin(args: initSlider) {
+    sliderPlugin(args: availableOptions) {
       const {
         stepSize = -50,
         minValue = 1,
@@ -16,7 +16,7 @@ namespace sliderPlugin {
         axis = 'X',
         isShowLabels = true,
         isEnabledTooltip = true,
-        valueType = 'singleValue',
+        valueType = 'single',
       } = args;
 
       this.model = new Model({
@@ -78,7 +78,7 @@ namespace sliderPlugin {
       this.controller.subscribeToChangeState();
 
       this.controller.eventObserver.subscribe((event: observerEvent<stateListener>) => {
-        if (event.type === customEvent.setState) {
+        if (event.type === СustomEvents.SetState) {
           callback(event.data.state);
         }
       });

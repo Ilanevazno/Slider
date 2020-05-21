@@ -1,8 +1,8 @@
 import Model from '../Model/Model';
 import MainView from '../View/MainView';
 import Observer from '../Observer/Observer';
-import * as customEvent from '../Observer/customEvents';
-import { observerEvent, modelListener } from '../types/types';
+import СustomEvents from '../Observer/CustomEvents';
+import { observerEvent, modelListener, handlerData } from '../types/types';
 
 class Controller {
   private model: Model;
@@ -23,8 +23,8 @@ class Controller {
   public subscribeToChangeState(): void {
     return this.model.eventObserver.subscribe((event: observerEvent<modelListener>) => {
       switch (event.type) {
-        case customEvent.setState:
-          this.eventObserver.broadcast({ type: customEvent.setState, data: { state: event.data.state } });
+        case СustomEvents.SetState:
+          this.eventObserver.broadcast({ type: СustomEvents.SetState, data: { state: event.data.state } });
           break;
         default:
           break;
@@ -73,15 +73,15 @@ class Controller {
   }
 
   private subscribeViewObserver(): void {
-    this.view.eventObserver.subscribe((event: observerEvent<never>) => {
+    this.view.eventObserver.subscribe((event: observerEvent<handlerData>) => {
       switch (event.type) {
-        case customEvent.setState:
+        case СustomEvents.SetState:
           this.model.setState(event.data);
           break;
-        case customEvent.refreshState:
+        case СustomEvents.RefreshState:
           this.model.refreshState();
           break;
-        case customEvent.clearState:
+        case СustomEvents.ClearState:
           this.model.clearState();
           break;
         default:
@@ -93,28 +93,28 @@ class Controller {
   private subscribeModelObserver(): void {
     this.model.eventObserver.subscribe((event: observerEvent<modelListener>) => {
       switch (event.type) {
-        case customEvent.setState:
+        case СustomEvents.SetState:
           this.view.prepareToMoveHandler(event.data.state);
           break;
-        case customEvent.setValueType:
+        case СustomEvents.SetValueType:
           this.view.refreshView();
           break;
-        case customEvent.setMinValue:
+        case СustomEvents.SetMinValue:
           this.view.changeBreakpointsActivity();
           break;
-        case customEvent.setMaxValue:
+        case СustomEvents.SetMaxValue:
           this.view.changeBreakpointsActivity();
           break;
-        case customEvent.setStepSize:
+        case СustomEvents.SetStepSize:
           this.view.changeBreakpointsActivity();
           break;
-        case customEvent.setAxis:
+        case СustomEvents.SetAxis:
           this.view.changeSliderBodyAxis(event.data.axis);
           break;
-        case customEvent.setTooltipActivity:
+        case СustomEvents.SetTooltipActivity:
           this.view.setTooltipActivity(event.data.isEnabledTooltip);
           break;
-        case customEvent.setLabelsActivity:
+        case СustomEvents.SetLabelsActivity:
           this.view.changeBreakpointsActivity();
           break;
         default:

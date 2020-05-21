@@ -45,7 +45,7 @@ class HandlerView {
   }
 
   private handleDocumentMouseMove(event): void {
-    this.observer.broadcast({ type: event.type, data: event });
+    this.observer.broadcast({ type: event.type.toUpperCase(), data: event });
   }
 
   private handleDocumentMouseUp(): void {

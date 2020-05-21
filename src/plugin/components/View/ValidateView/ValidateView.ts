@@ -1,4 +1,4 @@
-import { pixelToPercentConverting, percentToPixelConverting } from '../../types/types';
+import { convertingData } from '../../types/types';
 
 class ValidateView {
   private currentHandlerShift: number;
@@ -15,27 +15,25 @@ class ValidateView {
     return this.currentHandlerShift;
   }
 
-  public convertPixelToPercent(data: pixelToPercentConverting): any {
+  public convertPixelToPercent(data: convertingData): number {
     const {
-      currentPixel,
-      containerWidth,
       maxPercent,
       minPercent,
+      currentValue,
+      htmlContainerWidth,
     } = data;
-    return Math.trunc((currentPixel * (maxPercent - minPercent)) / containerWidth);
+    return Math.trunc((currentValue * (maxPercent - minPercent)) / htmlContainerWidth);
   }
 
-  public convertPercentToPixel(data: percentToPixelConverting): any {
+  public convertPercentToPixel(data: convertingData): number {
     const {
       minPercent,
       maxPercent,
-      currentPercent,
-      maxContainerWidth,
+      currentValue,
+      htmlContainerWidth,
     } = data;
 
-    console.log(((currentPercent - minPercent) / (maxPercent - minPercent)) * maxContainerWidth);
-
-    return Math.trunc(((currentPercent - minPercent) / (maxPercent - minPercent)) * maxContainerWidth);
+    return Math.trunc(((currentValue - minPercent) / (maxPercent - minPercent)) * htmlContainerWidth);
   }
 }
 

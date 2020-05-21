@@ -30,32 +30,31 @@ describe('Проверка класса ValidateView', () => {
   describe('Конверторы пикселей и процентов', () => {
     const minBlockWidth = 100;
     const maxBlockWidth = 800;
-    let currentPercent = 0;
+    let currentValue = 0;
 
     it(`получение текущего процента в ${minBlockWidth} пикселей с шириной контейнера в ${maxBlockWidth} пикселей`, () => {
       spyOn(validateView, 'convertPixelToPercent').and.callThrough();
 
       const data = {
-        currentPixel: minBlockWidth,
-        containerWidth: maxBlockWidth,
         maxPercent: 100,
         minPercent: 0,
+        currentValue: minBlockWidth,
+        htmlContainerWidth: maxBlockWidth,
       };
 
-      currentPercent = validateView.convertPixelToPercent(data);
+      currentValue = validateView.convertPixelToPercent(data);
 
       expect(validateView.convertPixelToPercent).toHaveBeenCalledWith(data);
-      expect(currentPercent).toBe(13);
+      expect(currentValue).toBe(13);
     });
-
-    it(`Получившиеся проценты ${currentPercent}, переводим в пиксели`, () => {
+    it(`Получившиеся проценты ${currentValue}, переводим в пиксели`, () => {
       spyOn(validateView, 'convertPercentToPixel').and.callThrough();
 
       const data = {
         minPercent: 0,
         maxPercent: 100,
-        currentPercent,
-        maxContainerWidth: maxBlockWidth,
+        currentValue,
+        htmlContainerWidth: maxBlockWidth,
       };
 
       const currentPixel = validateView.convertPercentToPixel(data);

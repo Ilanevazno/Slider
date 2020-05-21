@@ -2,15 +2,16 @@
 import Controller from '../src/plugin/components/Controller/Controller';
 import Model from '../src/plugin/components/Model/Model';
 import MainView from '../src/plugin/components/View/MainView';
+import { availableOptions } from '../src/plugin/components/types/types';
 
-const mockModelOptions = {
+const mockModelOptions: availableOptions = {
   stepSize: 1,
   minValue: 1,
   maxValue: 100,
   axis: 'X',
   isShowLabels: false,
   isEnabledTooltip: false,
-  valueType: 'singleValue',
+  valueType: 'single',
 };
 
 const dummyHtmlElement = document.createElement('div');

@@ -1,8 +1,9 @@
 /* eslint-disable no-param-reassign */
 import Observer from '../Observer/Observer';
 import * as ValidateModel from './ValidateModel/ValidateModel';
-import * as customEvent from '../Observer/customEvents';
-import { modelOptions, handlerData } from '../types/types';
+import СustomEvents from '../Observer/CustomEvents';
+import { availableOptions, handlerData, modelResponse } from '../types/types';
+import ModelValidator from './ValidateModel/ValidateModel';
 
 class Model {
   public isShowLabels: boolean;
@@ -25,7 +26,7 @@ class Model {
 
   public eventObserver: Observer;
 
-  constructor(options: modelOptions) {
+  constructor(options: availableOptions) {
     this.eventObserver = new Observer();
     this.state = {};
     this.isShowLabels = options.isShowLabels || true;
@@ -43,69 +44,81 @@ class Model {
   public setValueType(valueType: string): void {
     this.valueType = valueType;
 
-    this.eventObserver.broadcast({ type: customEvent.setValueType, data: { axis: this.valueType } });
+    this.eventObserver.broadcast({ type: СustomEvents.SetValueType, data: { axis: this.valueType } });
   }
 
   public setAxis(axis: string) {
     this.axis = axis;
 
-    this.eventObserver.broadcast({ type: customEvent.setAxis, data: { axis: this.axis } });
+    this.eventObserver.broadcast({ type: СustomEvents.SetAxis, data: { axis: this.axis } });
   }
 
   public setLabelsActivity(isLabelsActive: boolean): void {
     this.isShowLabels = isLabelsActive;
 
-    this.eventObserver.broadcast({ type: customEvent.setLabelsActivity, data: { isLabelsActive } });
+    this.eventObserver.broadcast({ type: СustomEvents.SetLabelsActivity, data: { isLabelsActive } });
   }
 
   public showTooltip(): void {
     this.isEnabledTooltip = true;
 
-    this.eventObserver.broadcast({ type: customEvent.setTooltipActivity, data: { isEnabledTooltip: this.isEnabledTooltip } });
+    this.eventObserver.broadcast({ type: СustomEvents.SetTooltipActivity, data: { isEnabledTooltip: this.isEnabledTooltip } });
   }
 
   public hideTooltip(): void {
     this.isEnabledTooltip = false;
 
-    this.eventObserver.broadcast({ type: customEvent.setTooltipActivity, data: { isEnabledTooltip: this.isEnabledTooltip } });
+    this.eventObserver.broadcast({ type: СustomEvents.SetTooltipActivity, data: { isEnabledTooltip: this.isEnabledTooltip } });
   }
 
   public getOption(targetOption: string): any {
-    const availableOptions: object = this.getOptionList();
+    const availableOptionsList: object = this.getOptionList();
 
-    return availableOptions[targetOption];
+    return availableOptionsList[targetOption];
   }
 
   public getState(): object {
     return this.state;
   }
 
-  public setMinValue(value: number): object {
+  public setMinValue(value: number): modelResponse {
     if (value <= this.maxValue) {
       this.minValue = value;
 
       this.updateBreakpointList();
       this.refreshState();
 
-      this.eventObserver.broadcast({ type: customEvent.setMinValue, data: { minValue: this.minValue } });
+      this.eventObserver.broadcast({ type: СustomEvents.SetMinValue, data: { minValue: this.minValue } });
 
-      return { response: 'success', message: `Минимальное значение установлено на ${value}` };
+      return {
+        response: ModelValidator.SuccessResponse,
+        message: `Минимальное значение установлено на ${value}`,
+      };
     }
-    return { response: 'error', message: 'Невалидное значения. Минимальное значение не может быть больше чем максимальное.' };
+    return {
+      response: ModelValidator.FailedResponse,
+      message: 'Невалидное значения. Минимальное значение не может быть больше чем максимальное.',
+    };
   }
 
-  public setMaxValue(value: number): object {
+  public setMaxValue(value: number): modelResponse {
     if (value >= this.minValue) {
       this.maxValue = value;
 
       this.updateBreakpointList();
       this.refreshState();
 
-      this.eventObserver.broadcast({ type: customEvent.setMaxValue, data: { maxValue: this.maxValue } });
+      this.eventObserver.broadcast({ type: СustomEvents.SetMaxValue, data: { maxValue: this.maxValue } });
 
-      return { response: 'success', message: `Максимальное значение установлено на ${value}` };
+      return {
+        response: ModelValidator.SuccessResponse,
+        message: `Максимальное значение установлено на ${value}`,
+      };
     }
-    return { response: 'error', message: 'Невалидное значения. Максимальное значение не может быть меньше чем минимальное.' };
+    return {
+      response: ModelValidator.FailedResponse,
+      message: 'Невалидное значения. Максимальное значение не может быть меньше чем минимальное.',
+    };
   }
 
   public updateBreakpointList(): number[] {
@@ -132,7 +145,7 @@ class Model {
 
     this.checkCollision(handlerName);
 
-    this.eventObserver.broadcast({ type: customEvent.setState, data: { state: this.state } });
+    this.eventObserver.broadcast({ type: СustomEvents.SetState, data: { state: this.state } });
   }
 
   public setState(currentHandler: handlerData): void {
@@ -152,7 +165,7 @@ class Model {
       return stateElement;
     });
 
-    this.eventObserver.broadcast({ type: customEvent.setState, data: { state: this.state } });
+    this.eventObserver.broadcast({ type: СustomEvents.SetState, data: { state: this.state } });
   }
 
   public clearState(): void {
@@ -167,10 +180,10 @@ class Model {
       return item;
     });
 
-    this.eventObserver.broadcast({ type: customEvent.setState, data: { state: this.state } });
+    this.eventObserver.broadcast({ type: СustomEvents.SetState, data: { state: this.state } });
   }
 
-  public setStepSize(newStepSize: number): object {
+  public setStepSize(newStepSize: number): modelResponse {
     const convertedNewStepSize = Math.abs(newStepSize);
     const convertedMaxValue = Math.abs(this.maxValue);
 
@@ -180,11 +193,17 @@ class Model {
       this.updateBreakpointList();
       this.refreshState();
 
-      this.eventObserver.broadcast({ type: customEvent.setStepSize, data: { newBreakpoints: this.breakPoints } });
+      this.eventObserver.broadcast({ type: СustomEvents.SetStepSize, data: { newBreakpoints: this.breakPoints } });
 
-      return { response: 'success', message: `Размер шага установлен на ${convertedNewStepSize}` };
+      return {
+        response: ModelValidator.SuccessResponse,
+        message: `Размер шага установлен на ${convertedNewStepSize}`,
+      };
     }
-    return { response: 'error', message: `Размер шага должен быть от 1 до ${convertedMaxValue}` };
+    return {
+      response: ModelValidator.FailedResponse,
+      message: `Размер шага должен быть от 1 до ${convertedMaxValue}`,
+    };
   }
 
   private getOptionList() {

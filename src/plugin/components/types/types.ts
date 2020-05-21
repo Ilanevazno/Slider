@@ -1,28 +1,18 @@
 import HandlerView from '../View/HandlerView/HandlerView';
 import TooltipView from '../View/TooltipView/TooltipView';
 
-export type initSlider = {
+export type availableOptions = {
   stepSize: number;
   minValue: number;
   maxValue: number;
-  axis: string;
+  axis: 'X' | 'Y';
   isShowLabels: boolean;
   isEnabledTooltip: boolean;
-  valueType: string;
-}
-
-export type modelOptions = {
-  isShowLabels: boolean;
-  isEnabledTooltip: boolean;
-  axis: string;
-  valueType: string;
-  minValue: number;
-  maxValue: number;
-  stepSize: number;
+  valueType: 'single' | 'double';
 }
 
 export type sliderBreakpoint = {
-  currentPercent: number;
+  currentValue: number;
   pixelPosition: number;
 }
 
@@ -42,7 +32,7 @@ export type handlerData = {
 }
 
 export type breakpointsData = {
-  breakpoints: number[] | boolean;
+  breakpoints: number[] | null;
   isActiveBreakpoints: boolean | void;
 }
 
@@ -61,21 +51,14 @@ export type observerEvent<T> = {
   data: T;
 }
 
-export type percentToPixelConverting = {
+export type convertingData = {
   minPercent: number;
   maxPercent: number;
-  currentPercent: number;
-  maxContainerWidth: number;
+  currentValue: number;
+  htmlContainerWidth: number;
 }
 
-export type pixelToPercentConverting = {
-  currentPixel: number;
-  containerWidth: number;
-  minPercent: number;
-  maxPercent: number;
-}
-
-export type modelRequestOption = {
-  response: string;
+export type modelResponse = {
+  readonly response: 'SUCCESS' | 'ERROR';
   message: string;
 }

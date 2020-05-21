@@ -4,7 +4,7 @@ import ValidateView from './ValidateView/ValidateView';
 import SliderBodyView from './SliderBodyView/SliderBodyView';
 import HandlerView from './HandlerView/HandlerView';
 import TooltipView from './TooltipView/TooltipView';
-import * as customEvent from '../Observer/customEvents';
+import CustomEvents from '../Observer/CustomEvents';
 import {
   handlerInstance, observerEvent, handlerData, breakpointsData,
 } from '../types/types';
@@ -32,9 +32,9 @@ class MainView {
 
   public refreshView(): void {
     this.sliderBody.removeSliderBody();
-    this.eventObserver.broadcast({ type: customEvent.clearState });
+    this.eventObserver.broadcast({ type: CustomEvents.ClearState });
     this.drawSliderInstances();
-    this.eventObserver.broadcast({ type: customEvent.refreshState });
+    this.eventObserver.broadcast({ type: CustomEvents.RefreshState });
   }
 
   public setState(handler: string): void {
@@ -45,7 +45,7 @@ class MainView {
     const minValue: number = this.model.getOption('minValue');
 
     const dataForBroadcasting: observerEvent<handlerData> = {
-      type: customEvent.setState,
+      type: CustomEvents.SetState,
       data: {
         $handler: $caughtHandlerHtml,
         name: caughtHandlerName,
@@ -58,12 +58,11 @@ class MainView {
   public changeBreakpointsActivity(): void {
     const availableBreakpoints: number[] = this.getConvertedBreakpoints();
     const isActiveBreakpoints: boolean = this.model.getOption('isShowLabels');
-
     const broadcastingData: observerEvent<breakpointsData> = {
-      type: customEvent.setBreakpointsActivity,
+      type: CustomEvents.SetBreakpointsActivity,
       data: {
         isActiveBreakpoints,
-        breakpoints: isActiveBreakpoints ? availableBreakpoints : false,
+        breakpoints: isActiveBreakpoints ? availableBreakpoints : null,
       },
     };
 
@@ -74,8 +73,8 @@ class MainView {
     [this.handlerMinValue, this.handlerMaxValue].map((currentHandler: handlerInstance) => {
       if (currentHandler) {
         const tooltipPercent: number = currentHandler.statePercent || this.model.getOption('minValue');
-        currentHandler.instances.tooltip.eventObserver.broadcast({ type: customEvent.setTooltipActivity, data: { isTooltipActive } });
-        currentHandler.instances.tooltip.eventObserver.broadcast({ type: customEvent.setTooltipValue, data: tooltipPercent });
+        currentHandler.instances.tooltip.eventObserver.broadcast({ type: CustomEvents.SetTooltipActivity, data: { isTooltipActive } });
+        currentHandler.instances.tooltip.eventObserver.broadcast({ type: CustomEvents.SetTooltipValue, data: tooltipPercent });
       }
 
       return currentHandler;
@@ -92,13 +91,13 @@ class MainView {
   public prepareToMoveHandler(currentHandler) {
     Object.values(currentHandler).map((handler: any) => {
       const $caughtHandler: JQuery<HTMLElement> = $(handler.$handler);
-      const currentPercent: number = handler.value;
-      const maxContainerWidth: number = this.sliderBody.getSliderBodyParams() - ($caughtHandler[0].offsetWidth / 2);
+      const currentValue: number = handler.value;
+      const htmlContainerWidth: number = this.sliderBody.getSliderBodyParams() - ($caughtHandler[0].offsetWidth / 2);
       const optionList = {
         minPercent: this.model.getOption('minValue'),
         maxPercent: this.model.getOption('maxValue'),
-        currentPercent,
-        maxContainerWidth,
+        currentValue,
+        htmlContainerWidth,
       };
       const newHandlerPosition: number = this.validateView.convertPercentToPixel(optionList);
 
@@ -110,18 +109,18 @@ class MainView {
       switch (handler.name) {
         case minValueHandlerName:
           this.handlerMinValue.instances.handler.moveHandler(newHandlerPosition);
-          this.handlerMinValue.statePercent = currentPercent;
+          this.handlerMinValue.statePercent = currentValue;
 
           if (this.isEnabledTooltip()) {
-            this.handlerMinValue.instances.tooltip.eventObserver.broadcast({ type: customEvent.setTooltipValue, data: currentPercent });
+            this.handlerMinValue.instances.tooltip.eventObserver.broadcast({ type: CustomEvents.SetTooltipValue, data: currentValue });
           }
           break;
         case maxValueHandlerName:
           this.handlerMaxValue.instances.handler.moveHandler(newHandlerPosition);
-          this.handlerMaxValue.statePercent = currentPercent;
+          this.handlerMaxValue.statePercent = currentValue;
 
           if (this.isEnabledTooltip()) {
-            this.handlerMaxValue.instances.tooltip.eventObserver.broadcast({ type: customEvent.setTooltipValue, data: currentPercent });
+            this.handlerMaxValue.instances.tooltip.eventObserver.broadcast({ type: CustomEvents.SetTooltipValue, data: currentValue });
           }
           break;
         default:
@@ -137,18 +136,18 @@ class MainView {
   }
 
   private getConvertedBreakpoints() {
-    const maxContainerWidth: number = this.sliderBody.getSliderBodyParams();
+    const htmlContainerWidth: number = this.sliderBody.getSliderBodyParams();
 
-    return this.model.getOption('breakpoints').map((currentPercent: number) => {
+    return this.model.getOption('breakpoints').map((currentValue: number) => {
       const optionList = {
         minPercent: this.model.getOption('minValue'),
         maxPercent: this.model.getOption('maxValue'),
-        currentPercent,
-        maxContainerWidth,
+        currentValue,
+        htmlContainerWidth,
       };
 
       return {
-        currentPercent,
+        currentValue,
         pixelPosition: this.validateView.convertPercentToPixel(optionList),
       };
     });
@@ -165,12 +164,12 @@ class MainView {
     this.setPointerShift(shift);
   }
 
-  private convertPxToPercent(currentPixel: number): number {
+  private convertPxToPercent(currentValue: number): number {
     const optionsToConvert = {
-      containerWidth: this.sliderBody.getSliderBodyParams(),
       minPercent: this.model.getOption('minValue'),
       maxPercent: this.model.getOption('maxValue'),
-      currentPixel,
+      htmlContainerWidth: this.sliderBody.getSliderBodyParams(),
+      currentValue,
     };
     return this.validateView.convertPixelToPercent(optionsToConvert) + this.model.getOption('minValue');
   }
@@ -183,7 +182,7 @@ class MainView {
 
     const value: number = this.convertPxToPercent(currentPixel);
     const dataForBroadcasting: observerEvent<handlerData> = {
-      type: customEvent.setState,
+      type: CustomEvents.SetState,
       data: {
         $handler,
         value,
@@ -228,13 +227,13 @@ class MainView {
   }
 
   private initSliderBodyEvents(): void {
-    this.sliderBody.eventObserver.subscribe((event: observerEvent<never>) => {
+    this.sliderBody.eventObserver.subscribe((event: observerEvent<any>) => {
       switch (event.type) {
-        case customEvent.windowResize:
+        case CustomEvents.WindowResize:
           this.changeBreakpointsActivity();
-          this.eventObserver.broadcast({ type: customEvent.refreshState });
+          this.eventObserver.broadcast({ type: CustomEvents.RefreshState });
           break;
-        case customEvent.changeStateByClick:
+        case CustomEvents.ChangeStateByClick:
           this.moveHandlerByBodyClick(event);
           break;
         default:
@@ -277,7 +276,7 @@ class MainView {
     Object.values(currentState).map((handler) => {
       if (handler.value === findAvailableHandler) {
         const dataForBroadcasting: observerEvent<handlerData> = {
-          type: customEvent.setState,
+          type: CustomEvents.SetState,
           data: {
             $handler: handler.$handler,
             name: handler.name,
@@ -312,7 +311,7 @@ class MainView {
     const isTooltipActive: boolean = this.model.getOption('isEnabledTooltip');
 
     if (isTooltipActive) {
-      handlerTooltip.eventObserver.broadcast({ type: customEvent.setTooltipActivity, data: { isTooltipActive } });
+      handlerTooltip.eventObserver.broadcast({ type: CustomEvents.SetTooltipActivity, data: { isTooltipActive } });
     }
 
     return {
@@ -324,17 +323,17 @@ class MainView {
   private initHandlerEvents(parent): void {
     parent.instances.handler.observer.subscribe((event) => {
       switch (event.type) {
-        case customEvent.mousedown:
+        case CustomEvents.Mousedown:
           this.handleHandlerMouseDown(event.data);
           break;
-        case customEvent.mousemove:
+        case CustomEvents.Mousemove:
           this.handleHandlerMove({
             $handler: parent.instances.handler.$html,
             event: event.data,
             name: parent.name,
           });
           break;
-        case customEvent.touchmove:
+        case CustomEvents.Touchmove:
           this.handleHandlerMove({
             $handler: parent.instances.handler.$html,
             event: event.data.touches[0],

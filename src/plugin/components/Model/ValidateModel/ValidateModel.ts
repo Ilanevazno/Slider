@@ -9,3 +9,10 @@ export const [
   'singleValue',
   'doubleValue',
 ];
+
+enum ModelValidator {
+  SuccessResponse = 'SUCCESS',
+  FailedResponse = 'ERROR',
+}
+
+export default ModelValidator;
