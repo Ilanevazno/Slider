@@ -2,7 +2,7 @@
 import Observer from '../Observer/Observer';
 import * as ValidateModel from './ValidateModel/ValidateModel';
 import СustomEvents from '../Observer/CustomEvents';
-import { availableOptions, handlerData, modelResponse } from '../types/types';
+import { availableOptions, stateHandler, modelResponse } from '../types/types';
 import ModelValidator from './ValidateModel/ValidateModel';
 
 class Model {
@@ -14,7 +14,7 @@ class Model {
 
   public valueType: string;
 
-  public state: object;
+  public state: stateHandler[];
 
   public minValue: number;
 
@@ -28,7 +28,7 @@ class Model {
 
   constructor(options: availableOptions) {
     this.eventObserver = new Observer();
-    this.state = {};
+    this.state = [];
     this.isShowLabels = options.isShowLabels || true;
     this.axis = options.axis || ValidateModel.axisX;
     this.valueType = options.valueType || ValidateModel.singleValue;
@@ -77,7 +77,7 @@ class Model {
     return availableOptionsList[targetOption];
   }
 
-  public getState(): object {
+  public getState(): stateHandler[] {
     return this.state;
   }
 
@@ -136,7 +136,7 @@ class Model {
   }
 
   public changeStateByHandlerName(handlerName: string, value: number): void {
-    Object.values(this.state).map((stateElement: handlerData) => {
+    this.state.map((stateElement: stateHandler) => {
       if (stateElement.name === handlerName) {
         stateElement.value = this.findTheClosestBreakpoint(Number(value));
       }
@@ -148,7 +148,7 @@ class Model {
     this.eventObserver.broadcast({ type: СustomEvents.SetState, data: { state: this.state } });
   }
 
-  public setState(currentHandler: handlerData): void {
+  public setState(currentHandler: stateHandler): void {
     const stateLength = this.getStateLength();
 
     if (!this.checkIncludeStateValue(currentHandler.$handler)) {
@@ -157,7 +157,7 @@ class Model {
 
     this.checkCollision(currentHandler.name);
 
-    Object.values(this.state).map((stateElement: handlerData) => {
+    this.state.map((stateElement: stateHandler) => {
       if (stateElement.$handler[0] === currentHandler.$handler[0]) {
         stateElement.value = this.findTheClosestBreakpoint(currentHandler.value);
       }
@@ -169,13 +169,11 @@ class Model {
   }
 
   public clearState(): void {
-    this.state = {};
+    this.state = [];
   }
 
   public refreshState(): void {
-    const currentState: object = this.getState();
-
-    Object.values(currentState).map((item) => {
+    this.state.map((item) => {
       this.setState(item);
       return item;
     });
@@ -224,7 +222,7 @@ class Model {
   private checkIncludeStateValue($targetElement: JQuery<HTMLElement>): boolean {
     let isFoundItem = false;
 
-    Object.values(this.state).map((stateElement: handlerData) => {
+    this.state.map((stateElement: stateHandler) => {
       if (stateElement.$handler[0] === $targetElement[0]) {
         isFoundItem = true;
       }
@@ -235,11 +233,11 @@ class Model {
   }
 
   private getStateLength(): number {
-    return Object.keys(this.state).length;
+    return this.state.length;
   }
 
   private checkCollision(currentHandler): void {
-    const stateLength = this.getStateLength();
+    const stateLength: number = this.getStateLength();
     const minValue: number = this.state[0].value;
     const maxValue: number = this.state[stateLength - 1].value;
 

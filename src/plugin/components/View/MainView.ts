@@ -6,7 +6,7 @@ import HandlerView from './HandlerView/HandlerView';
 import TooltipView from './TooltipView/TooltipView';
 import CustomEvents from '../Observer/CustomEvents';
 import {
-  handlerInstance, observerEvent, handlerData, breakpointsData,
+  handlerInstance, observerEvent, stateHandler, breakpointsData,
 } from '../types/types';
 
 class MainView {
@@ -44,7 +44,7 @@ class MainView {
     const $caughtHandlerHtml = caughtHandlerInstance.instances.handler.$html;
     const minValue: number = this.model.getOption('minValue');
 
-    const dataForBroadcasting: observerEvent<handlerData> = {
+    const dataForBroadcasting: observerEvent<stateHandler> = {
       type: CustomEvents.SetState,
       data: {
         $handler: $caughtHandlerHtml,
@@ -88,8 +88,8 @@ class MainView {
     return this.model.getOption('axis');
   }
 
-  public prepareToMoveHandler(currentHandler) {
-    Object.values(currentHandler).map((handler: any) => {
+  public prepareToMoveHandler(state) {
+    state.map((handler: stateHandler) => {
       const $caughtHandler: JQuery<HTMLElement> = $(handler.$handler);
       const currentValue: number = handler.value;
       const htmlContainerWidth: number = this.sliderBody.getSliderBodyParams() - ($caughtHandler[0].offsetWidth / 2);
@@ -181,7 +181,7 @@ class MainView {
       : event.clientY - shift - this.sliderBody.$mainHtml[0].getBoundingClientRect().top;
 
     const value: number = this.convertPxToPercent(currentPixel);
-    const dataForBroadcasting: observerEvent<handlerData> = {
+    const dataForBroadcasting: observerEvent<stateHandler> = {
       type: CustomEvents.SetState,
       data: {
         $handler,
@@ -244,10 +244,10 @@ class MainView {
 
   private moveHandlerByBodyClick(event): void {
     const targetPercent: number = this.convertPxToPercent(event.caughtCoords);
-    const currentState: object = this.model.getState();
+    const currentState: stateHandler[] = this.model.getState();
     const availableHandlerValues: number[] = [];
 
-    Object.values(currentState).map((handler, index) => {
+    currentState.map((handler, index) => {
       availableHandlerValues.push(currentState[index].value);
       return handler;
     });
@@ -273,9 +273,9 @@ class MainView {
 
     const findAvailableHandler: number = findTheClosest(availableHandlerValues, targetPercent);
 
-    Object.values(currentState).map((handler) => {
+    currentState.map((handler) => {
       if (handler.value === findAvailableHandler) {
-        const dataForBroadcasting: observerEvent<handlerData> = {
+        const dataForBroadcasting: observerEvent<stateHandler> = {
           type: CustomEvents.SetState,
           data: {
             $handler: handler.$handler,

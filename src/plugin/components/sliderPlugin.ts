@@ -3,7 +3,7 @@ import MainView from './View/MainView';
 import Model from './Model/Model';
 import Controller from './Controller/Controller';
 import СustomEvents from './Observer/CustomEvents';
-import { availableOptions, observerEvent, stateListener } from './types/types';
+import { availableOptions, observerEvent } from './types/types';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 namespace sliderPlugin {
@@ -77,7 +77,7 @@ namespace sliderPlugin {
     listenToChangeState(callback) {
       this.controller.subscribeToChangeState();
 
-      this.controller.eventObserver.subscribe((event: observerEvent<stateListener>) => {
+      this.controller.eventObserver.subscribe((event: observerEvent<any>) => {
         if (event.type === СustomEvents.SetState) {
           callback(event.data.state);
         }

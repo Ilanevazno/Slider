@@ -25,7 +25,7 @@ export type handlerInstance = {
   statePercent?: number;
 }
 
-export type handlerData = {
+export type stateHandler = {
   $handler: JQuery<HTMLElement>;
   name: string;
   value: number;
@@ -33,15 +33,11 @@ export type handlerData = {
 
 export type breakpointsData = {
   breakpoints: number[] | null;
-  isActiveBreakpoints: boolean | void;
-}
-
-export type stateListener = {
-  state: object;
+  isActiveBreakpoints: boolean;
 }
 
 export type modelListener = {
-  state: stateListener;
+  state: stateHandler;
   axis: string;
   isEnabledTooltip: boolean;
 }
