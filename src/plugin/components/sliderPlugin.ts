@@ -46,15 +46,15 @@ namespace sliderPlugin {
       this.controller.hideLabels();
     },
 
-    setStepSize(stepSize: number | Array<number>): void | object {
+    setStepSize(stepSize: number): object {
       return this.controller.setStepSize(stepSize);
     },
 
-    setMinValue(value: number): void | object {
+    setMinValue(value: number): object {
       return this.controller.setMinValue(value);
     },
 
-    setMaxValue(value: number): void | object {
+    setMaxValue(value: number): object {
       return this.controller.setMaxValue(value);
     },
 

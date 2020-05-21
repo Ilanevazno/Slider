@@ -60,11 +60,11 @@ class Controller {
     this.model.setAxis(axis);
   }
 
-  public setStepSize(newStepSize: number): void | object {
+  public setStepSize(newStepSize: number): object {
     return this.model.setStepSize(newStepSize);
   }
 
-  public setMinValue(value: number): void | object {
+  public setMinValue(value: number): object {
     return this.model.setMinValue(value);
   }
 
