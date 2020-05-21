@@ -22,7 +22,7 @@ class ValidateView {
       maxPercent,
       minPercent,
     } = data;
-    return (currentPixel * (maxPercent - minPercent)) / containerWidth;
+    return Math.trunc((currentPixel * (maxPercent - minPercent)) / containerWidth);
   }
 
   public convertPercentToPixel(data: percentToPixelConverting): any {
@@ -33,7 +33,9 @@ class ValidateView {
       maxContainerWidth,
     } = data;
 
-    return ((currentPercent - minPercent) / (maxPercent - minPercent)) * maxContainerWidth;
+    console.log(((currentPercent - minPercent) / (maxPercent - minPercent)) * maxContainerWidth);
+
+    return Math.trunc(((currentPercent - minPercent) / (maxPercent - minPercent)) * maxContainerWidth);
   }
 }
 
