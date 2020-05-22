@@ -18,13 +18,13 @@ html
     -
       const sliderSettings = [
         {
-          minValue: 0,
-          maxValue: 100,
-          stepSize: 1,
+          minValue: 1234,
+          maxValue: 5678,
+          stepSize: 123,
           axis: 'X',
           valueType: 'double',
-          isShowTooltip: true,
-          isShowLabels: true,
+          withTooltip: true,
+          withLabels: true,
         },
         {
           minValue: 500,
@@ -32,8 +32,8 @@ html
           stepSize: 55,
           axis: 'Y',
           valueType: 'single',
-          isShowTooltip: false,
-          isShowLabels: true,
+          withTooltip: false,
+          withLabels: true,
         },
         {
           minValue: 5000,
@@ -41,8 +41,8 @@ html
           stepSize: 1000,
           axis: 'X',
           valueType: 'single',
-          isShowTooltip: true,
-          isShowLabels: true,
+          withTooltip: true,
+          withLabels: true,
         }
       ];
     each settings in sliderSettings

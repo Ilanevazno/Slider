@@ -11,8 +11,8 @@ import { availableOptions } from './types/types';
         minValue: 1,
         maxValue: 100,
         axis: 'X',
-        isShowLabels: true,
-        isEnabledTooltip: true,
+        withLabels: true,
+        withTooltip: true,
         valueType: 'single',
       };
 

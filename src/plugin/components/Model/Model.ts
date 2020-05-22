@@ -6,9 +6,9 @@ import { availableOptions, stateHandler, modelResponse } from '../types/types';
 import ModelValidator from './ValidateModel/ValidateModel';
 
 class Model {
-  public isShowLabels: boolean;
+  public withLabels: boolean;
 
-  public isEnabledTooltip: boolean;
+  public withTooltip: boolean;
 
   public axis: string;
 
@@ -29,10 +29,10 @@ class Model {
   constructor(options: availableOptions) {
     this.eventObserver = new Observer();
     this.state = [];
-    this.isShowLabels = options.isShowLabels || false;
+    this.withLabels = options.withLabels || false;
     this.axis = options.axis || ValidateModel.axisX;
     this.valueType = options.valueType || ValidateModel.singleValue;
-    this.isEnabledTooltip = options.isEnabledTooltip || false;
+    this.withTooltip = options.withTooltip || false;
     this.minValue = options.minValue || 0;
     this.maxValue = options.maxValue || 100;
     this.stepSize = options.stepSize || 1;
@@ -54,21 +54,21 @@ class Model {
   }
 
   public setLabelsActivity(isLabelsActive: boolean): void {
-    this.isShowLabels = isLabelsActive;
+    this.withLabels = isLabelsActive;
 
     this.eventObserver.broadcast({ type: СustomEvents.SetLabelsActivity, data: { isLabelsActive } });
   }
 
   public showTooltip(): void {
-    this.isEnabledTooltip = true;
+    this.withTooltip = true;
 
-    this.eventObserver.broadcast({ type: СustomEvents.SetTooltipActivity, data: { isEnabledTooltip: this.isEnabledTooltip } });
+    this.eventObserver.broadcast({ type: СustomEvents.SetTooltipActivity, data: { withTooltip: this.withTooltip } });
   }
 
   public hideTooltip(): void {
-    this.isEnabledTooltip = false;
+    this.withTooltip = false;
 
-    this.eventObserver.broadcast({ type: СustomEvents.SetTooltipActivity, data: { isEnabledTooltip: this.isEnabledTooltip } });
+    this.eventObserver.broadcast({ type: СustomEvents.SetTooltipActivity, data: { withTooltip: this.withTooltip } });
   }
 
   public getOption(targetOption: string): any {
@@ -212,8 +212,8 @@ class Model {
       maxValue: this.maxValue,
       stepSize: this.stepSize,
       breakpoints: this.breakPoints,
-      isEnabledTooltip: this.isEnabledTooltip,
-      isShowLabels: this.isShowLabels,
+      withTooltip: this.withTooltip,
+      withLabels: this.withLabels,
     };
 
     return optionList;

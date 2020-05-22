@@ -80,14 +80,14 @@ const slider = $("#slider").sliderPlugin()
 | maxValue  | -∞ -  +∞ | Number  | 100  | Set slider max value   |
 | axis  | X/Y  | String  | X  | Change slider axis  |
 | valueType  | singleValue/doubleValue  | String  | singleValue  | Setting type of slider  |
-| isShowLabels  | true/false  | Boolean  | false  | show/hide number values under slider body   |
-| isEnabledTooltip  | true/false  | Boolean  | false  | show/hide tooltip   |
+| withLabels  | true/false  | Boolean  | false  | show/hide number values under slider body   |
+| withTooltip  | true/false  | Boolean  | false  | show/hide tooltip   |
 
 ## Methods
 
 | Method  | Arguments | Arguments examples | Description |
 | ------------- | ------------- | ------------- | ------------- |
-| sliderPlugin  |options: object|{ stepSize: number, minValue: number, maxValue: number, axis: string, isShowLabels: boolean, isEnabledTooltip: boolean, valueType: string, } | generage slider plugin into HTML container|
+| sliderPlugin  |options: object|{ stepSize: number, minValue: number, maxValue: number, axis: string, withLabels: boolean, withTooltip: boolean, valueType: string, } | generage slider plugin into HTML container|
 | showLabels ||| Show labels under slider body|
 | hideLabels ||| Hide labels under slider body|
 | setStepSize| stepSize: number | -∞ -  +∞ | Hide labels under slider body|

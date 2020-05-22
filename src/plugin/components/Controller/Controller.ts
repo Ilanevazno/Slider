@@ -108,7 +108,7 @@ class Controller {
           this.view.changeSliderBodyAxis(event.data.axis);
           break;
         case СustomEvents.SetTooltipActivity:
-          this.view.setTooltipActivity(event.data.isEnabledTooltip);
+          this.view.setTooltipActivity(event.data.withTooltip);
           break;
         case СustomEvents.SetLabelsActivity:
           this.view.changeBreakpointsActivity();

@@ -57,7 +57,7 @@ class MainView {
 
   public changeBreakpointsActivity(): void {
     const availableBreakpoints: number[] = this.getConvertedBreakpoints();
-    const isActiveBreakpoints: boolean = this.model.getOption('isShowLabels');
+    const isActiveBreakpoints: boolean = this.model.getOption('withLabels');
     const broadcastingData: observerEvent<breakpointsData> = {
       type: CustomEvents.SetBreakpointsActivity,
       data: {
@@ -111,7 +111,7 @@ class MainView {
           this.handlerMinValue.instances.handler.moveHandler(newHandlerPosition);
           this.handlerMinValue.statePercent = currentValue;
 
-          if (this.isEnabledTooltip()) {
+          if (this.withTooltip()) {
             this.handlerMinValue.instances.tooltip.eventObserver.broadcast({ type: CustomEvents.SetTooltipValue, data: currentValue });
           }
           break;
@@ -119,7 +119,7 @@ class MainView {
           this.handlerMaxValue.instances.handler.moveHandler(newHandlerPosition);
           this.handlerMaxValue.statePercent = currentValue;
 
-          if (this.isEnabledTooltip()) {
+          if (this.withTooltip()) {
             this.handlerMaxValue.instances.tooltip.eventObserver.broadcast({ type: CustomEvents.SetTooltipValue, data: currentValue });
           }
           break;
@@ -131,8 +131,8 @@ class MainView {
     });
   }
 
-  private isEnabledTooltip(): boolean {
-    return this.model.getOption('isEnabledTooltip');
+  private withTooltip(): boolean {
+    return this.model.getOption('withTooltip');
   }
 
   private getConvertedBreakpoints() {
@@ -219,7 +219,7 @@ class MainView {
       }, 0);
     }
 
-    if (this.model.getOption('isShowLabels')) {
+    if (this.model.getOption('withLabels')) {
       this.changeBreakpointsActivity();
     }
 
@@ -308,7 +308,7 @@ class MainView {
     const sliderHandler = new HandlerView($HtmlContainer, this.model.getOption('axis'));
     const handlerTooltip: TooltipView = new TooltipView(sliderHandler.$html, this.model.getOption('axis'));
 
-    const isTooltipActive: boolean = this.model.getOption('isEnabledTooltip');
+    const isTooltipActive: boolean = this.model.getOption('withTooltip');
 
     if (isTooltipActive) {
       handlerTooltip.eventObserver.broadcast({ type: CustomEvents.SetTooltipActivity, data: { isTooltipActive } });

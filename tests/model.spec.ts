@@ -7,8 +7,8 @@ const modelSpecOptions: availableOptions = {
   minValue: 1,
   maxValue: 100,
   axis: 'X',
-  isShowLabels: false,
-  isEnabledTooltip: false,
+  withLabels: false,
+  withTooltip: false,
   valueType: 'single',
 };
 
@@ -37,29 +37,29 @@ describe('Проверка класса Model', () => {
     it('Включение нижней подсказки с шагами', () => {
       modelSpec.setLabelsActivity(true);
 
-      expect(modelSpec.isShowLabels).toBe(true);
+      expect(modelSpec.withLabels).toBe(true);
     });
 
     it('Включение тултипа', () => {
       modelSpec.showTooltip();
 
-      expect(modelSpec.isEnabledTooltip).toBe(true);
+      expect(modelSpec.withTooltip).toBe(true);
     });
 
     it('Отключение тултипа', () => {
       modelSpec.hideTooltip();
 
-      expect(modelSpec.isEnabledTooltip).toBe(false);
+      expect(modelSpec.withTooltip).toBe(false);
     });
 
     it('Отключение тултипа', () => {
       modelSpec.hideTooltip();
 
-      expect(modelSpec.isEnabledTooltip).toBe(false);
+      expect(modelSpec.withTooltip).toBe(false);
     });
 
     it('Получение всех возможных опций', () => {
-      const options = ['axis', 'valueType', 'minValue', 'maxValue', 'stepSize', 'breakpoints', 'isEnabledTooltip', 'isShowLabels'];
+      const options = ['axis', 'valueType', 'minValue', 'maxValue', 'stepSize', 'breakpoints', 'withTooltip', 'withLabels'];
 
       options.map((option: string) => {
         const caughtOption = modelSpec.getOption(option);

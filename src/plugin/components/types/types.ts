@@ -6,8 +6,8 @@ export type availableOptions = {
   minValue: number;
   maxValue: number;
   axis: 'X' | 'Y';
-  isShowLabels: boolean;
-  isEnabledTooltip: boolean;
+  withLabels: boolean;
+  withTooltip: boolean;
   valueType: 'single' | 'double';
 }
 
@@ -39,7 +39,7 @@ export type breakpointsData = {
 export type modelListener = {
   state: stateHandler;
   axis: string;
-  isEnabledTooltip: boolean;
+  withTooltip: boolean;
 }
 
 export type observerEvent<T> = {

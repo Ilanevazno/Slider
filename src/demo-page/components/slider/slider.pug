@@ -6,8 +6,8 @@ mixin slider (data)
       stepSize = 10,
       axis = 'X',
       valueType = 'singleValue',
-      isShowTooltip = true,
-      isShowLabels = true,
+      withTooltip = true,
+      withLabels = true,
     } = data;
   section.slider.js-slider(
     data-minValue= minValue
@@ -15,6 +15,6 @@ mixin slider (data)
     data-stepSize= stepSize
     data-axis= axis
     data-valueType= valueType
-    data-isShowTooltip= isShowTooltip
-    data-isShowLabels= isShowLabels
+    data-withTooltip= withTooltip
+    data-withLabels= withLabels
   )

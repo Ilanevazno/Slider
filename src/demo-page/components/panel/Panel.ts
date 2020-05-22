@@ -41,8 +41,8 @@ class Panel {
       maxValue: this.$slider.data('maxvalue'),
       valueType: this.$slider.data('valuetype'),
       axis: this.$slider.data('axis'),
-      isEnabledTooltip: this.$slider.data('isshowtooltip') !== undefined,
-      isShowLabels: this.$slider.data('isshowlabels') !== undefined,
+      withTooltip: this.$slider.data('withtooltip') !== undefined,
+      withLabels: this.$slider.data('withlabels') !== undefined,
     };
 
     this.drawSlider();
@@ -69,11 +69,11 @@ class Panel {
   }
 
   private prepareCheckboxes(): void {
-    if (this.sliderOptions.isEnabledTooltip) {
+    if (this.sliderOptions.withTooltip) {
       this.$setTooltipActivity?.prop('checked', true);
     }
 
-    if (this.sliderOptions.isShowLabels) {
+    if (this.sliderOptions.withLabels) {
       this.$setLabelsActivity?.prop('checked', true);
     }
   }

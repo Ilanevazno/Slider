@@ -8,8 +8,8 @@ const mockModelOptions: availableOptions = {
   minValue: 1,
   maxValue: 100,
   axis: 'X',
-  isShowLabels: false,
-  isEnabledTooltip: false,
+  withLabels: false,
+  withTooltip: false,
   valueType: 'single',
 };
 
