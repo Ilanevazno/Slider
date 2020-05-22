@@ -29,7 +29,10 @@ describe('Проверка класса Controller', () => {
 
   it('Подписка на события', () => {
     spyOn(controllerSpec, 'subscribeToChangeState').and.callThrough();
-    controllerSpec.subscribeToChangeState();
+    const callback = () => {
+      return true;
+    };
+    controllerSpec.subscribeToChangeState(callback);
     expect(controllerSpec.subscribeToChangeState).toBeCalled();
   });
 

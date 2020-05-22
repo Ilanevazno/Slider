@@ -47,7 +47,11 @@ class SliderBodyView {
     while (shortStepCounter <= breakpoints.length) {
       shortBreakpoints.push(breakpoints[shortStepCounter]);
 
-      shortStepCounter += Math.trunc(breakpoints.length / 10);
+      const cycleCounter = Math.trunc(breakpoints.length / 10) === 0
+        ? Math.ceil(breakpoints.length / 10)
+        : Math.trunc(breakpoints.length / 10);
+
+      shortStepCounter += cycleCounter;
     }
 
     this.breakpointElements = shortBreakpoints

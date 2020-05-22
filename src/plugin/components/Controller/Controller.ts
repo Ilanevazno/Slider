@@ -20,11 +20,11 @@ class Controller {
     this.subscribeModelObserver();
   }
 
-  public subscribeToChangeState(): void {
+  public subscribeToChangeState(callback): void {
     return this.model.eventObserver.subscribe((event: observerEvent<modelListener>) => {
       switch (event.type) {
         case СustomEvents.SetState:
-          this.eventObserver.broadcast({ type: СustomEvents.SetState, data: { state: event.data.state } });
+          callback(event.data.state);
           break;
         default:
           break;
@@ -118,6 +118,7 @@ class Controller {
           this.view.changeBreakpointsActivity();
           break;
         default:
+          break;
       }
     });
   }

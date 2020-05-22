@@ -1,23 +1,15 @@
 /* eslint-disable no-unused-expressions */
-
-type sliderOptions = {
-  stepSize: number;
-  minValue: number;
-  maxValue: number;
-  axis: string;
-  isEnabledTooltip: boolean;
-  isShowLabels: boolean;
-  valueType: string;
-}
+import '../../../plugin/components/sliderPlugin';
+import { availableOptions } from '../../../plugin/components/types/types';
 
 type panelDOMElement = JQuery<HTMLElement> | undefined;
 
 class Panel {
-  private sliderOptions: sliderOptions;
+  private sliderOptions: availableOptions;
 
   private $panelHtml: JQuery<HTMLElement>;
 
-  private slider: any;
+  private $slider: any;
 
   private $setTooltipActivity: panelDOMElement;
 
@@ -41,16 +33,16 @@ class Panel {
 
   constructor(htmlContainer: JQuery<HTMLElement> | HTMLElement) {
     this.$panelHtml = $(htmlContainer);
-    this.slider = this.$panelHtml.prev();
+    this.$slider = this.$panelHtml.prev();
 
     this.sliderOptions = {
-      stepSize: this.slider.data('stepsize'),
-      minValue: this.slider.data('minvalue'),
-      maxValue: this.slider.data('maxvalue'),
-      valueType: this.slider.data('valuetype'),
-      axis: this.slider.data('axis'),
-      isEnabledTooltip: this.slider.data('isshowtooltip') !== undefined,
-      isShowLabels: this.slider.data('isshowlabels') !== undefined,
+      stepSize: this.$slider.data('stepsize'),
+      minValue: this.$slider.data('minvalue'),
+      maxValue: this.$slider.data('maxvalue'),
+      valueType: this.$slider.data('valuetype'),
+      axis: this.$slider.data('axis'),
+      isEnabledTooltip: this.$slider.data('isshowtooltip') !== undefined,
+      isShowLabels: this.$slider.data('isshowlabels') !== undefined,
     };
 
     this.drawSlider();
@@ -59,7 +51,7 @@ class Panel {
   }
 
   private drawSlider(): void {
-    this.slider = this.slider.sliderPlugin(this.sliderOptions);
+    this.$slider.sliderPlugin(this.sliderOptions);
   }
 
   private connectLabels(): void {
@@ -76,7 +68,7 @@ class Panel {
     this.prepareLabelsData();
   }
 
-  private prepareLabelsData(): void {
+  private prepareCheckboxes(): void {
     if (this.sliderOptions.isEnabledTooltip) {
       this.$setTooltipActivity?.prop('checked', true);
     }
@@ -84,14 +76,28 @@ class Panel {
     if (this.sliderOptions.isShowLabels) {
       this.$setLabelsActivity?.prop('checked', true);
     }
+  }
 
-    this.changeViewTypeInputState(this.sliderOptions.valueType);
+  private prepareSelectLabels(): void {
+    const currentValueType = this.sliderOptions.valueType === 'single'
+      ? 'Одиночное'
+      : 'Интервал';
 
-    this.slider.listenToChangeState((newState) => {
+    this.$valueTypeSelect.val(currentValueType);
+
+    const currentAxis = this.sliderOptions.axis === 'X'
+      ? 'Горизонтальный'
+      : 'Вертикальный';
+
+    this.$viewTypeSelect.val(currentAxis);
+  }
+
+  private prepareInputLabels(): void {
+    this.$slider.sliderPlugin('subscribeToChangeState', (newState) => {
       try {
         this.$minValueHandlerInput?.val(newState[0].value);
         this.$maxValueHandlerInput?.val(newState[Object.values(newState).length - 1].value);
-      // eslint-disable-next-line no-empty
+        // eslint-disable-next-line no-empty
       } catch (err) { }
     });
 
@@ -100,10 +106,17 @@ class Panel {
     this.$maxValueInput?.val(this.sliderOptions.maxValue);
   }
 
+  private prepareLabelsData(): void {
+    this.changeViewTypeInputState(this.sliderOptions.valueType);
+    this.prepareCheckboxes();
+    this.prepareInputLabels();
+    this.prepareSelectLabels();
+  }
+
   private changeViewTypeInputState(viewType: string): void {
     const $maxValueInputContainer: panelDOMElement = this.$maxValueHandlerInput?.parent();
 
-    if (viewType === 'singleValue') {
+    if (viewType === 'single') {
       $maxValueInputContainer?.hide();
     } else {
       $maxValueInputContainer?.show();
@@ -124,7 +137,7 @@ class Panel {
   }
 
   private getErrorNotify(errorMessage: string, $label: JQuery<HTMLElement>): void {
-    const errorSound = new Audio('src/assets/sounds/sound__error.mp3');
+    const errorSound = new Audio('src/demo-page/assets/sounds/sound__error.mp3');
 
     errorSound.play();
 
@@ -177,13 +190,13 @@ class Panel {
   private setMinValueHandler($targetLabel: JQuery<HTMLElement>): void {
     const newStateValue = $targetLabel.val();
 
-    this.slider.changeStateByHandlerName('min-value', newStateValue);
+    this.$slider.sliderPlugin('changeStateByHandlerName', 'min-value', newStateValue);
   }
 
   private setMaxValueHandler($targetLabel: JQuery<HTMLElement>): void {
     const newStateValue = $targetLabel.val();
 
-    this.slider.changeStateByHandlerName('max-value', newStateValue);
+    this.$slider.sliderPlugin('changeStateByHandlerName', 'max-value', newStateValue);
   }
 
   private changeValueType($targetLabel: JQuery<HTMLElement>): void {
@@ -197,22 +210,22 @@ class Panel {
       if (selectedOption === currentElementText) {
         const caughtValueType = $currentOptionElement.data('code');
 
-        this.slider.setValueType(caughtValueType);
+        this.$slider.sliderPlugin('setValueType', caughtValueType);
         this.changeViewTypeInputState(caughtValueType);
       }
     });
   }
 
   private setLabelsActivity($targetLabel: JQuery<HTMLElement>): void {
-    $targetLabel.is(':checked') ? this.slider.showLabels() : this.slider.hideLabels();
+    $targetLabel.is(':checked') ? this.$slider.sliderPlugin('showLabels') : this.$slider.sliderPlugin('hideLabels');
   }
 
   private setStepSize($targetLabel: JQuery<HTMLElement>): void {
     const caughtNewValue = Number($targetLabel.val());
     const $targetLabelParent = $targetLabel.parent();
-    const setStepSizeRequest = this.slider.setStepSize(caughtNewValue);
+    const setStepSizeRequest = this.$slider.sliderPlugin('setStepSize', caughtNewValue);
 
-    if (setStepSizeRequest.response === 'error') {
+    if (setStepSizeRequest.response === 'ERROR') {
       this.getErrorNotify(setStepSizeRequest.message, $targetLabelParent);
       $targetLabel.val('');
     }
@@ -221,9 +234,9 @@ class Panel {
   private setMinValue($targetLabel: JQuery<HTMLElement>): void {
     const caughtNewValue = Number($targetLabel.val());
     const $targetLabelParent = $targetLabel.parent();
-    const setNewValueRequest = this.slider.setMinValue(caughtNewValue);
+    const setNewValueRequest = this.$slider.sliderPlugin('setMinValue', caughtNewValue);
 
-    if (setNewValueRequest.response === 'error') {
+    if (setNewValueRequest.response === 'ERROR') {
       this.getErrorNotify(setNewValueRequest.message, $targetLabelParent);
       $targetLabel.val('');
     }
@@ -232,16 +245,16 @@ class Panel {
   private setMaxValue($targetLabel: JQuery<HTMLElement>): void {
     const caughtNewValue = Number($targetLabel.val());
     const $targetLabelParent = $targetLabel.parent();
-    const setMaxValueRequest = this.slider.setMaxValue(caughtNewValue);
+    const setMaxValueRequest = this.$slider.sliderPlugin('setMaxValue', caughtNewValue);
 
-    if (setMaxValueRequest.response === 'error') {
+    if (setMaxValueRequest.response === 'ERROR') {
       this.getErrorNotify(setMaxValueRequest.message, $targetLabelParent);
       $targetLabel.val('');
     }
   }
 
   private setActivityTooltip($targetLabel: JQuery<HTMLElement>): void {
-    $targetLabel.is(':checked') ? this.slider.showTooltip() : this.slider.hideTooltip();
+    $targetLabel.is(':checked') ? this.$slider.sliderPlugin('showTooltip') : this.$slider.sliderPlugin('hideTooltip');
   }
 
   private changeAxis($targetLabel: JQuery<HTMLElement>): void {
@@ -254,7 +267,7 @@ class Panel {
 
       if (selectedOption === currentElementText) {
         const newAxis = $currentOptionElement.data('code');
-        this.slider.setAxis(newAxis);
+        this.$slider.sliderPlugin('setAxis', newAxis);
       }
     });
   }

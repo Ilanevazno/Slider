@@ -103,7 +103,7 @@ class MainView {
 
       const valueType: string = this.model.getOption('valueType');
 
-      const minValueHandlerName: string = valueType === 'singleValue' ? 'min-value' : 'min-value';
+      const minValueHandlerName: string = valueType === 'single' ? 'min-value' : 'min-value';
       const maxValueHandlerName = 'max-value';
 
       switch (handler.name) {
@@ -198,7 +198,7 @@ class MainView {
     const valueType: string = this.model.getOption('valueType');
     this.sliderBody = this.drawSliderBody(this.$sliderContainer);
     this.handlerMinValue = {
-      name: valueType === 'singleValue' ? 'min-value' : 'min-value',
+      name: valueType === 'single' ? 'min-value' : 'min-value',
       instances: this.drawHandlerInstances(this.sliderBody.$mainHtml),
     };
 
@@ -207,7 +207,7 @@ class MainView {
       this.setState('min-value');
     }, 0);
 
-    if (valueType === 'doubleValue') {
+    if (valueType === 'double') {
       this.handlerMaxValue = {
         name: 'max-value',
         instances: this.drawHandlerInstances(this.sliderBody.$mainHtml),

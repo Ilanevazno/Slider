@@ -1,99 +1,47 @@
-/* eslint-disable @typescript-eslint/class-name-casing */
 import MainView from './View/MainView';
 import Model from './Model/Model';
 import Controller from './Controller/Controller';
-import СustomEvents from './Observer/CustomEvents';
-import { availableOptions, observerEvent } from './types/types';
+import { availableOptions } from './types/types';
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-namespace sliderPlugin {
-  jQuery.fn.extend({
-    sliderPlugin(args: availableOptions) {
-      const {
-        stepSize = -50,
-        minValue = 1,
-        maxValue = 100,
-        axis = 'X',
-        isShowLabels = true,
-        isEnabledTooltip = true,
-        valueType = 'single',
-      } = args;
+(function ($) {
+  const methods = {
+    _init(args) {
+      const initSliderOptions: availableOptions = {
+        stepSize: 1,
+        minValue: 1,
+        maxValue: 100,
+        axis: 'X',
+        isShowLabels: true,
+        isEnabledTooltip: true,
+        valueType: 'single',
+      };
 
-      this.model = new Model({
-        stepSize,
-        minValue,
-        maxValue,
-        axis,
-        isShowLabels,
-        isEnabledTooltip,
-        valueType,
+      Object.keys(args).map((setting) => {
+        initSliderOptions[setting] = args[setting];
+        return setting;
       });
-      this.view = new MainView(this.model, this);
-      this.controller = new Controller(this.model, this.view);
+
+      const model = new Model(initSliderOptions);
+      const view = new MainView(model, this);
+      const controller = new Controller(model, view);
+      this.data('controller', controller);
 
       return this;
     },
+  };
+  $.fn.extend({
+    sliderPlugin(method: any, ...args: any[]) {
+      const currentController = this.data('controller') || {};
 
-    setValueType(valueType: string): void {
-      this.controller.setValueType(valueType);
-    },
+      if (currentController[method]) {
+        return currentController[method].call(currentController, ...args) || this;
+      }
 
-    showLabels(): void {
-      this.controller.showLabels();
-    },
+      if (typeof method === 'object' || !method) {
+        return methods._init.apply(this, [method]);
+      }
 
-    hideLabels(): void {
-      this.controller.hideLabels();
-    },
-
-    setStepSize(stepSize: number): object {
-      return this.controller.setStepSize(stepSize);
-    },
-
-    setMinValue(value: number): object {
-      return this.controller.setMinValue(value);
-    },
-
-    setMaxValue(value: number): object {
-      return this.controller.setMaxValue(value);
-    },
-
-    setAxis(axis: string): void {
-      this.controller.setAxis(axis);
-    },
-
-    showTooltip(): void {
-      this.controller.showTooltip();
-    },
-
-    hideTooltip(): void {
-      this.controller.hideTooltip();
-    },
-
-    changeStateByHandlerName(handlerName: string, newValue: number): void {
-      this.controller.changeStateByHandlerName(handlerName, newValue);
-    },
-
-    listenToChangeState(callback) {
-      this.controller.subscribeToChangeState();
-
-      this.controller.eventObserver.subscribe((event: observerEvent<any>) => {
-        if (event.type === СustomEvents.SetState) {
-          callback(event.data.state);
-        }
-      });
+      return this;
     },
   });
-
-  export interface jQuery {
-    sliderPlugin(args);
-    setStepSize(newStep: number);
-    setMinValue(value: number);
-    setMaxValue(value: number);
-    setAxis(axis: string);
-    showTooltip();
-    hideTooltip();
-  }
-}
-
-export default sliderPlugin;
+}(jQuery));

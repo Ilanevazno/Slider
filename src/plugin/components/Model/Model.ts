@@ -29,10 +29,10 @@ class Model {
   constructor(options: availableOptions) {
     this.eventObserver = new Observer();
     this.state = [];
-    this.isShowLabels = options.isShowLabels || true;
+    this.isShowLabels = options.isShowLabels || false;
     this.axis = options.axis || ValidateModel.axisX;
     this.valueType = options.valueType || ValidateModel.singleValue;
-    this.isEnabledTooltip = options.isEnabledTooltip || true;
+    this.isEnabledTooltip = options.isEnabledTooltip || false;
     this.minValue = options.minValue || 0;
     this.maxValue = options.maxValue || 100;
     this.stepSize = options.stepSize || 1;
