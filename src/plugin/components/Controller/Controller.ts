@@ -100,11 +100,7 @@ class Controller {
           this.view.refreshView();
           break;
         case СustomEvents.SetMinValue:
-          this.view.changeBreakpointsActivity();
-          break;
         case СustomEvents.SetMaxValue:
-          this.view.changeBreakpointsActivity();
-          break;
         case СustomEvents.SetStepSize:
           this.view.changeBreakpointsActivity();
           break;
