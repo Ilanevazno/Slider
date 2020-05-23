@@ -1,18 +1,11 @@
-import Observer from '../../Observer/Observer';
-import СustomEvents from '../../Observer/CustomEvents';
-
 class TooltipView {
-  private $tooltip: any;
+  private $tooltip: JQuery<HTMLElement>;
 
   private $htmlParent: JQuery<HTMLElement>;
-
-  public eventObserver: Observer;
 
   constructor($HTMLContainer, private axis: string) {
     this.$tooltip = null;
     this.$htmlParent = $HTMLContainer;
-    this.eventObserver = new Observer();
-    this.listenEvents();
     this.axis = axis;
   }
 
@@ -31,26 +24,6 @@ class TooltipView {
 
   public removeTooltip(): void {
     this.$tooltip.remove();
-  }
-
-  private listenEvents() {
-    this.eventObserver.subscribe((event) => {
-      switch (event.type) {
-        case СustomEvents.SetTooltipActivity:
-          if (event.data.isTooltipActive) {
-            this.drawTooltip();
-            this.setValue(event.data);
-          } else {
-            this.removeTooltip();
-          }
-          break;
-        case СustomEvents.SetTooltipValue:
-          this.setValue(event.data);
-          break;
-        default:
-          break;
-      }
-    });
   }
 }
 

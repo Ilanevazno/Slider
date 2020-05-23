@@ -18,7 +18,6 @@ class SliderBodyView {
 
     useAutoBind(this);
     this.bindActions();
-    this.listenEvents();
   }
 
   public setAxis(axis: string): string {
@@ -74,20 +73,12 @@ class SliderBodyView {
     });
   }
 
-  private listenEvents(): void {
-    this.eventObserver.subscribe((event) => {
-      switch (event.type) {
-        case CustomEvents.SetBreakpointsActivity:
-          if (event.data.isActiveBreakpoints) {
-            this.drawBreakPoints(event.data.breakpoints);
-          } else {
-            this.removeBreakpoints();
-          }
-          break;
-        default:
-          break;
-      }
-    });
+  public changeBreakpointsActivity(isActive: boolean, availableBreakpoints: sliderBreakpoint[]): void {
+    if (isActive) {
+      this.drawBreakPoints(availableBreakpoints);
+    } else {
+      this.removeBreakpoints();
+    }
   }
 
   private handleBreakpointClick(breakpointPixelPosition: number): void {
