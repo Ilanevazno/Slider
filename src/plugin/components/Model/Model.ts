@@ -1,9 +1,8 @@
 /* eslint-disable no-param-reassign */
 import Observer from '../Observer/Observer';
-import * as ValidateModel from './ValidateModel/ValidateModel';
 import СustomEvents from '../Observer/CustomEvents';
 import { availableOptions, stateHandler, modelResponse } from '../types/types';
-import ModelValidator from './ValidateModel/ValidateModel';
+import ModelConstants from './ModelConstants/ModelConstants';
 
 class Model {
   public withLabels: boolean;
@@ -29,13 +28,13 @@ class Model {
   constructor(options: availableOptions) {
     this.eventObserver = new Observer();
     this.state = [];
-    this.withLabels = options.withLabels || false;
-    this.axis = options.axis || ValidateModel.axisX;
-    this.valueType = options.valueType || ValidateModel.singleValue;
-    this.withTooltip = options.withTooltip || false;
-    this.minValue = options.minValue || 0;
-    this.maxValue = options.maxValue || 100;
-    this.stepSize = options.stepSize || 1;
+    this.withLabels = options.withLabels;
+    this.axis = options.axis;
+    this.valueType = options.valueType;
+    this.withTooltip = options.withTooltip;
+    this.minValue = options.minValue;
+    this.maxValue = options.maxValue;
+    this.stepSize = options.stepSize;
     this.breakPoints = this.updateBreakpointList();
 
     this.setStepSize(options.stepSize);
@@ -91,12 +90,12 @@ class Model {
       this.eventObserver.broadcast({ type: СustomEvents.SetMinValue, data: { minValue: this.minValue } });
 
       return {
-        response: ModelValidator.SuccessResponse,
+        response: ModelConstants.SuccessResponse,
         message: `Минимальное значение установлено на ${value}`,
       };
     }
     return {
-      response: ModelValidator.FailedResponse,
+      response: ModelConstants.FailedResponse,
       message: 'Невалидное значения. Минимальное значение не может быть больше чем максимальное.',
     };
   }
@@ -111,12 +110,12 @@ class Model {
       this.eventObserver.broadcast({ type: СustomEvents.SetMaxValue, data: { maxValue: this.maxValue } });
 
       return {
-        response: ModelValidator.SuccessResponse,
+        response: ModelConstants.SuccessResponse,
         message: `Максимальное значение установлено на ${value}`,
       };
     }
     return {
-      response: ModelValidator.FailedResponse,
+      response: ModelConstants.FailedResponse,
       message: 'Невалидное значения. Максимальное значение не может быть меньше чем минимальное.',
     };
   }
@@ -194,12 +193,12 @@ class Model {
       this.eventObserver.broadcast({ type: СustomEvents.SetStepSize, data: { newBreakpoints: this.breakPoints } });
 
       return {
-        response: ModelValidator.SuccessResponse,
+        response: ModelConstants.SuccessResponse,
         message: `Размер шага установлен на ${convertedNewStepSize}`,
       };
     }
     return {
-      response: ModelValidator.FailedResponse,
+      response: ModelConstants.FailedResponse,
       message: `Размер шага должен быть от 1 до ${convertedMaxValue}`,
     };
   }
