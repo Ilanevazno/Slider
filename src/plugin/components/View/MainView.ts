@@ -4,7 +4,7 @@ import SliderBodyView from './SliderBodyView/SliderBodyView';
 import HandlerView from './HandlerView/HandlerView';
 import CustomEvents from '../Observer/CustomEvents';
 import {
-  handlerInstance, observerEvent, stateHandler, sliderBreakpoint, convertingData,
+  observerEvent, stateHandler, sliderBreakpoint, convertingData,
 } from '../types/types';
 
 class MainView {
@@ -14,9 +14,9 @@ class MainView {
 
   public sliderBody: SliderBodyView;
 
-  public minValueHandler: handlerInstance;
+  public minValueHandler: stateHandler;
 
-  public maxValueHandler: handlerInstance;
+  public maxValueHandler: stateHandler;
 
   constructor(private model: Model, private initHtmlElement: HTMLElement) {
     this.eventObserver = new Observer();
@@ -34,7 +34,7 @@ class MainView {
 
   public setState(handler: string): void {
     const caughtHandlerIndex: number = handler === 'min-value' || handler === 'value' ? 0 : 1;
-    const caughtHandlerInstance: handlerInstance = [this.minValueHandler, this.maxValueHandler][caughtHandlerIndex];
+    const caughtHandlerInstance: stateHandler = [this.minValueHandler, this.maxValueHandler][caughtHandlerIndex];
     const caughtHandlerName = caughtHandlerInstance.name;
     const $caughtHandlerHtml = caughtHandlerInstance.handler.$html;
     const minValue: number = this.model.getOption('minValue');
@@ -59,7 +59,7 @@ class MainView {
   }
 
   public setTooltipActivity(isTooltipActive: boolean): void {
-    [this.minValueHandler, this.maxValueHandler].map((currentHandler: handlerInstance) => {
+    [this.minValueHandler, this.maxValueHandler].map((currentHandler: stateHandler) => {
       if (currentHandler) {
         const tooltipPercent: number = currentHandler.statePercent || this.model.getOption('minValue');
         currentHandler.handler.changeTooltipActivity(isTooltipActive);
@@ -162,7 +162,7 @@ class MainView {
   }
 
   private convertPxToPercent(currentValue: number): number {
-    const optionsToConvert = {
+    const optionsToConvert: convertingData = {
       minPercent: this.model.getOption('minValue'),
       maxPercent: this.model.getOption('maxValue'),
       htmlContainerWidth: this.sliderBody.getSliderBodyParams(),

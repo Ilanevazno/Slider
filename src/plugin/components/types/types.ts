@@ -1,5 +1,4 @@
 import HandlerView from '../View/HandlerView/HandlerView';
-import TooltipView from '../View/TooltipView/TooltipView';
 
 export type availableOptions = {
   stepSize: number;
@@ -16,16 +15,12 @@ export type sliderBreakpoint = {
   pixelPosition: number;
 }
 
-export type handlerInstance = {
+export type stateHandler = {
   handler?: HandlerView;
+  $handler?: JQuery<HTMLElement>;
   name: string;
   statePercent?: number;
-}
-
-export type stateHandler = {
-  $handler: JQuery<HTMLElement>;
-  name: string;
-  value: number;
+  value?: number;
 }
 
 export type breakpointsData = {
