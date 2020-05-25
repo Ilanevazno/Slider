@@ -33,7 +33,7 @@ class MainView {
   }
 
   public setState(handler: string): void {
-    const caughtHandlerIndex: number = handler === 'min-value' || handler === 'value' ? 0 : 1;
+    const caughtHandlerIndex: number = handler === 'min-value' ? 0 : 1;
     const caughtHandlerInstance: stateHandler = [this.minValueHandler, this.maxValueHandler][caughtHandlerIndex];
     const caughtHandlerName = caughtHandlerInstance.name;
     const $caughtHandlerHtml = caughtHandlerInstance.handler.$html;
@@ -90,28 +90,15 @@ class MainView {
       };
       const newHandlerPosition: number = this.convertPercentToPixel(optionList);
 
-      const minValueHandlerName = 'min-value';
-      const maxValueHandlerName = 'max-value';
+      const handlerForMoving: stateHandler = handler.name === 'min-value'
+        ? this.minValueHandler
+        : this.maxValueHandler;
 
-      switch (handler.name) {
-        case minValueHandlerName:
-          this.minValueHandler.handler.moveHandler(newHandlerPosition);
-          this.minValueHandler.statePercent = currentValue;
+      handlerForMoving.handler.moveHandler(newHandlerPosition);
+      handlerForMoving.statePercent = currentValue;
 
-          if (this.withTooltip()) {
-            this.minValueHandler.handler.setTooltipValue(currentValue);
-          }
-          break;
-        case maxValueHandlerName:
-          this.maxValueHandler.handler.moveHandler(newHandlerPosition);
-          this.maxValueHandler.statePercent = currentValue;
-
-          if (this.withTooltip()) {
-            this.maxValueHandler.handler.setTooltipValue(currentValue);
-          }
-          break;
-        default:
-          break;
+      if (this.withTooltip()) {
+        handlerForMoving.handler.setTooltipValue(currentValue);
       }
 
       return handler;
@@ -171,7 +158,7 @@ class MainView {
     return this.convertPixelToPercent(optionsToConvert) + this.model.getOption('minValue');
   }
 
-  private handleHandlerMove(data: any = { }): number {
+  private handleHandlerMove(data: any = {}): number {
     const {
       $handler,
       event,

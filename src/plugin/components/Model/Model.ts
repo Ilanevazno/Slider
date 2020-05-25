@@ -242,11 +242,15 @@ class Model {
 
 
     if (currentHandler === 'min-value') {
-      this.state[stateLength - 1].value = minValue > maxValue ? this.state[0].value : this.state[stateLength - 1].value;
+      this.state[stateLength - 1].value = minValue > maxValue
+        ? this.state[0].value
+        : this.state[stateLength - 1].value;
     }
 
     if (currentHandler === 'max-value') {
-      this.state[0].value = maxValue < minValue ? this.state[stateLength - 1].value : this.state[0].value;
+      this.state[0].value = maxValue < minValue
+        ? this.state[stateLength - 1].value
+        : this.state[0].value;
     }
   }
 
