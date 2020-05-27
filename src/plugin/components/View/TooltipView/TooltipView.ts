@@ -22,8 +22,8 @@ class TooltipView {
     return this.$tooltip;
   }
 
-  public removeTooltip(): void {
-    this.$tooltip.remove();
+  public removeTooltip(): JQuery<HTMLElement> {
+    return this.$tooltip.remove();
   }
 }
 

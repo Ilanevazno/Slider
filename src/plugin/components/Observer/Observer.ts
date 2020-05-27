@@ -1,5 +1,5 @@
 class Observer {
-  private observers: Array<any>;
+  private observers: Array<Function>;
 
   constructor() {
     this.observers = [];

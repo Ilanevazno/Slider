@@ -4,6 +4,10 @@ import { availableOptions } from '../../../plugin/components/types/types';
 
 type panelDOMElement = JQuery<HTMLElement> | undefined;
 
+interface SliderMethods{
+  sliderPlugin: void;
+}
+
 class Panel {
   private sliderOptions: availableOptions;
 

@@ -34,7 +34,7 @@ class HandlerView {
     this.tooltip.setValue(value);
   }
 
-  public changeTooltipActivity(isActive: boolean): any {
+  public changeTooltipActivity(isActive: boolean): JQuery<HTMLElement> {
     return isActive
       ? this.tooltip.drawTooltip()
       : this.tooltip.removeTooltip();
@@ -68,8 +68,8 @@ class HandlerView {
   }
 
   private handleDocumentMouseMove(event): void {
-    const handlerClickOffset = this.offset / 2;
-    this.observer.broadcast({ type: event.type.toUpperCase(), data: { event, handlerClickOffset } });
+    const offset = this.offset / 2;
+    this.observer.broadcast({ type: event.type.toUpperCase(), data: { event, offset } });
   }
 
   private handleDocumentMouseUp(): void {

@@ -30,7 +30,7 @@ import { availableOptions } from './types/types';
     },
   };
   $.fn.extend({
-    sliderPlugin(method: any, ...args: any[]) {
+    sliderPlugin<T>(method: string, ...args: T[]): JQuery<HTMLElement> {
       const currentController = this.data('controller') || {};
 
       if (currentController[method]) {

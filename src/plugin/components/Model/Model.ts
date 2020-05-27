@@ -70,8 +70,9 @@ class Model {
     this.eventObserver.broadcast({ type: СustomEvents.SetTooltipActivity, data: { withTooltip: this.withTooltip } });
   }
 
-  public getOption(targetOption: string): any {
+  public getOption<T>(targetOption: string): T {
     const availableOptionsList: object = this.getOptionList();
+
 
     return availableOptionsList[targetOption];
   }

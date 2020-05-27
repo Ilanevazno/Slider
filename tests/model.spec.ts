@@ -76,13 +76,13 @@ describe('Проверка класса Model', () => {
 
     describe('Установка минимального значения', () => {
       it('Должно вернуть ошибку, т.к значение больше максимального', () => {
-        const newMinValue: any = modelSpec.setMinValue(modelSpecOptions.maxValue + 1);
+        const newMinValue = modelSpec.setMinValue(modelSpecOptions.maxValue + 1);
 
         expect(newMinValue.response).toBe('error');
       });
 
       it('Установка минимального значения должна быть без ошибок', () => {
-        const newMinValue: any = modelSpec.setMinValue(modelSpecOptions.maxValue - 10);
+        const newMinValue = modelSpec.setMinValue(modelSpecOptions.maxValue - 10);
 
         expect(newMinValue.response).toBe('success');
       });
@@ -90,13 +90,13 @@ describe('Проверка класса Model', () => {
 
     describe('Установка максимального значения', () => {
       it('Должно вернуть ошибку, т.к значение меньше минимального', () => {
-        const newMaxValue: any = modelSpec.setMaxValue(modelSpecOptions.minValue + -10);
+        const newMaxValue = modelSpec.setMaxValue(modelSpecOptions.minValue + -10);
 
         expect(newMaxValue.response).toBe('error');
       });
 
       it('Установка минимального значения должна быть без ошибок', () => {
-        const newMaxValue: any = modelSpec.setMaxValue(modelSpecOptions.maxValue + 10);
+        const newMaxValue = modelSpec.setMaxValue(modelSpecOptions.maxValue + 10);
 
         expect(newMaxValue.response).toBe('success');
       });
@@ -104,22 +104,22 @@ describe('Проверка класса Model', () => {
 
     describe('Установка шага', () => {
       it('Должна быть возвращена ошибка, новое значение больше чем максимальное', () => {
-        const newStepSize: any = modelSpec.setStepSize(modelSpecOptions.maxValue * 2);
+        const newStepSize = modelSpec.setStepSize(modelSpecOptions.maxValue * 2);
         expect(newStepSize.response).toBe('error');
       });
 
       it(`Новое новый шаг должен быть установлен на ${modelSpecOptions.maxValue / 2}`, () => {
-        const newStepSize: any = modelSpec.setStepSize(modelSpecOptions.maxValue / 2);
+        const newStepSize = modelSpec.setStepSize(modelSpecOptions.maxValue / 2);
         expect(newStepSize.response).toBe('success');
       });
 
       it('Отрицательные значения должны работать', () => {
-        const newStepSize: any = modelSpec.setStepSize(-modelSpecOptions.maxValue);
+        const newStepSize = modelSpec.setStepSize(-modelSpecOptions.maxValue);
         expect(newStepSize.response).toBe('success');
       });
 
       it('Дробные значения должны работать', () => {
-        const newStepSize: any = modelSpec.setStepSize(modelSpecOptions.maxValue / 2.5);
+        const newStepSize = modelSpec.setStepSize(modelSpecOptions.maxValue / 2.5);
         expect(newStepSize.response).toBe('success');
       });
     });

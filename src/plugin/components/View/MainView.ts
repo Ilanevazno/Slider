@@ -4,7 +4,7 @@ import SliderBodyView from './SliderBodyView/SliderBodyView';
 import HandlerView from './HandlerView/HandlerView';
 import CustomEvents from '../Observer/CustomEvents';
 import {
-  observerEvent, stateHandler, sliderBreakpoint, convertingData,
+  observerEvent, stateHandler, sliderBreakpoint, convertingData, handlerEvent,
 } from '../types/types';
 
 class MainView {
@@ -82,7 +82,7 @@ class MainView {
       const $caughtHandler: JQuery<HTMLElement> = $(handler.$handler);
       const currentValue: number = handler.value;
       const htmlContainerWidth: number = this.sliderBody.getSliderBodyParams() - ($caughtHandler[0].offsetWidth / 2);
-      const optionList = {
+      const optionList: convertingData = {
         minPercent: this.model.getOption('minValue'),
         maxPercent: this.model.getOption('maxValue'),
         currentValue,
@@ -111,9 +111,10 @@ class MainView {
 
   private getConvertedBreakpoints() {
     const htmlContainerWidth: number = this.sliderBody.getSliderBodyParams();
+    const availableBreakpoints: number[] = this.model.getOption('breakpoints');
 
-    return this.model.getOption('breakpoints').map((currentValue: number) => {
-      const optionList = {
+    return availableBreakpoints.map((currentValue: number) => {
+      const optionList: convertingData = {
         minPercent: this.model.getOption('minValue'),
         maxPercent: this.model.getOption('maxValue'),
         currentValue,
@@ -149,16 +150,17 @@ class MainView {
   }
 
   private convertPxToPercent(currentValue: number): number {
-    const optionsToConvert: convertingData = {
+    const optionsForConverting: convertingData = {
       minPercent: this.model.getOption('minValue'),
       maxPercent: this.model.getOption('maxValue'),
       htmlContainerWidth: this.sliderBody.getSliderBodyParams(),
       currentValue,
     };
-    return this.convertPixelToPercent(optionsToConvert) + this.model.getOption('minValue');
+    const minValueOption: number = this.model.getOption('minValue');
+    return this.convertPixelToPercent(optionsForConverting) + minValueOption;
   }
 
-  private handleHandlerMove(data: any = {}): number {
+  private handleHandlerMove(data: handlerEvent): number {
     const {
       $handler,
       event,
@@ -217,7 +219,7 @@ class MainView {
   }
 
   private initSliderBodyEvents(): void {
-    this.sliderBody.eventObserver.subscribe((event: observerEvent<any>) => {
+    this.sliderBody.eventObserver.subscribe((event: observerEvent<object>) => {
       switch (event.type) {
         case CustomEvents.WindowResize:
           this.changeBreakpointsActivity();
@@ -307,14 +309,15 @@ class MainView {
   }
 
   private initHandlerEvents(parent): void {
-    parent.handler.observer.subscribe((event) => {
+    parent.handler.observer.subscribe((event: observerEvent<handlerEvent>) => {
+      console.log(event.data.event);
       switch (event.type) {
         case CustomEvents.Mousemove:
           this.handleHandlerMove({
             $handler: parent.handler.$html,
             event: event.data.event,
             name: parent.name,
-            offset: event.data.handlerClickOffset,
+            offset: event.data.offset,
           });
           break;
         case CustomEvents.Touchmove:
@@ -322,7 +325,7 @@ class MainView {
             $handler: parent.handler.$html,
             event: event.data.event.touches[0],
             name: parent.name,
-            offset: event.data.handlerClickOffset,
+            offset: event.data.offset,
           });
           break;
         default:

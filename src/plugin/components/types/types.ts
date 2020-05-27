@@ -15,6 +15,13 @@ export type sliderBreakpoint = {
   pixelPosition: number;
 }
 
+export type handlerEvent = {
+  $handler: JQuery<HTMLElement>;
+  event: any;
+  name: string;
+  offset: number;
+}
+
 export type stateHandler = {
   handler?: HandlerView;
   $handler?: JQuery<HTMLElement>;
