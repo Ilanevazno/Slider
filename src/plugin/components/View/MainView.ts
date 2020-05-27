@@ -310,7 +310,6 @@ class MainView {
 
   private initHandlerEvents(parent): void {
     parent.handler.observer.subscribe((event: observerEvent<handlerEvent>) => {
-      console.log(event.data.event);
       switch (event.type) {
         case CustomEvents.Mousemove:
           this.handleHandlerMove({
