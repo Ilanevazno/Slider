@@ -7,6 +7,8 @@ const mockModelOptions: availableOptions = {
   stepSize: 1,
   minValue: 1,
   maxValue: 100,
+  minValueCurrent: 30,
+  maxValueCurrent: 70,
   axis: 'X',
   withLabels: false,
   withTooltip: false,

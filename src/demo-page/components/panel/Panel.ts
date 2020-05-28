@@ -4,10 +4,6 @@ import { availableOptions } from '../../../plugin/components/types/types';
 
 type panelDOMElement = JQuery<HTMLElement> | undefined;
 
-interface SliderMethods{
-  sliderPlugin: void;
-}
-
 class Panel {
   private sliderOptions: availableOptions;
 
@@ -43,6 +39,8 @@ class Panel {
       stepSize: this.$slider.data('stepsize'),
       minValue: this.$slider.data('minvalue'),
       maxValue: this.$slider.data('maxvalue'),
+      minValueCurrent: this.$slider.data('minvaluecurrent'),
+      maxValueCurrent: this.$slider.data('maxvaluecurrent'),
       valueType: this.$slider.data('valuetype'),
       axis: this.$slider.data('axis'),
       withTooltip: this.$slider.data('withtooltip') !== undefined,

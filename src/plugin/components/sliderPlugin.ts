@@ -10,6 +10,8 @@ import { availableOptions } from './types/types';
         stepSize: 1,
         minValue: 1,
         maxValue: 100,
+        minValueCurrent: 1,
+        maxValueCurrent: 100,
         axis: 'X',
         withLabels: true,
         withTooltip: true,
@@ -25,6 +27,11 @@ import { availableOptions } from './types/types';
       const view = new MainView(model, this);
       const controller = new Controller(model, view);
       this.data('controller', controller);
+
+      setTimeout(() => {
+        model.changeStateByHandlerName('min-value', args.minValueCurrent);
+        model.changeStateByHandlerName('max-value', args.maxValueCurrent);
+      }, 0);
 
       return this;
     },

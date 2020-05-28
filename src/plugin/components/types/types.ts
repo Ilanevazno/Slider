@@ -4,6 +4,8 @@ export type availableOptions = {
   stepSize: number;
   minValue: number;
   maxValue: number;
+  minValueCurrent: number;
+  maxValueCurrent: number;
   axis: 'X' | 'Y';
   withLabels: boolean;
   withTooltip: boolean;

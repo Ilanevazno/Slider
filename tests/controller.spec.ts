@@ -8,6 +8,8 @@ const mockModelOptions: availableOptions = {
   stepSize: 1,
   minValue: 1,
   maxValue: 100,
+  minValueCurrent: 30,
+  maxValueCurrent: 70,
   axis: 'X',
   withLabels: false,
   withTooltip: false,
@@ -29,9 +31,7 @@ describe('Проверка класса Controller', () => {
 
   it('Подписка на события', () => {
     spyOn(controllerSpec, 'subscribeToChangeState').and.callThrough();
-    const callback = () => {
-      return true;
-    };
+    const callback = (_) => true;
     controllerSpec.subscribeToChangeState(callback);
     expect(controllerSpec.subscribeToChangeState).toBeCalled();
   });

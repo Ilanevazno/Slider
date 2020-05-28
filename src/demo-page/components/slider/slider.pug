@@ -4,6 +4,8 @@ mixin slider (data)
       minValue = 0,
       maxValue = 100,
       stepSize = 10,
+      minValueCurrent = 0,
+      maxValueCurrent = 0,
       axis = 'X',
       valueType = 'singleValue',
       withTooltip = true,
@@ -13,6 +15,8 @@ mixin slider (data)
     data-minValue= minValue
     data-maxValue= maxValue
     data-stepSize= stepSize
+    data-minValueCurrent = minValueCurrent
+    data-maxValueCurrent = maxValueCurrent
     data-axis= axis
     data-valueType= valueType
     data-withTooltip= withTooltip
