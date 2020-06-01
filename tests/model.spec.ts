@@ -80,13 +80,13 @@ describe('Проверка класса Model', () => {
       it('Должно вернуть ошибку, т.к значение больше максимального', () => {
         const newMinValue = modelSpec.setMinValue(modelSpecOptions.maxValue + 1);
 
-        expect(newMinValue.response).toBe('error');
+        expect(newMinValue.response).toBe('ERROR');
       });
 
       it('Установка минимального значения должна быть без ошибок', () => {
         const newMinValue = modelSpec.setMinValue(modelSpecOptions.maxValue - 10);
 
-        expect(newMinValue.response).toBe('success');
+        expect(newMinValue.response).toBe('SUCCESS');
       });
     });
 
@@ -94,35 +94,35 @@ describe('Проверка класса Model', () => {
       it('Должно вернуть ошибку, т.к значение меньше минимального', () => {
         const newMaxValue = modelSpec.setMaxValue(modelSpecOptions.minValue + -10);
 
-        expect(newMaxValue.response).toBe('error');
+        expect(newMaxValue.response).toBe('ERROR');
       });
 
       it('Установка минимального значения должна быть без ошибок', () => {
         const newMaxValue = modelSpec.setMaxValue(modelSpecOptions.maxValue + 10);
 
-        expect(newMaxValue.response).toBe('success');
+        expect(newMaxValue.response).toBe('SUCCESS');
       });
     });
 
     describe('Установка шага', () => {
       it('Должна быть возвращена ошибка, новое значение больше чем максимальное', () => {
         const newStepSize = modelSpec.setStepSize(modelSpecOptions.maxValue * 2);
-        expect(newStepSize.response).toBe('error');
+        expect(newStepSize.response).toBe('ERROR');
       });
 
       it(`Новое новый шаг должен быть установлен на ${modelSpecOptions.maxValue / 2}`, () => {
         const newStepSize = modelSpec.setStepSize(modelSpecOptions.maxValue / 2);
-        expect(newStepSize.response).toBe('success');
+        expect(newStepSize.response).toBe('SUCCESS');
       });
 
       it('Отрицательные значения должны работать', () => {
         const newStepSize = modelSpec.setStepSize(-modelSpecOptions.maxValue);
-        expect(newStepSize.response).toBe('success');
+        expect(newStepSize.response).toBe('SUCCESS');
       });
 
       it('Дробные значения должны работать', () => {
         const newStepSize = modelSpec.setStepSize(modelSpecOptions.maxValue / 2.5);
-        expect(newStepSize.response).toBe('success');
+        expect(newStepSize.response).toBe('SUCCESS');
       });
     });
 

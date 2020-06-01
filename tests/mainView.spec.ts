@@ -37,7 +37,7 @@ describe('Тестирование класса MainView', () => {
       spyOn(view, 'refreshView').and.callThrough();
 
       view.eventObserver.subscribe((event) => {
-        const refreshStateEvents = ['clearState', 'refreshState'];
+        const refreshStateEvents = ['CLEAR_STATE', 'REFRESH_STATE'];
         expect(typeof event).toBe('object');
         expect(refreshStateEvents).toContain(event.type);
       });
@@ -66,7 +66,7 @@ describe('Тестирование класса MainView', () => {
   describe('Попытка смены положения хандлера, метод prepareToMoveHandler', () => {
     it('Вызываем метод', () => {
       spyOn(view, 'prepareToMoveHandler').and.callThrough();
-      const currentState = {};
+      const currentState = [];
 
       const currentHandler = {
         $handler: view.minValueHandler.handler.$html,

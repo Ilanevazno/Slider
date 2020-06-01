@@ -60,7 +60,7 @@ To start you need make HTML container, for example:
 Then you can initialize plugin uses:
 
 ``` javascript
-$("#slider").sliderPlugin()
+$("#slider").sliderPlugin({ options })
 ```
 
 Or if you need getting slider values you can use variable, for example:
@@ -71,7 +71,7 @@ const slider = $("#slider").sliderPlugin()
 
 #### Option list
 
-**Using:** ` `  ` const slider = $("#second_slider").createSlider({ option: value }) `  ` ` 
+**Using:** ` `  ` const slider = $("#second_slider").sliderPlugin('method', ...args) `  ` ` 
 
 | Option  | Values | Type | Default | Description |
 | ------------- | ------------- | ------------- | ------------- | ------------- |
