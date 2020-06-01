@@ -63,12 +63,6 @@ Then you can initialize plugin uses:
 $("#slider").sliderPlugin({ options })
 ```
 
-Or if you need getting slider values you can use variable, for example:
-
-``` javascript
-const slider = $("#slider").sliderPlugin()
-```
-
 #### Option list
 
 **Using:** ` `  ` const slider = $("#second_slider").sliderPlugin('method', ...args) `  ` ` 
