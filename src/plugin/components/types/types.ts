@@ -1,4 +1,5 @@
 import HandlerView from '../View/HandlerView/HandlerView';
+import { JQueryExtendedEvent } from '../interfaces/interfaces';
 
 export type availableOptions = {
   stepSize: number;
@@ -19,7 +20,7 @@ export type sliderBreakpoint = {
 
 export type handlerEvent = {
   $handler: JQuery<HTMLElement>;
-  event: any;
+  event: JQueryExtendedEvent;
   name: string;
   offset: number;
 }

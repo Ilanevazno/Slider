@@ -135,7 +135,7 @@ class MainView {
       currentValue,
       htmlContainerWidth,
     } = data;
-    return Math.trunc((currentValue * (maxPercent - minPercent)) / htmlContainerWidth);
+    return (currentValue * (maxPercent - minPercent)) / htmlContainerWidth;
   }
 
   public convertPercentToPixel(data: convertingData): number {
@@ -146,7 +146,7 @@ class MainView {
       htmlContainerWidth,
     } = data;
 
-    return Math.trunc(((currentValue - minPercent) / (maxPercent - minPercent)) * htmlContainerWidth);
+    return ((currentValue - minPercent) / (maxPercent - minPercent)) * htmlContainerWidth;
   }
 
   private convertPxToPercent(currentValue: number): number {
@@ -194,10 +194,12 @@ class MainView {
       handler: this.getHandlerComponent(this.sliderBody.$mainHtml),
     };
 
+    const callFunctionAfterAll = (callbackFunction) => setTimeout(callbackFunction, 0);
+
     this.initHandlerEvents(this.minValueHandler);
-    setTimeout(() => {
+    callFunctionAfterAll(() => {
       this.setState('min-value');
-    }, 0);
+    });
 
     if (valueType === 'double') {
       this.maxValueHandler = {
@@ -206,13 +208,15 @@ class MainView {
       };
 
       this.initHandlerEvents(this.maxValueHandler);
-      setTimeout(() => {
+      callFunctionAfterAll(() => {
         this.setState('max-value');
-      }, 0);
+      });
     }
 
     if (this.model.getOption('withLabels')) {
-      this.changeBreakpointsActivity();
+      callFunctionAfterAll(() => {
+        this.changeBreakpointsActivity();
+      });
     }
 
     this.initSliderBodyEvents();
@@ -234,6 +238,25 @@ class MainView {
     });
   }
 
+  private findTheClosestArrayValue(array: number[], base: number): number {
+    let theClosest = Infinity;
+    let temp;
+    let arrayElement;
+
+    array.map((element, i) => {
+      temp = Math.abs(array[i] - base);
+
+      if (temp < theClosest) {
+        theClosest = temp;
+        arrayElement = array[i];
+      }
+
+      return element;
+    });
+
+    return arrayElement;
+  }
+
   private moveHandlerByBodyClick(event): void {
     const targetPercent: number = this.convertPxToPercent(event.caughtCoords);
     const currentState: stateHandler[] = this.model.getState();
@@ -244,26 +267,7 @@ class MainView {
       return handler;
     });
 
-    const findTheClosest = (array, base) => {
-      let theClosest = Infinity;
-      let temp; let
-        arrayElement;
-
-      array.map((element, i) => {
-        temp = Math.abs(array[i] - base);
-
-        if (temp < theClosest) {
-          theClosest = temp;
-          arrayElement = array[i];
-        }
-
-        return element;
-      });
-
-      return arrayElement;
-    };
-
-    const findAvailableHandler: number = findTheClosest(availableHandlerValues, targetPercent);
+    const findAvailableHandler: number = this.findTheClosestArrayValue(availableHandlerValues, targetPercent);
 
     currentState.map((handler) => {
       if (handler.value === findAvailableHandler) {

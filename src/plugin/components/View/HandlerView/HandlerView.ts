@@ -60,8 +60,8 @@ class HandlerView {
 
   private handleHandlerMouseDown(event): void {
     this.offset = this.axis === 'X'
-      ? event.clientX - this.$html[0].getBoundingClientRect().left
-      : event.clientY - this.$html[0].getBoundingClientRect().top;
+      ? (event.clientX || event.touches[0].clientX) - this.$html[0].getBoundingClientRect().left
+      : event.clientX || event.touches[0].clientY - this.$html[0].getBoundingClientRect().top;
     this.observer.broadcast({ type: event.type, data: event });
     $(document).on('touchmove.documentTouchMove mousemove.documentMouseMove', this.handleDocumentMouseMove);
     $(document).on('touchend.documentTouchEnd mouseup.documentMouseUp', this.handleDocumentMouseUp);

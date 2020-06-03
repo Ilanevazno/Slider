@@ -1,35 +1,34 @@
 /* eslint-disable no-unused-expressions */
 import '../../../plugin/components/sliderPlugin';
 import { availableOptions } from '../../../plugin/components/types/types';
-
-type panelDOMElement = JQuery<HTMLElement> | undefined;
+import { JqueryPluginElement } from '../../../plugin/components/interfaces/interfaces';
 
 class Panel {
   private sliderOptions: availableOptions;
 
   private $panelHtml: JQuery<HTMLElement>;
 
-  private $slider: any;
+  private $slider: JqueryPluginElement;
 
-  private $setTooltipActivity: panelDOMElement;
+  private $setTooltipActivity: JQuery<HTMLElement>;
 
-  private $viewTypeSelect: panelDOMElement;
+  private $viewTypeSelect: JQuery<HTMLElement>;
 
-  private $valueTypeSelect: panelDOMElement;
+  private $valueTypeSelect: JQuery<HTMLElement>;
 
-  private $minValueInput: panelDOMElement;
+  private $minValueInput: JQuery<HTMLElement>;
 
-  private $maxValueInput: panelDOMElement;
+  private $maxValueInput: JQuery<HTMLElement>;
 
-  private $minValueHandlerInput: panelDOMElement;
+  private $minValueHandlerInput: JQuery<HTMLElement>;
 
-  private $maxValueHandlerInput: panelDOMElement;
+  private $maxValueHandlerInput: JQuery<HTMLElement>;
 
-  private $stepSizeInput: panelDOMElement;
+  private $stepSizeInput: JQuery<HTMLElement>;
 
-  private $setLabelsActivity: panelDOMElement;
+  private $setLabelsActivity: JQuery<HTMLElement>;
 
-  private $errorNotify: panelDOMElement;
+  private $errorNotify: JQuery<HTMLElement>;
 
   constructor(htmlContainer: JQuery<HTMLElement> | HTMLElement) {
     this.$panelHtml = $(htmlContainer);
@@ -116,7 +115,7 @@ class Panel {
   }
 
   private changeViewTypeInputState(viewType: string): void {
-    const $maxValueInputContainer: panelDOMElement = this.$maxValueHandlerInput?.parent();
+    const $maxValueInputContainer: JQuery<HTMLElement> = this.$maxValueHandlerInput?.parent();
 
     if (viewType === 'single') {
       $maxValueInputContainer?.hide();
