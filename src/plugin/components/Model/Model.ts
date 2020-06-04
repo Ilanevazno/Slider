@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import Observer from '../Observer/Observer';
 import СustomEvents from '../Observer/CustomEvents';
 import { availableOptions, stateHandler, modelResponse } from '../types/types';
@@ -138,6 +137,7 @@ class Model {
   public changeStateByHandlerName(handlerName: string, value: number): void {
     this.state.map((stateElement: stateHandler) => {
       if (stateElement.name === handlerName) {
+        // eslint-disable-next-line no-param-reassign
         stateElement.value = this.findTheClosestBreakpoint(Number(value));
       }
       return stateElement;
@@ -159,6 +159,7 @@ class Model {
 
     this.state.map((stateElement: stateHandler) => {
       if (stateElement.$handler[0] === currentHandler.$handler[0]) {
+        // eslint-disable-next-line no-param-reassign
         stateElement.value = this.findTheClosestBreakpoint(currentHandler.value);
       }
 

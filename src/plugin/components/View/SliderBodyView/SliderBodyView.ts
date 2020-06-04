@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import Observer from '../../Observer/Observer';
 import { sliderBreakpoint } from '../../types/types';
 import CustomEvents from '../../Observer/CustomEvents';

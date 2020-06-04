@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import Model from '../src/plugin/components/Model/Model';
 import { availableOptions } from '../src/plugin/components/types/types';
 

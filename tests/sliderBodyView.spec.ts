@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import SliderBodyView from '../src/plugin/components/View/SliderBodyView/SliderBodyView';
 
 const $dummyHtmlElement = $(document.createElement('div'));

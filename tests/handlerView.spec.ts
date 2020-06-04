@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import HandlerView from '../src/plugin/components/View/HandlerView/HandlerView';
 
 const $dummyHtmlElement = $(document.createElement('div'));

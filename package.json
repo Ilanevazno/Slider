@@ -9,7 +9,7 @@
     "tests": "jest",
     "coverage": "jest --coverage",
     "deploy": "gh-pages -d build",
-    "eslint": "eslint --fix --ext .js,.ts ./src/plugin"
+    "eslint": "eslint --ext .js,.ts ./src/plugin"
   },
   "keywords": [],
   "author": "",

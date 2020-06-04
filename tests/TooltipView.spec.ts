@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import TooltipView from '../src/plugin/components/View/TooltipView/TooltipView';
 
 const dummyHtmlElement = document.createElement('div');
