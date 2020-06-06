@@ -1,15 +1,15 @@
 class Observer {
-  private observers: Array<Function>;
+  private observers: Function[];
 
   constructor() {
     this.observers = [];
   }
 
-  public subscribe(fn): void {
+  public subscribe(fn: Function): void {
     this.observers.push(fn);
   }
 
-  public unsubscribe(fn): void {
+  public unsubscribe(fn: Function): void {
     this.observers = this.observers.filter((subscriber) => subscriber !== fn);
   }
 

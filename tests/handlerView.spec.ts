@@ -1,9 +1,10 @@
 import HandlerView from '../src/plugin/components/View/HandlerView/HandlerView';
+import { Axis } from '../src/plugin/components/types/types';
 
 const $dummyHtmlElement = $(document.createElement('div'));
 document.getElementById = jasmine.createSpy('HTML Element').and.returnValue($dummyHtmlElement);
 
-const currentAxis = 'Y';
+const currentAxis: Axis = 'Y' as unknown as Axis;
 
 const handlerView = new HandlerView($dummyHtmlElement, currentAxis);
 

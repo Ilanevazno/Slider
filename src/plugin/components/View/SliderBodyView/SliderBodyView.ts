@@ -1,5 +1,5 @@
 import Observer from '../../Observer/Observer';
-import { SliderBreakpoint } from '../../types/types';
+import { SliderBreakpoint, Axis } from '../../types/types';
 import CustomEvents from '../../Observer/CustomEvents';
 
 class SliderBodyView {
@@ -9,7 +9,7 @@ class SliderBodyView {
 
   private breakpointElements: JQuery<HTMLElement>[];
 
-  constructor($htmlContainer: JQuery<HTMLElement>, private axis: string) {
+  constructor($htmlContainer: JQuery<HTMLElement>, private axis: Axis) {
     this.eventObserver = new Observer();
     this.axis = axis;
     this.$mainHtml = this.drawSliderBody($htmlContainer);
@@ -19,7 +19,7 @@ class SliderBodyView {
     this.bindActions();
   }
 
-  public setAxis(axis: string): string {
+  public setAxis(axis: Axis): Axis {
     this.axis = axis;
     return this.axis;
   }
@@ -29,7 +29,7 @@ class SliderBodyView {
   }
 
   public getSliderBodyParams(): number {
-    return this.axis === 'X'
+    return this.axis as unknown as string === 'X'
       ? this.$mainHtml[0].offsetWidth
       : this.$mainHtml[0].offsetHeight;
   }
@@ -37,7 +37,7 @@ class SliderBodyView {
   public drawBreakPoints(breakpoints: SliderBreakpoint[]): void {
     this.removeBreakpoints();
 
-    const direction: string = this.axis === 'X' ? 'left' : 'top';
+    const direction: string = this.axis as unknown as string === 'X' ? 'left' : 'top';
     let shortStepCounter: number = Math.trunc((breakpoints.length - 1) / 10);
     const shortBreakpoints: SliderBreakpoint[] = [];
     shortBreakpoints.push(breakpoints[0]);
@@ -86,7 +86,7 @@ class SliderBodyView {
 
   private drawSliderBody($htmlContainer): JQuery<HTMLElement> {
     const sliderBody: JQuery<HTMLElement> = $('<div/>', {
-      class: this.axis === 'X'
+      class: this.axis as unknown as string === 'X'
         ? 'slider__body slider__body_type_horizontal'
         : 'slider__body slider__body_type_vertical',
     }).appendTo($htmlContainer);
@@ -100,7 +100,7 @@ class SliderBodyView {
 
   private handleSliderBodyClick(event): void {
     const htmlEventTarget = event.target;
-    const caughtCoords: number = this.axis === 'X'
+    const caughtCoords: number = this.axis as unknown as string === 'X'
       ? event.offsetX
       : event.offsetY;
 

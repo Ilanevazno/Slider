@@ -1,7 +1,7 @@
 import MainView from './View/MainView';
 import Model from './Model/Model';
 import Controller from './Controller/Controller';
-import { Options } from './types/types';
+import { Options, Axis, ValueType } from './types/types';
 
 (function ($) {
   const methods = {
@@ -12,10 +12,10 @@ import { Options } from './types/types';
         maxValue: 100,
         minValueCurrent: 1,
         maxValueCurrent: 100,
-        axis: 'X',
+        axis: 'X' as unknown as Axis,
         withLabels: true,
         withTooltip: true,
-        valueType: 'single',
+        valueType: 'single' as unknown as ValueType,
       };
 
       Object.keys(args).map((setting) => {

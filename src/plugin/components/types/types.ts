@@ -7,10 +7,10 @@ export type Options = {
   maxValue: number;
   minValueCurrent?: number;
   maxValueCurrent?: number;
-  axis: 'X' | 'Y';
+  axis: Axis;
   withLabels: boolean;
   withTooltip: boolean;
-  valueType: 'single' | 'double';
+  valueType: ValueType;
   breakpoints?: any[];
 }
 
@@ -41,7 +41,7 @@ export type BreakpointsData = {
 
 export type ModelListener = {
   state: StateHandler;
-  axis: string;
+  axis: Axis;
   withTooltip: boolean;
 }
 
@@ -61,3 +61,11 @@ export type ModelResponse = {
   readonly response: 'SUCCESS' | 'ERROR';
   message: string;
 }
+
+export type ValueType = {
+  readonly valueType: 'single' | 'double';
+};
+
+export type Axis = {
+  readonly axis: 'X' | 'Y';
+};

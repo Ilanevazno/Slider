@@ -1,9 +1,10 @@
 import SliderBodyView from '../src/plugin/components/View/SliderBodyView/SliderBodyView';
+import { Axis } from '../src/plugin/components/types/types';
 
 const $dummyHtmlElement = $(document.createElement('div'));
 document.getElementById = jasmine.createSpy('HTML Element').and.returnValue($dummyHtmlElement);
 
-const currentAxis = 'Y';
+const currentAxis: Axis = 'Y' as unknown as Axis;
 const sliderBody = new SliderBodyView($dummyHtmlElement, currentAxis);
 
 describe('Проверка класса SliderBodyView', () => {

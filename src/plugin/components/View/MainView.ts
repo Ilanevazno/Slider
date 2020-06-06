@@ -4,7 +4,7 @@ import SliderBodyView from './SliderBodyView/SliderBodyView';
 import HandlerView from './HandlerView/HandlerView';
 import CustomEvents from '../Observer/CustomEvents';
 import {
-  ObserverEvent, StateHandler, SliderBreakpoint, ConvertingData, HandlerEvent,
+  ObserverEvent, StateHandler, SliderBreakpoint, ConvertingData, HandlerEvent, ValueType, Axis,
 } from '../types/types';
 
 class MainView {
@@ -70,7 +70,7 @@ class MainView {
     });
   }
 
-  public changeSliderBodyAxis(axis: string): void {
+  public changeSliderBodyAxis(axis: Axis): void {
     this.sliderBody.setAxis(axis);
     this.refreshView();
 
@@ -187,7 +187,7 @@ class MainView {
   }
 
   private createSliderComponents() {
-    const valueType: string = this.model.getOption('valueType');
+    const valueType: ValueType = this.model.getOption('valueType');
     this.sliderBody = this.drawSliderBody(this.$sliderContainer);
     this.minValueHandler = {
       name: 'min-value',
@@ -201,7 +201,7 @@ class MainView {
       this.setState('min-value');
     });
 
-    if (valueType === 'double') {
+    if (valueType as unknown as string === 'double') {
       this.maxValueHandler = {
         name: 'max-value',
         handler: this.getHandlerComponent(this.sliderBody.$mainHtml),
@@ -269,7 +269,7 @@ class MainView {
 
     const findAvailableHandler: number = this.findTheClosestArrayValue(availableHandlerValues, targetPercent);
 
-    currentState.map((handler) => {
+    currentState.map((handler: StateHandler) => {
       if (handler.value === findAvailableHandler) {
         const dataForBroadcasting: ObserverEvent<StateHandler> = {
           type: CustomEvents.SetState,

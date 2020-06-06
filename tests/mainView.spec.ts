@@ -1,6 +1,6 @@
 import Model from '../src/plugin/components/Model/Model';
 import MainView from '../src/plugin/components/View/MainView';
-import { Options } from '../src/plugin/components/types/types';
+import { Options, ValueType, Axis } from '../src/plugin/components/types/types';
 
 const mockModelOptions: Options = {
   stepSize: 1,
@@ -8,10 +8,10 @@ const mockModelOptions: Options = {
   maxValue: 100,
   minValueCurrent: 30,
   maxValueCurrent: 70,
-  axis: 'X',
+  axis: 'X' as unknown as Axis,
   withLabels: false,
   withTooltip: false,
-  valueType: 'single',
+  valueType: 'single' as unknown as ValueType,
 };
 
 const dummyHtmlElement = document.createElement('div');
@@ -55,7 +55,7 @@ describe('Тестирование класса MainView', () => {
     it('Смена направления слайдера на указанное значение', () => {
       spyOn(view, 'changeSliderBodyAxis').and.callThrough();
 
-      const currentAxis = 'Y';
+      const currentAxis: Axis = 'Y' as unknown as Axis;
       const newSliderBodyAxis = view.changeSliderBodyAxis(currentAxis);
 
       expect(view.changeSliderBodyAxis).toHaveBeenCalledWith(currentAxis);

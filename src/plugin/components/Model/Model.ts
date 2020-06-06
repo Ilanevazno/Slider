@@ -1,16 +1,18 @@
 import Observer from '../Observer/Observer';
 import СustomEvents from '../Observer/CustomEvents';
-import { Options, StateHandler, ModelResponse } from '../types/types';
-import ModelConstants from './ModelConstants/ModelConstants';
+import {
+  Options, StateHandler, ModelResponse, ValueType, Axis,
+} from '../types/types';
+import Response from './ModelConstants/ModelConstants';
 
 class Model {
   public withLabels: boolean;
 
   public withTooltip: boolean;
 
-  public axis: string;
+  public axis: Axis;
 
-  public valueType: string;
+  public valueType: ValueType;
 
   public state: StateHandler[];
 
@@ -20,7 +22,7 @@ class Model {
 
   public stepSize: number;
 
-  public breakPoints: Array<number>;
+  public breakPoints: number[];
 
   public eventObserver: Observer;
 
@@ -39,13 +41,13 @@ class Model {
     this.setStepSize(options.stepSize);
   }
 
-  public setValueType(valueType: string): void {
+  public setValueType(valueType: ValueType): void {
     this.valueType = valueType;
 
     this.eventObserver.broadcast({ type: СustomEvents.SetValueType, data: { axis: this.valueType } });
   }
 
-  public setAxis(axis: string) {
+  public setAxis(axis: Axis) {
     this.axis = axis;
 
     this.eventObserver.broadcast({ type: СustomEvents.SetAxis, data: { axis: this.axis } });
@@ -90,12 +92,12 @@ class Model {
       this.eventObserver.broadcast({ type: СustomEvents.SetMinValue, data: { minValue: this.minValue } });
 
       return {
-        response: ModelConstants.SuccessResponse,
+        response: Response.SuccessResponse,
         message: `Минимальное значение установлено на ${value}`,
       };
     }
     return {
-      response: ModelConstants.FailedResponse,
+      response: Response.FailedResponse,
       message: 'Невалидное значения. Минимальное значение не может быть больше чем максимальное.',
     };
   }
@@ -110,12 +112,12 @@ class Model {
       this.eventObserver.broadcast({ type: СustomEvents.SetMaxValue, data: { maxValue: this.maxValue } });
 
       return {
-        response: ModelConstants.SuccessResponse,
+        response: Response.SuccessResponse,
         message: `Максимальное значение установлено на ${value}`,
       };
     }
     return {
-      response: ModelConstants.FailedResponse,
+      response: Response.FailedResponse,
       message: 'Невалидное значения. Максимальное значение не может быть меньше чем минимальное.',
     };
   }
@@ -195,20 +197,20 @@ class Model {
       this.eventObserver.broadcast({ type: СustomEvents.SetStepSize, data: { newBreakpoints: this.breakPoints } });
 
       return {
-        response: ModelConstants.SuccessResponse,
+        response: Response.SuccessResponse,
         message: `Размер шага установлен на ${convertedNewStepSize}`,
       };
     }
     return {
-      response: ModelConstants.FailedResponse,
+      response: Response.FailedResponse,
       message: `Размер шага должен быть от 1 до ${convertedMaxValue}`,
     };
   }
 
   private getOptionList(): Options {
     return {
-      axis: this.axis as 'X' | 'Y',
-      valueType: this.valueType as 'single' | 'double',
+      axis: this.axis,
+      valueType: this.valueType,
       minValue: this.minValue,
       maxValue: this.maxValue,
       stepSize: this.stepSize,

@@ -1,6 +1,6 @@
-enum ModelConstants {
+enum Response {
   SuccessResponse = 'SUCCESS',
   FailedResponse = 'ERROR',
 }
 
-export default ModelConstants;
+export default Response;

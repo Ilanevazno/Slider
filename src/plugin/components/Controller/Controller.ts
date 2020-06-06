@@ -3,7 +3,7 @@ import MainView from '../View/MainView';
 import Observer from '../Observer/Observer';
 import СustomEvents from '../Observer/CustomEvents';
 import {
-  ObserverEvent, ModelListener, StateHandler, ModelResponse,
+  ObserverEvent, ModelListener, StateHandler, ModelResponse, ValueType, Axis,
 } from '../types/types';
 
 class Controller {
@@ -22,7 +22,7 @@ class Controller {
     this.subscribeModelObserver();
   }
 
-  public subscribeToChangeState(callback): void {
+  public subscribeToChangeState(callback: Function): void {
     return this.model.eventObserver.subscribe((event: ObserverEvent<ModelListener>) => {
       switch (event.type) {
         case СustomEvents.SetState:
@@ -38,7 +38,7 @@ class Controller {
     this.model.changeStateByHandlerName(handlerName, value);
   }
 
-  public setValueType(valueType: string): void {
+  public setValueType(valueType: ValueType): void {
     this.model.setValueType(valueType);
   }
 
@@ -58,7 +58,7 @@ class Controller {
     this.model.hideTooltip();
   }
 
-  public setAxis(axis: string) {
+  public setAxis(axis: Axis) {
     this.model.setAxis(axis);
   }
 

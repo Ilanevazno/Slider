@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import '../../../plugin/components/sliderPlugin';
-import { Options } from '../../../plugin/components/types/types';
+import { Options, ValueType, Axis } from '../../../plugin/components/types/types';
 import { JqueryPluginElement } from '../../../plugin/components/interfaces/interfaces';
 
 class Panel {
@@ -44,7 +44,7 @@ class Panel {
       axis: this.$slider.data('axis'),
       withTooltip: this.$slider.data('withtooltip') !== undefined,
       withLabels: this.$slider.data('withlabels') !== undefined,
-    };
+    } as Options;
 
     this.drawSlider();
     this.connectLabels();
@@ -80,13 +80,13 @@ class Panel {
   }
 
   private prepareSelectLabels(): void {
-    const currentValueType = this.sliderOptions.valueType === 'single'
+    const currentValueType = this.sliderOptions.valueType === 'single' as unknown as ValueType
       ? 'Одиночное'
       : 'Интервал';
 
     this.$valueTypeSelect.val(currentValueType);
 
-    const currentAxis = this.sliderOptions.axis === 'X'
+    const currentAxis = this.sliderOptions.axis === 'X' as unknown as Axis
       ? 'Горизонтальный'
       : 'Вертикальный';
 
@@ -108,7 +108,7 @@ class Panel {
   }
 
   private prepareLabelsData(): void {
-    this.changeViewTypeInputState(this.sliderOptions.valueType);
+    this.changeViewTypeInputState(this.sliderOptions.valueType as unknown as string);
     this.prepareCheckboxes();
     this.prepareInputLabels();
     this.prepareSelectLabels();
