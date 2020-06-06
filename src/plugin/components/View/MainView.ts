@@ -59,14 +59,12 @@ class MainView {
   }
 
   public setTooltipActivity(isTooltipActive: boolean): void {
-    [this.minValueHandler, this.maxValueHandler].map((currentHandler: StateHandler) => {
+    [this.minValueHandler, this.maxValueHandler].forEach((currentHandler: StateHandler) => {
       if (currentHandler) {
         const tooltipPercent: number = currentHandler.statePercent || this.model.getOption('minValue');
         currentHandler.handler.changeTooltipActivity(isTooltipActive);
         currentHandler.handler.setTooltipValue(tooltipPercent);
       }
-
-      return currentHandler;
     });
   }
 
@@ -262,14 +260,13 @@ class MainView {
     const currentState: StateHandler[] = this.model.getState();
     const availableHandlerValues: number[] = [];
 
-    currentState.map((handler, index) => {
+    currentState.forEach((_stateHandler, index) => {
       availableHandlerValues.push(currentState[index].value);
-      return handler;
     });
 
     const findAvailableHandler: number = this.findTheClosestArrayValue(availableHandlerValues, targetPercent);
 
-    currentState.map((handler: StateHandler) => {
+    currentState.forEach((handler: StateHandler) => {
       if (handler.value === findAvailableHandler) {
         const dataForBroadcasting: ObserverEvent<StateHandler> = {
           type: CustomEvents.SetState,
@@ -281,8 +278,6 @@ class MainView {
         };
         this.eventObserver.broadcast(dataForBroadcasting);
       }
-
-      return handler;
     });
   }
 

@@ -137,12 +137,11 @@ class Model {
   }
 
   public changeStateByHandlerName(handlerName: string, value: number): void {
-    this.state.map((stateElement: StateHandler) => {
+    this.state.forEach((stateElement: StateHandler) => {
       if (stateElement.name === handlerName) {
         // eslint-disable-next-line no-param-reassign
         stateElement.value = this.findTheClosestBreakpoint(Number(value));
       }
-      return stateElement;
     });
 
     this.checkCollision(handlerName);
@@ -159,7 +158,7 @@ class Model {
 
     this.checkCollision(currentHandler.name);
 
-    this.state.map((stateElement: StateHandler) => {
+    this.state.forEach((stateElement: StateHandler) => {
       if (stateElement.$handler[0] === currentHandler.$handler[0]) {
         // eslint-disable-next-line no-param-reassign
         stateElement.value = this.findTheClosestBreakpoint(currentHandler.value);
@@ -176,9 +175,8 @@ class Model {
   }
 
   public refreshState(): void {
-    this.state.map((item) => {
+    this.state.forEach((item) => {
       this.setState(item);
-      return item;
     });
 
     this.eventObserver.broadcast({ type: СustomEvents.SetState, data: { state: this.state } });

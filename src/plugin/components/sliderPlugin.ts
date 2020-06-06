@@ -18,9 +18,8 @@ import { Options, Axis, ValueType } from './types/types';
         valueType: 'single' as unknown as ValueType,
       };
 
-      Object.keys(args).map((setting) => {
+      Object.keys(args).forEach((setting) => {
         initSliderOptions[setting] = args[setting];
-        return setting;
       });
 
       const model = new Model(initSliderOptions);
@@ -29,8 +28,8 @@ import { Options, Axis, ValueType } from './types/types';
       this.data('controller', controller);
 
       setTimeout(() => {
-        model.changeStateByHandlerName('min-value', args.minValueCurrent);
-        model.changeStateByHandlerName('max-value', args.maxValueCurrent);
+        controller.changeStateByHandlerName('min-value', args.minValueCurrent);
+        controller.changeStateByHandlerName('max-value', args.maxValueCurrent);
       }, 0);
 
       return this;
