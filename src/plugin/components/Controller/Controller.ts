@@ -1,6 +1,5 @@
 import Model from '../Model/Model';
 import MainView from '../View/MainView';
-import Observer from '../Observer/Observer';
 import СustomEvents from '../Observer/CustomEvents';
 import {
   ObserverEvent, ModelListener, StateHandler, ModelResponse, ValueType, Axis,
@@ -11,12 +10,9 @@ class Controller {
 
   private view: MainView;
 
-  private eventObserver: Observer;
-
   constructor(model: Model, view: MainView) {
     this.model = model;
     this.view = view;
-    this.eventObserver = new Observer();
 
     this.subscribeViewObserver();
     this.subscribeModelObserver();
