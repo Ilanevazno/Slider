@@ -1,7 +1,7 @@
 import Model from '../src/plugin/components/Model/Model';
-import { Options, ValueType, Axis } from '../src/plugin/components/types/types';
+import { availableOptions, ValueType, Axis } from '../src/plugin/components/types/types';
 
-const modelSpecOptions: Options = {
+const modelSpecOptions: availableOptions = {
   stepSize: 1,
   minValue: 1,
   maxValue: 100,

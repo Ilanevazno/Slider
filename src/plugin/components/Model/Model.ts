@@ -1,7 +1,7 @@
 import Observer from '../Observer/Observer';
 import СustomEvents from '../Observer/CustomEvents';
 import {
-  Options, StateHandler, ModelResponse, ValueType, Axis,
+  availableOptions, StateHandler, ModelResponse, ValueType, Axis,
 } from '../types/types';
 import Response from './ModelConstants/ModelConstants';
 
@@ -26,7 +26,7 @@ class Model {
 
   public eventObserver: Observer;
 
-  constructor(options: Options) {
+  constructor(options: availableOptions) {
     this.eventObserver = new Observer();
     this.state = [];
     this.withLabels = options.withLabels;
@@ -205,7 +205,7 @@ class Model {
     };
   }
 
-  private getOptionList(): Options {
+  private getOptionList(): availableOptions {
     return {
       axis: this.axis,
       valueType: this.valueType,
@@ -215,7 +215,7 @@ class Model {
       breakpoints: this.breakPoints,
       withTooltip: this.withTooltip,
       withLabels: this.withLabels,
-    } as Options;
+    } as availableOptions;
   }
 
   private checkIncludeStateValue($targetElement: JQuery<HTMLElement>): boolean {

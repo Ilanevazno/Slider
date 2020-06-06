@@ -1,7 +1,7 @@
 import HandlerView from '../View/HandlerView/HandlerView';
 import { JQueryExtendedEvent } from '../interfaces/interfaces';
 
-export type Options = {
+export type availableOptions = {
   stepSize: number;
   minValue: number;
   maxValue: number;

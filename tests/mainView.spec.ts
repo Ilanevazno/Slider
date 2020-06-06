@@ -1,8 +1,8 @@
 import Model from '../src/plugin/components/Model/Model';
 import MainView from '../src/plugin/components/View/MainView';
-import { Options, ValueType, Axis } from '../src/plugin/components/types/types';
+import { availableOptions, ValueType, Axis } from '../src/plugin/components/types/types';
 
-const mockModelOptions: Options = {
+const mockModelOptions: availableOptions = {
   stepSize: 1,
   minValue: 1,
   maxValue: 100,

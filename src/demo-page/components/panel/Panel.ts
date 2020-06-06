@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-expressions */
 import '../../../plugin/components/sliderPlugin';
-import { Options, ValueType, Axis } from '../../../plugin/components/types/types';
+import { availableOptions, ValueType, Axis } from '../../../plugin/components/types/types';
 import { JqueryPluginElement } from '../../../plugin/components/interfaces/interfaces';
 
 class Panel {
-  private sliderOptions: Options;
+  private sliderOptions: availableOptions;
 
   private $panelHtml: JQuery<HTMLElement>;
 
@@ -44,7 +44,7 @@ class Panel {
       axis: this.$slider.data('axis'),
       withTooltip: this.$slider.data('withtooltip') !== undefined,
       withLabels: this.$slider.data('withlabels') !== undefined,
-    } as Options;
+    } as availableOptions;
 
     this.drawSlider();
     this.connectLabels();
