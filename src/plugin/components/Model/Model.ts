@@ -1,6 +1,6 @@
 import Observer from '../Observer/Observer';
 import СustomEvents from '../Observer/CustomEvents';
-import { availableOptions, stateHandler, modelResponse } from '../types/types';
+import { Options, StateHandler, ModelResponse } from '../types/types';
 import ModelConstants from './ModelConstants/ModelConstants';
 
 class Model {
@@ -12,7 +12,7 @@ class Model {
 
   public valueType: string;
 
-  public state: stateHandler[];
+  public state: StateHandler[];
 
   public minValue: number;
 
@@ -24,7 +24,7 @@ class Model {
 
   public eventObserver: Observer;
 
-  constructor(options: availableOptions) {
+  constructor(options: Options) {
     this.eventObserver = new Observer();
     this.state = [];
     this.withLabels = options.withLabels;
@@ -70,17 +70,17 @@ class Model {
   }
 
   public getOption<T>(targetOption: string): T {
-    const availableOptionsList: object = this.getOptionList();
+    const OptionsList: object = this.getOptionList();
 
 
-    return availableOptionsList[targetOption];
+    return OptionsList[targetOption];
   }
 
-  public getState(): stateHandler[] {
+  public getState(): StateHandler[] {
     return this.state;
   }
 
-  public setMinValue(value: number): modelResponse {
+  public setMinValue(value: number): ModelResponse {
     if (value <= this.maxValue) {
       this.minValue = value;
 
@@ -100,7 +100,7 @@ class Model {
     };
   }
 
-  public setMaxValue(value: number): modelResponse {
+  public setMaxValue(value: number): ModelResponse {
     if (value >= this.minValue) {
       this.maxValue = value;
 
@@ -135,7 +135,7 @@ class Model {
   }
 
   public changeStateByHandlerName(handlerName: string, value: number): void {
-    this.state.map((stateElement: stateHandler) => {
+    this.state.map((stateElement: StateHandler) => {
       if (stateElement.name === handlerName) {
         // eslint-disable-next-line no-param-reassign
         stateElement.value = this.findTheClosestBreakpoint(Number(value));
@@ -148,7 +148,7 @@ class Model {
     this.eventObserver.broadcast({ type: СustomEvents.SetState, data: { state: this.state } });
   }
 
-  public setState(currentHandler: stateHandler): void {
+  public setState(currentHandler: StateHandler): void {
     const stateLength = this.getStateLength();
 
     if (!this.checkIncludeStateValue(currentHandler.$handler)) {
@@ -157,7 +157,7 @@ class Model {
 
     this.checkCollision(currentHandler.name);
 
-    this.state.map((stateElement: stateHandler) => {
+    this.state.map((stateElement: StateHandler) => {
       if (stateElement.$handler[0] === currentHandler.$handler[0]) {
         // eslint-disable-next-line no-param-reassign
         stateElement.value = this.findTheClosestBreakpoint(currentHandler.value);
@@ -182,7 +182,7 @@ class Model {
     this.eventObserver.broadcast({ type: СustomEvents.SetState, data: { state: this.state } });
   }
 
-  public setStepSize(newStepSize: number): modelResponse {
+  public setStepSize(newStepSize: number): ModelResponse {
     const convertedNewStepSize = Math.abs(newStepSize);
     const convertedMaxValue = Math.abs(this.maxValue);
 
@@ -205,25 +205,23 @@ class Model {
     };
   }
 
-  private getOptionList() {
-    const optionList = {
-      axis: this.axis,
-      valueType: this.valueType,
+  private getOptionList(): Options {
+    return {
+      axis: this.axis as 'X' | 'Y',
+      valueType: this.valueType as 'single' | 'double',
       minValue: this.minValue,
       maxValue: this.maxValue,
       stepSize: this.stepSize,
       breakpoints: this.breakPoints,
       withTooltip: this.withTooltip,
       withLabels: this.withLabels,
-    };
-
-    return optionList;
+    } as Options;
   }
 
   private checkIncludeStateValue($targetElement: JQuery<HTMLElement>): boolean {
     let isFoundItem = false;
 
-    this.state.map((stateElement: stateHandler) => {
+    this.state.map((stateElement: StateHandler) => {
       if (stateElement.$handler[0] === $targetElement[0]) {
         isFoundItem = true;
       }

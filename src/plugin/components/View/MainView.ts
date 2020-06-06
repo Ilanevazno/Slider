@@ -4,7 +4,7 @@ import SliderBodyView from './SliderBodyView/SliderBodyView';
 import HandlerView from './HandlerView/HandlerView';
 import CustomEvents from '../Observer/CustomEvents';
 import {
-  observerEvent, stateHandler, sliderBreakpoint, convertingData, handlerEvent,
+  ObserverEvent, StateHandler, SliderBreakpoint, ConvertingData, HandlerEvent,
 } from '../types/types';
 
 class MainView {
@@ -14,9 +14,9 @@ class MainView {
 
   public sliderBody: SliderBodyView;
 
-  public minValueHandler: stateHandler;
+  public minValueHandler: StateHandler;
 
-  public maxValueHandler: stateHandler;
+  public maxValueHandler: StateHandler;
 
   constructor(private model: Model, private initHtmlElement: HTMLElement) {
     this.eventObserver = new Observer();
@@ -34,12 +34,12 @@ class MainView {
 
   public setState(handler: string): void {
     const caughtHandlerIndex: number = handler === 'min-value' ? 0 : 1;
-    const caughtHandlerInstance: stateHandler = [this.minValueHandler, this.maxValueHandler][caughtHandlerIndex];
+    const caughtHandlerInstance: StateHandler = [this.minValueHandler, this.maxValueHandler][caughtHandlerIndex];
     const caughtHandlerName = caughtHandlerInstance.name;
     const $caughtHandlerHtml = caughtHandlerInstance.handler.$html;
     const minValue: number = this.model.getOption('minValue');
 
-    const dataForBroadcasting: observerEvent<stateHandler> = {
+    const dataForBroadcasting: ObserverEvent<StateHandler> = {
       type: CustomEvents.SetState,
       data: {
         $handler: $caughtHandlerHtml,
@@ -53,13 +53,13 @@ class MainView {
 
   public changeBreakpointsActivity(): void {
     const isActiveBreakpoints: boolean = this.model.getOption('withLabels');
-    const availableBreakpoints: sliderBreakpoint[] = this.getConvertedBreakpoints();
+    const availableBreakpoints: SliderBreakpoint[] = this.getConvertedBreakpoints();
 
     this.sliderBody.changeBreakpointsActivity(isActiveBreakpoints, availableBreakpoints);
   }
 
   public setTooltipActivity(isTooltipActive: boolean): void {
-    [this.minValueHandler, this.maxValueHandler].map((currentHandler: stateHandler) => {
+    [this.minValueHandler, this.maxValueHandler].map((currentHandler: StateHandler) => {
       if (currentHandler) {
         const tooltipPercent: number = currentHandler.statePercent || this.model.getOption('minValue');
         currentHandler.handler.changeTooltipActivity(isTooltipActive);
@@ -78,11 +78,11 @@ class MainView {
   }
 
   public prepareToMoveHandler(state) {
-    state.map((handler: stateHandler) => {
+    state.map((handler: StateHandler) => {
       const $caughtHandler: JQuery<HTMLElement> = $(handler.$handler);
       const currentValue: number = handler.value;
       const htmlContainerWidth: number = this.sliderBody.getSliderBodyParams() - ($caughtHandler[0].offsetWidth / 2);
-      const optionList: convertingData = {
+      const optionList: ConvertingData = {
         minPercent: this.model.getOption('minValue'),
         maxPercent: this.model.getOption('maxValue'),
         currentValue,
@@ -90,7 +90,7 @@ class MainView {
       };
       const newHandlerPosition: number = this.convertPercentToPixel(optionList);
 
-      const handlerForMoving: stateHandler = handler.name === 'min-value'
+      const handlerForMoving: StateHandler = handler.name === 'min-value'
         ? this.minValueHandler
         : this.maxValueHandler;
 
@@ -114,7 +114,7 @@ class MainView {
     const availableBreakpoints: number[] = this.model.getOption('breakpoints');
 
     return availableBreakpoints.map((currentValue: number) => {
-      const optionList: convertingData = {
+      const optionList: ConvertingData = {
         minPercent: this.model.getOption('minValue'),
         maxPercent: this.model.getOption('maxValue'),
         currentValue,
@@ -128,7 +128,7 @@ class MainView {
     });
   }
 
-  private convertPixelToPercent(data: convertingData): number {
+  private convertPixelToPercent(data: ConvertingData): number {
     const {
       maxPercent,
       minPercent,
@@ -138,7 +138,7 @@ class MainView {
     return (currentValue * (maxPercent - minPercent)) / htmlContainerWidth;
   }
 
-  public convertPercentToPixel(data: convertingData): number {
+  public convertPercentToPixel(data: ConvertingData): number {
     const {
       minPercent,
       maxPercent,
@@ -150,7 +150,7 @@ class MainView {
   }
 
   private convertPxToPercent(currentValue: number): number {
-    const optionsForConverting: convertingData = {
+    const optionsForConverting: ConvertingData = {
       minPercent: this.model.getOption('minValue'),
       maxPercent: this.model.getOption('maxValue'),
       htmlContainerWidth: this.sliderBody.getSliderBodyParams(),
@@ -160,7 +160,7 @@ class MainView {
     return this.convertPixelToPercent(optionsForConverting) + minValueOption;
   }
 
-  private handleHandlerMove(data: handlerEvent): number {
+  private handleHandlerMove(data: HandlerEvent): number {
     const {
       $handler,
       event,
@@ -173,7 +173,7 @@ class MainView {
       : event.clientY - offset - this.sliderBody.$mainHtml[0].getBoundingClientRect().top;
 
     const value: number = this.convertPxToPercent(currentPixel);
-    const dataForBroadcasting: observerEvent<stateHandler> = {
+    const dataForBroadcasting: ObserverEvent<StateHandler> = {
       type: CustomEvents.SetState,
       data: {
         $handler,
@@ -223,7 +223,7 @@ class MainView {
   }
 
   private initSliderBodyEvents(): void {
-    this.sliderBody.eventObserver.subscribe((event: observerEvent<object>) => {
+    this.sliderBody.eventObserver.subscribe((event: ObserverEvent<object>) => {
       switch (event.type) {
         case CustomEvents.WindowResize:
           this.changeBreakpointsActivity();
@@ -259,7 +259,7 @@ class MainView {
 
   private moveHandlerByBodyClick(event): void {
     const targetPercent: number = this.convertPxToPercent(event.caughtCoords);
-    const currentState: stateHandler[] = this.model.getState();
+    const currentState: StateHandler[] = this.model.getState();
     const availableHandlerValues: number[] = [];
 
     currentState.map((handler, index) => {
@@ -271,7 +271,7 @@ class MainView {
 
     currentState.map((handler) => {
       if (handler.value === findAvailableHandler) {
-        const dataForBroadcasting: observerEvent<stateHandler> = {
+        const dataForBroadcasting: ObserverEvent<StateHandler> = {
           type: CustomEvents.SetState,
           data: {
             $handler: handler.$handler,
@@ -313,7 +313,7 @@ class MainView {
   }
 
   private initHandlerEvents(parent): void {
-    parent.handler.observer.subscribe((event: observerEvent<handlerEvent>) => {
+    parent.handler.observer.subscribe((event: ObserverEvent<HandlerEvent>) => {
       switch (event.type) {
         case CustomEvents.Mousemove:
           this.handleHandlerMove({

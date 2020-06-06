@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-expressions */
 import '../../../plugin/components/sliderPlugin';
-import { availableOptions } from '../../../plugin/components/types/types';
+import { Options } from '../../../plugin/components/types/types';
 import { JqueryPluginElement } from '../../../plugin/components/interfaces/interfaces';
 
 class Panel {
-  private sliderOptions: availableOptions;
+  private sliderOptions: Options;
 
   private $panelHtml: JQuery<HTMLElement>;
 

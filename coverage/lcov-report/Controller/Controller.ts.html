@@ -307,7 +307,7 @@
 import MainView from '../View/MainView';
 import Observer from '../Observer/Observer';
 import СustomEvents from '../Observer/CustomEvents';
-import { observerEvent, modelListener, stateHandler } from '../types/types';
+import { ObserverEvent, ModelListener, StateHandler } from '../types/types';
 &nbsp;
 class Controller {
   private model: Model;
@@ -326,7 +326,7 @@ class Controller {
   }
 &nbsp;
   public subscribeToChangeState(callback): void {
-    return this.model.eventObserver.subscribe(<span class="fstat-no" title="function not covered" >(e</span>vent: observerEvent&lt;modelListener&gt;) =&gt; {
+    return this.model.eventObserver.subscribe(<span class="fstat-no" title="function not covered" >(e</span>vent: ObserverEvent&lt;ModelListener&gt;) =&gt; {
 <span class="cstat-no" title="statement not covered" >      switch (event.type) {</span>
         case СustomEvents.SetState:
 <span class="cstat-no" title="statement not covered" >          callback(event.data.state);</span>
@@ -378,7 +378,7 @@ class Controller {
   }
 &nbsp;
   private subscribeViewObserver(): void {
-    this.view.eventObserver.subscribe(<span class="fstat-no" title="function not covered" >(e</span>vent: observerEvent&lt;stateHandler&gt;) =&gt; {
+    this.view.eventObserver.subscribe(<span class="fstat-no" title="function not covered" >(e</span>vent: ObserverEvent&lt;StateHandler&gt;) =&gt; {
 <span class="cstat-no" title="statement not covered" >      switch (event.type) {</span>
         case СustomEvents.SetState:
 <span class="cstat-no" title="statement not covered" >          this.model.setState(event.data);</span>
@@ -396,7 +396,7 @@ class Controller {
   }
 &nbsp;
   private subscribeModelObserver(): void {
-    this.model.eventObserver.subscribe(<span class="fstat-no" title="function not covered" >(e</span>vent: observerEvent&lt;modelListener&gt;) =&gt; {
+    this.model.eventObserver.subscribe(<span class="fstat-no" title="function not covered" >(e</span>vent: ObserverEvent&lt;ModelListener&gt;) =&gt; {
 <span class="cstat-no" title="statement not covered" >      switch (event.type) {</span>
         case СustomEvents.SetState:
 <span class="cstat-no" title="statement not covered" >          this.view.prepareToMoveHandler(event.data.state);</span>

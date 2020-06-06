@@ -737,7 +737,7 @@ import SliderBodyView from './SliderBodyView/SliderBodyView';
 import HandlerView from './HandlerView/HandlerView';
 import CustomEvents from '../Observer/CustomEvents';
 import {
-  observerEvent, stateHandler, sliderBreakpoint, convertingData, handlerEvent,
+  ObserverEvent, StateHandler, SliderBreakpoint, ConvertingData, HandlerEvent,
 } from '../types/types';
 &nbsp;
 class MainView {
@@ -747,9 +747,9 @@ class MainView {
 &nbsp;
   public sliderBody: SliderBodyView;
 &nbsp;
-  public minValueHandler: stateHandler;
+  public minValueHandler: StateHandler;
 &nbsp;
-  public maxValueHandler: stateHandler;
+  public maxValueHandler: StateHandler;
 &nbsp;
   constructor(private model: Model, private initHtmlElement: HTMLElement) {
     this.eventObserver = new Observer();
@@ -767,12 +767,12 @@ class MainView {
 &nbsp;
 <span class="fstat-no" title="function not covered" >  pu</span>blic setState(handler: string): void {
     const caughtHandlerIndex: number = <span class="cstat-no" title="statement not covered" >handler === 'min-value' ? 0 : 1;</span>
-    const caughtHandlerInstance: stateHandler = <span class="cstat-no" title="statement not covered" >[this.minValueHandler, this.maxValueHandler][caughtHandlerIndex];</span>
+    const caughtHandlerInstance: StateHandler = <span class="cstat-no" title="statement not covered" >[this.minValueHandler, this.maxValueHandler][caughtHandlerIndex];</span>
     const caughtHandlerName = <span class="cstat-no" title="statement not covered" >caughtHandlerInstance.name;</span>
     const $caughtHandlerHtml = <span class="cstat-no" title="statement not covered" >caughtHandlerInstance.handler.$html;</span>
     const minValue: number = <span class="cstat-no" title="statement not covered" >this.model.getOption('minValue');</span>
 &nbsp;
-    const dataForBroadcasting: observerEvent&lt;stateHandler&gt; = <span class="cstat-no" title="statement not covered" >{</span>
+    const dataForBroadcasting: ObserverEvent&lt;StateHandler&gt; = <span class="cstat-no" title="statement not covered" >{</span>
       type: CustomEvents.SetState,
       data: {
         $handler: $caughtHandlerHtml,
@@ -786,13 +786,13 @@ class MainView {
 &nbsp;
 <span class="fstat-no" title="function not covered" >  pu</span>blic changeBreakpointsActivity(): void {
     const isActiveBreakpoints: boolean = <span class="cstat-no" title="statement not covered" >this.model.getOption('withLabels');</span>
-    const availableBreakpoints: sliderBreakpoint[] = <span class="cstat-no" title="statement not covered" >this.getConvertedBreakpoints();</span>
+    const availableBreakpoints: SliderBreakpoint[] = <span class="cstat-no" title="statement not covered" >this.getConvertedBreakpoints();</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    this.sliderBody.changeBreakpointsActivity(isActiveBreakpoints, availableBreakpoints);</span>
   }
 &nbsp;
   public setTooltipActivity(isTooltipActive: boolean): void {
-    [this.minValueHandler, this.maxValueHandler].map((currentHandler: stateHandler) =&gt; {
+    [this.minValueHandler, this.maxValueHandler].map((currentHandler: StateHandler) =&gt; {
       if (currentHandler) {
         const tooltipPercent: number = currentHandler.statePercent || <span class="branch-1 cbranch-no" title="branch not covered" >this.model.getOption('minValue');</span>
         currentHandler.handler.changeTooltipActivity(isTooltipActive);
@@ -811,11 +811,11 @@ class MainView {
   }
 &nbsp;
   public prepareToMoveHandler(state) {
-    state.map((handler: stateHandler) =&gt; {
+    state.map((handler: StateHandler) =&gt; {
       const $caughtHandler: JQuery&lt;HTMLElement&gt; = $(handler.$handler);
       const currentValue: number = handler.value;
       const htmlContainerWidth: number = this.sliderBody.getSliderBodyParams() - ($caughtHandler[0].offsetWidth / 2);
-      const optionList: convertingData = {
+      const optionList: ConvertingData = {
         minPercent: this.model.getOption('minValue'),
         maxPercent: this.model.getOption('maxValue'),
         currentValue,
@@ -823,7 +823,7 @@ class MainView {
       };
       const newHandlerPosition: number = this.convertPercentToPixel(optionList);
 &nbsp;
-      const handlerForMoving: stateHandler = handler.name === 'min-value'
+      const handlerForMoving: StateHandler = handler.name === 'min-value'
         ? this.minValueHandler
         : <span class="branch-1 cbranch-no" title="branch not covered" >this.maxValueHandler;</span>
 &nbsp;
@@ -847,7 +847,7 @@ class MainView {
     const availableBreakpoints: number[] = <span class="cstat-no" title="statement not covered" >this.model.getOption('breakpoints');</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    return availableBreakpoints.map(<span class="fstat-no" title="function not covered" >(c</span>urrentValue: number) =&gt; {</span>
-      const optionList: convertingData = <span class="cstat-no" title="statement not covered" >{</span>
+      const optionList: ConvertingData = <span class="cstat-no" title="statement not covered" >{</span>
         minPercent: this.model.getOption('minValue'),
         maxPercent: this.model.getOption('maxValue'),
         currentValue,
@@ -861,7 +861,7 @@ class MainView {
     });
   }
 &nbsp;
-<span class="fstat-no" title="function not covered" >  pr</span>ivate convertPixelToPercent(data: convertingData): number {
+<span class="fstat-no" title="function not covered" >  pr</span>ivate convertPixelToPercent(data: ConvertingData): number {
     const {
       maxPercent,
       minPercent,
@@ -871,7 +871,7 @@ class MainView {
 <span class="cstat-no" title="statement not covered" >    return Math.trunc((currentValue * (maxPercent - minPercent)) / htmlContainerWidth);</span>
   }
 &nbsp;
-  public convertPercentToPixel(data: convertingData): number {
+  public convertPercentToPixel(data: ConvertingData): number {
     const {
       minPercent,
       maxPercent,
@@ -883,7 +883,7 @@ class MainView {
   }
 &nbsp;
 <span class="fstat-no" title="function not covered" >  pr</span>ivate convertPxToPercent(currentValue: number): number {
-    const optionsForConverting: convertingData = <span class="cstat-no" title="statement not covered" >{</span>
+    const optionsForConverting: ConvertingData = <span class="cstat-no" title="statement not covered" >{</span>
       minPercent: this.model.getOption('minValue'),
       maxPercent: this.model.getOption('maxValue'),
       htmlContainerWidth: this.sliderBody.getSliderBodyParams(),
@@ -893,7 +893,7 @@ class MainView {
 <span class="cstat-no" title="statement not covered" >    return this.convertPixelToPercent(optionsForConverting) + minValueOption;</span>
   }
 &nbsp;
-<span class="fstat-no" title="function not covered" >  pr</span>ivate handleHandlerMove(data: handlerEvent): number {
+<span class="fstat-no" title="function not covered" >  pr</span>ivate handleHandlerMove(data: HandlerEvent): number {
     const {
       $handler,
       event,
@@ -906,7 +906,7 @@ class MainView {
       : event.clientY - offset - this.sliderBody.$mainHtml[0].getBoundingClientRect().top;
 &nbsp;
     const value: number = <span class="cstat-no" title="statement not covered" >this.convertPxToPercent(currentPixel);</span>
-    const dataForBroadcasting: observerEvent&lt;stateHandler&gt; = <span class="cstat-no" title="statement not covered" >{</span>
+    const dataForBroadcasting: ObserverEvent&lt;StateHandler&gt; = <span class="cstat-no" title="statement not covered" >{</span>
       type: CustomEvents.SetState,
       data: {
         $handler,
@@ -952,7 +952,7 @@ class MainView {
   }
 &nbsp;
   private initSliderBodyEvents(): void {
-    this.sliderBody.eventObserver.subscribe(<span class="fstat-no" title="function not covered" >(e</span>vent: observerEvent&lt;object&gt;) =&gt; {
+    this.sliderBody.eventObserver.subscribe(<span class="fstat-no" title="function not covered" >(e</span>vent: ObserverEvent&lt;object&gt;) =&gt; {
 <span class="cstat-no" title="statement not covered" >      switch (event.type) {</span>
         case CustomEvents.WindowResize:
 <span class="cstat-no" title="statement not covered" >          this.changeBreakpointsActivity();</span>
@@ -969,7 +969,7 @@ class MainView {
 &nbsp;
 <span class="fstat-no" title="function not covered" >  pr</span>ivate moveHandlerByBodyClick(event): void {
     const targetPercent: number = <span class="cstat-no" title="statement not covered" >this.convertPxToPercent(event.caughtCoords);</span>
-    const currentState: stateHandler[] = <span class="cstat-no" title="statement not covered" >this.model.getState();</span>
+    const currentState: StateHandler[] = <span class="cstat-no" title="statement not covered" >this.model.getState();</span>
     const availableHandlerValues: number[] = <span class="cstat-no" title="statement not covered" >[];</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    currentState.map(<span class="fstat-no" title="function not covered" >(h</span>andler, index) =&gt; {</span>
@@ -1000,7 +1000,7 @@ class MainView {
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    currentState.map(<span class="fstat-no" title="function not covered" >(h</span>andler) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      if (handler.value === findAvailableHandler) {</span>
-        const dataForBroadcasting: observerEvent&lt;stateHandler&gt; = <span class="cstat-no" title="statement not covered" >{</span>
+        const dataForBroadcasting: ObserverEvent&lt;StateHandler&gt; = <span class="cstat-no" title="statement not covered" >{</span>
           type: CustomEvents.SetState,
           data: {
             $handler: handler.$handler,
@@ -1042,7 +1042,7 @@ class MainView {
   }
 &nbsp;
   private initHandlerEvents(parent): void {
-    parent.handler.observer.subscribe(<span class="fstat-no" title="function not covered" >(e</span>vent: observerEvent&lt;handlerEvent&gt;) =&gt; {
+    parent.handler.observer.subscribe(<span class="fstat-no" title="function not covered" >(e</span>vent: ObserverEvent&lt;HandlerEvent&gt;) =&gt; {
 <span class="cstat-no" title="statement not covered" >      switch (event.type) {</span>
         case CustomEvents.Mousemove:
 <span class="cstat-no" title="statement not covered" >          this.handleHandlerMove({</span>

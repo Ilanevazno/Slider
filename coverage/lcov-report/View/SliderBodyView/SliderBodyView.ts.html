@@ -297,7 +297,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/* eslint-disable @typescript-eslint/unbound-method */
 import Observer from '../../Observer/Observer';
-import { sliderBreakpoint } from '../../types/types';
+import { SliderBreakpoint } from '../../types/types';
 import CustomEvents from '../../Observer/CustomEvents';
 &nbsp;
 class SliderBodyView {
@@ -332,12 +332,12 @@ class SliderBodyView {
       : this.$mainHtml[0].offsetHeight;
   }
 &nbsp;
-  public drawBreakPoints(breakpoints: sliderBreakpoint[]): void {
+  public drawBreakPoints(breakpoints: SliderBreakpoint[]): void {
     this.removeBreakpoints();
 &nbsp;
     const direction: string = this.axis === 'X' ? <span class="branch-0 cbranch-no" title="branch not covered" >'left' </span>: 'top';
     let shortStepCounter: number = Math.trunc((breakpoints.length - 1) / 10);
-    const shortBreakpoints: sliderBreakpoint[] = [];
+    const shortBreakpoints: SliderBreakpoint[] = [];
     shortBreakpoints.push(breakpoints[0]);
 &nbsp;
     while (shortStepCounter &lt;= breakpoints.length) {
@@ -351,7 +351,7 @@ class SliderBodyView {
     }
 &nbsp;
     this.breakpointElements = shortBreakpoints
-      .filter((breakpoint) =&gt; breakpoint !== undefined).map((breakpoint: sliderBreakpoint) =&gt; {
+      .filter((breakpoint) =&gt; breakpoint !== undefined).map((breakpoint: SliderBreakpoint) =&gt; {
         const icon: number = breakpoint.currentValue;
 &nbsp;
         return $('&lt;div/&gt;', {
@@ -370,7 +370,7 @@ class SliderBodyView {
     });
   }
 &nbsp;
-<span class="fstat-no" title="function not covered" >  pu</span>blic changeBreakpointsActivity(isActive: boolean, availableBreakpoints: sliderBreakpoint[]): void {
+<span class="fstat-no" title="function not covered" >  pu</span>blic changeBreakpointsActivity(isActive: boolean, availableBreakpoints: SliderBreakpoint[]): void {
 <span class="cstat-no" title="statement not covered" >    if (isActive) {</span>
 <span class="cstat-no" title="statement not covered" >      this.drawBreakPoints(availableBreakpoints);</span>
     } else {

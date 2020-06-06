@@ -616,7 +616,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/* eslint-disable no-param-reassign */
 import Observer from '../Observer/Observer';
 import СustomEvents from '../Observer/CustomEvents';
-import { availableOptions, stateHandler, modelResponse } from '../types/types';
+import { Options, StateHandler, ModelResponse } from '../types/types';
 import ModelConstants from './ModelConstants/ModelConstants';
 &nbsp;
 class Model {
@@ -628,7 +628,7 @@ class Model {
 &nbsp;
   public valueType: string;
 &nbsp;
-  public state: stateHandler[];
+  public state: StateHandler[];
 &nbsp;
   public minValue: number;
 &nbsp;
@@ -640,7 +640,7 @@ class Model {
 &nbsp;
   public eventObserver: Observer;
 &nbsp;
-  constructor(options: availableOptions) {
+  constructor(options: Options) {
     this.eventObserver = new Observer();
     this.state = [];
     this.withLabels = options.withLabels;
@@ -686,17 +686,17 @@ class Model {
   }
 &nbsp;
   public getOption&lt;T&gt;(targetOption: string): T {
-    const availableOptionsList: object = this.getOptionList();
+    const OptionsList: object = this.getOptionList();
 &nbsp;
 &nbsp;
-    return availableOptionsList[targetOption];
+    return OptionsList[targetOption];
   }
 &nbsp;
-  public getState(): stateHandler[] {
+  public getState(): StateHandler[] {
     return this.state;
   }
 &nbsp;
-  public setMinValue(value: number): modelResponse {
+  public setMinValue(value: number): ModelResponse {
     if (value &lt;= this.maxValue) {
       this.minValue = value;
 &nbsp;
@@ -716,7 +716,7 @@ class Model {
     };
   }
 &nbsp;
-  public setMaxValue(value: number): modelResponse {
+  public setMaxValue(value: number): ModelResponse {
     if (value &gt;= this.minValue) {
       this.maxValue = value;
 &nbsp;
@@ -751,7 +751,7 @@ class Model {
   }
 &nbsp;
   public changeStateByHandlerName(handlerName: string, value: number): void {
-    this.state.map((stateElement: stateHandler) =&gt; {
+    this.state.map((stateElement: StateHandler) =&gt; {
       <span class="missing-if-branch" title="else path not taken" >E</span>if (stateElement.name === handlerName) {
         stateElement.value = this.findTheClosestBreakpoint(Number(value));
       }
@@ -763,7 +763,7 @@ class Model {
     this.eventObserver.broadcast({ type: СustomEvents.SetState, data: { state: this.state } });
   }
 &nbsp;
-  public setState(currentHandler: stateHandler): void {
+  public setState(currentHandler: StateHandler): void {
     const stateLength = this.getStateLength();
 &nbsp;
     if (!this.checkIncludeStateValue(currentHandler.$handler)) {
@@ -772,7 +772,7 @@ class Model {
 &nbsp;
     this.checkCollision(currentHandler.name);
 &nbsp;
-    this.state.map((stateElement: stateHandler) =&gt; {
+    this.state.map((stateElement: StateHandler) =&gt; {
       <span class="missing-if-branch" title="else path not taken" >E</span>if (stateElement.$handler[0] === currentHandler.$handler[0]) {
         stateElement.value = this.findTheClosestBreakpoint(currentHandler.value);
       }
@@ -796,7 +796,7 @@ class Model {
     this.eventObserver.broadcast({ type: СustomEvents.SetState, data: { state: this.state } });
   }
 &nbsp;
-  public setStepSize(newStepSize: number): modelResponse {
+  public setStepSize(newStepSize: number): ModelResponse {
     const convertedNewStepSize = Math.abs(newStepSize);
     const convertedMaxValue = Math.abs(this.maxValue);
 &nbsp;
@@ -837,7 +837,7 @@ class Model {
   private checkIncludeStateValue($targetElement: JQuery&lt;HTMLElement&gt;): boolean {
     let isFoundItem = false;
 &nbsp;
-    this.state.map((stateElement: stateHandler) =&gt; {
+    this.state.map((stateElement: StateHandler) =&gt; {
       <span class="missing-if-branch" title="else path not taken" >E</span>if (stateElement.$handler[0] === $targetElement[0]) {
         isFoundItem = true;
       }

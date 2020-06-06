@@ -2,7 +2,9 @@ import Model from '../Model/Model';
 import MainView from '../View/MainView';
 import Observer from '../Observer/Observer';
 import СustomEvents from '../Observer/CustomEvents';
-import { observerEvent, modelListener, stateHandler } from '../types/types';
+import {
+  ObserverEvent, ModelListener, StateHandler, ModelResponse,
+} from '../types/types';
 
 class Controller {
   private model: Model;
@@ -21,7 +23,7 @@ class Controller {
   }
 
   public subscribeToChangeState(callback): void {
-    return this.model.eventObserver.subscribe((event: observerEvent<modelListener>) => {
+    return this.model.eventObserver.subscribe((event: ObserverEvent<ModelListener>) => {
       switch (event.type) {
         case СustomEvents.SetState:
           callback(event.data.state);
@@ -60,20 +62,20 @@ class Controller {
     this.model.setAxis(axis);
   }
 
-  public setStepSize(newStepSize: number): object {
+  public setStepSize(newStepSize: number): ModelResponse {
     return this.model.setStepSize(newStepSize);
   }
 
-  public setMinValue(value: number): object {
+  public setMinValue(value: number): ModelResponse {
     return this.model.setMinValue(value);
   }
 
-  public setMaxValue(value: number): object {
+  public setMaxValue(value: number): ModelResponse {
     return this.model.setMaxValue(value);
   }
 
   private subscribeViewObserver(): void {
-    this.view.eventObserver.subscribe((event: observerEvent<stateHandler>) => {
+    this.view.eventObserver.subscribe((event: ObserverEvent<StateHandler>) => {
       switch (event.type) {
         case СustomEvents.SetState:
           this.model.setState(event.data);
@@ -91,7 +93,7 @@ class Controller {
   }
 
   private subscribeModelObserver(): void {
-    this.model.eventObserver.subscribe((event: observerEvent<modelListener>) => {
+    this.model.eventObserver.subscribe((event: ObserverEvent<ModelListener>) => {
       switch (event.type) {
         case СustomEvents.SetState:
           this.view.prepareToMoveHandler(event.data.state);

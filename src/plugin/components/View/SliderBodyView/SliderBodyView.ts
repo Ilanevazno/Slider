@@ -1,5 +1,5 @@
 import Observer from '../../Observer/Observer';
-import { sliderBreakpoint } from '../../types/types';
+import { SliderBreakpoint } from '../../types/types';
 import CustomEvents from '../../Observer/CustomEvents';
 
 class SliderBodyView {
@@ -34,12 +34,12 @@ class SliderBodyView {
       : this.$mainHtml[0].offsetHeight;
   }
 
-  public drawBreakPoints(breakpoints: sliderBreakpoint[]): void {
+  public drawBreakPoints(breakpoints: SliderBreakpoint[]): void {
     this.removeBreakpoints();
 
     const direction: string = this.axis === 'X' ? 'left' : 'top';
     let shortStepCounter: number = Math.trunc((breakpoints.length - 1) / 10);
-    const shortBreakpoints: sliderBreakpoint[] = [];
+    const shortBreakpoints: SliderBreakpoint[] = [];
     shortBreakpoints.push(breakpoints[0]);
 
     while (shortStepCounter <= breakpoints.length) {
@@ -53,7 +53,7 @@ class SliderBodyView {
     }
 
     this.breakpointElements = shortBreakpoints
-      .filter((breakpoint) => breakpoint !== undefined).map((breakpoint: sliderBreakpoint) => {
+      .filter((breakpoint) => breakpoint !== undefined).map((breakpoint: SliderBreakpoint) => {
         const icon: number = breakpoint.currentValue;
 
         return $('<div/>', {
@@ -72,7 +72,7 @@ class SliderBodyView {
     });
   }
 
-  public changeBreakpointsActivity(isActive: boolean, availableBreakpoints: sliderBreakpoint[]): void {
+  public changeBreakpointsActivity(isActive: boolean, availableBreakpoints: SliderBreakpoint[]): void {
     if (isActive) {
       this.drawBreakPoints(availableBreakpoints);
     } else {
