@@ -18,7 +18,7 @@ class MainView {
 
   public maxValueHandler: StateHandler;
 
-  constructor(private model: Model, private initHtmlElement: HTMLElement) {
+  constructor(private model: Model, initHtmlElement: HTMLElement) {
     this.eventObserver = new Observer();
     this.$sliderContainer = this.drawSliderContainer(initHtmlElement);
 

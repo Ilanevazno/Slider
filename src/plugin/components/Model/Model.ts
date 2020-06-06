@@ -156,6 +156,8 @@ class Model {
       this.state[stateLength] = currentHandler;
     }
 
+    console.log(this.state);
+
     this.checkCollision(currentHandler.name);
 
     this.state.forEach((stateElement: StateHandler) => {
