@@ -36,13 +36,11 @@ class MainView {
     const caughtHandlerIndex: number = handler === 'min-value' ? 0 : 1;
     const caughtHandlerInstance: StateHandler = [this.minValueHandler, this.maxValueHandler][caughtHandlerIndex];
     const caughtHandlerName = caughtHandlerInstance.name;
-    const $caughtHandlerHtml = caughtHandlerInstance.handler.$html;
     const minValue: number = this.model.getOption('minValue');
 
     const dataForBroadcasting: ObserverEvent<StateHandler> = {
       type: CustomEvents.SetState,
       data: {
-        // $handler: $caughtHandlerHtml,
         name: caughtHandlerName,
         value: minValue,
       },
@@ -78,10 +76,10 @@ class MainView {
   public prepareToMoveHandler(state) {
     [this.minValueHandler, this.maxValueHandler].forEach((handler: StateHandler) => {
       if (handler !== undefined) {
-        const findedState = state.filter((currentState) => currentState.name === handler.name);
-        if (findedState.length) {
-          const currentValue: number = findedState[0].value;
-          const htmlContainerWidth: number = this.sliderBody.getSliderBodyParams() - (handler.handler.getHandlerWidth() / 2);
+        const foundState = state.filter((currentState) => currentState.name === handler.name);
+        if (foundState.length) {
+          const currentValue: number = foundState[0].value;
+          const htmlContainerWidth: number = this.sliderBody.getSliderBodyParams() - handler.handler.getHandlerWidth();
           const optionList: ConvertingData = {
             minPercent: this.model.getOption('minValue'),
             maxPercent: this.model.getOption('maxValue'),
@@ -109,7 +107,9 @@ class MainView {
   }
 
   private getConvertedBreakpoints() {
-    const htmlContainerWidth: number = this.sliderBody.getSliderBodyParams();
+    const axisDivisionOffset = this.model.getOption('axis') === 'X' ? 4 : 2;
+    const offsetHandlerWidth = this.minValueHandler.handler.getHandlerWidth();
+    const htmlContainerWidth: number = this.sliderBody.getSliderBodyParams() - offsetHandlerWidth;
     const availableBreakpoints: number[] = this.model.getOption('breakpoints');
 
     return availableBreakpoints.map((currentValue: number) => {
@@ -122,7 +122,7 @@ class MainView {
 
       return {
         currentValue,
-        pixelPosition: this.convertPercentToPixel(optionList),
+        pixelPosition: this.convertPercentToPixel(optionList) + (offsetHandlerWidth / axisDivisionOffset),
       };
     });
   }
@@ -161,7 +161,6 @@ class MainView {
 
   private handleHandlerMove(data: HandlerEvent): number {
     const {
-      $handler,
       event,
       name,
       offset,
@@ -175,7 +174,6 @@ class MainView {
     const dataForBroadcasting: ObserverEvent<StateHandler> = {
       type: CustomEvents.SetState,
       data: {
-        // $handler,
         value,
         name,
       },
@@ -257,7 +255,9 @@ class MainView {
   }
 
   private moveHandlerByBodyClick(event): void {
-    const targetPercent: number = this.convertPxToPercent(event.caughtCoords);
+    const targetPercent: number = event.caughtCoords
+      ? this.convertPxToPercent(event.caughtCoords)
+      : event.percentValue;
     const currentState: StateHandler[] = this.model.getState();
     const availableHandlerValues: number[] = [];
 
@@ -272,7 +272,6 @@ class MainView {
         const dataForBroadcasting: ObserverEvent<StateHandler> = {
           type: CustomEvents.SetState,
           data: {
-            // $handler: handler.$handler,
             name: handler.name,
             value: targetPercent,
           },

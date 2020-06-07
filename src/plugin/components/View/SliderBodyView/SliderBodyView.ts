@@ -30,8 +30,8 @@ class SliderBodyView {
 
   public getSliderBodyParams(): number {
     return this.axis as unknown as string === 'X'
-      ? this.$mainHtml[0].offsetWidth
-      : this.$mainHtml[0].offsetHeight;
+      ? this.$mainHtml[0].getBoundingClientRect().width
+      : this.$mainHtml[0].getBoundingClientRect().height;
   }
 
   public drawBreakPoints(breakpoints: SliderBreakpoint[]): void {
@@ -62,7 +62,7 @@ class SliderBodyView {
           .css(direction, `${breakpoint.pixelPosition}px`)
           .text(icon)
           .appendTo(this.$mainHtml)
-          .on('click', this.handleBreakpointClick.bind(null, breakpoint.pixelPosition));
+          .on('click', this.handleBreakpointClick.bind(null, icon));
       });
   }
 
@@ -80,8 +80,8 @@ class SliderBodyView {
     }
   }
 
-  private handleBreakpointClick(breakpointPixelPosition: number): void {
-    this.eventObserver.broadcast({ type: CustomEvents.ChangeStateByClick, caughtCoords: breakpointPixelPosition });
+  private handleBreakpointClick(breakpointValue: number): void {
+    this.eventObserver.broadcast({ type: CustomEvents.ChangeStateByClick, percentValue: breakpointValue });
   }
 
   private drawSliderBody($htmlContainer): JQuery<HTMLElement> {
