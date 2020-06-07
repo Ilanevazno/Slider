@@ -44,7 +44,7 @@ class Model {
   public setValueType(valueType: ValueType): void {
     this.valueType = valueType;
 
-    this.eventObserver.broadcast({ type: СustomEvents.SetValueType, data: { axis: this.valueType } });
+    this.eventObserver.broadcast({ type: СustomEvents.SetValueType, data: { valueType: this.valueType } });
   }
 
   public setAxis(axis: Axis) {
@@ -98,7 +98,7 @@ class Model {
     }
     return {
       response: Response.FailedResponse,
-      message: 'Невалидное значения. Минимальное значение не может быть больше чем максимальное.',
+      message: 'Невалидное значение. Минимальное значение не может быть больше чем максимальное.',
     };
   }
 
@@ -118,7 +118,7 @@ class Model {
     }
     return {
       response: Response.FailedResponse,
-      message: 'Невалидное значения. Максимальное значение не может быть меньше чем минимальное.',
+      message: 'Невалидное значение. Максимальное значение не может быть меньше чем минимальное.',
     };
   }
 
@@ -155,8 +155,6 @@ class Model {
     if (!this.checkIncludeStateValue(currentHandler.name)) {
       this.state[stateLength] = currentHandler;
     }
-
-    // console.log(this.state);
 
     this.checkCollision(currentHandler.name);
 
