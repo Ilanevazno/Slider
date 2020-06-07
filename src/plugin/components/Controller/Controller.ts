@@ -2,7 +2,7 @@ import Model from '../Model/Model';
 import MainView from '../View/MainView';
 import СustomEvents from '../Observer/CustomEvents';
 import {
-  ObserverEvent, ModelListener, StateHandler, ModelResponse, ValueType, Axis,
+  ObserverEvent, ModelListener, ModelResponse, ValueType, Axis, modelState,
 } from '../types/types';
 
 class Controller {
@@ -71,7 +71,7 @@ class Controller {
   }
 
   private subscribeViewObserver(): void {
-    this.view.eventObserver.subscribe((event: ObserverEvent<StateHandler>) => {
+    this.view.eventObserver.subscribe((event: ObserverEvent<modelState>) => {
       switch (event.type) {
         case СustomEvents.SetState:
           this.model.setState(event.data);

@@ -1,7 +1,7 @@
 import Observer from '../Observer/Observer';
 import СustomEvents from '../Observer/CustomEvents';
 import {
-  availableOptions, StateHandler, ModelResponse, ValueType, Axis,
+  availableOptions, modelState, ModelResponse, ValueType, Axis,
 } from '../types/types';
 import Response from './ModelConstants/ModelConstants';
 
@@ -14,7 +14,7 @@ class Model {
 
   public valueType: ValueType;
 
-  public state: StateHandler[];
+  public state: modelState[];
 
   public minValue: number;
 
@@ -78,7 +78,7 @@ class Model {
     return OptionsList[targetOption];
   }
 
-  public getState(): StateHandler[] {
+  public getState(): modelState[] {
     return this.state;
   }
 
@@ -137,7 +137,7 @@ class Model {
   }
 
   public changeStateByHandlerName(handlerName: string, value: number): void {
-    this.state.forEach((stateElement: StateHandler) => {
+    this.state.forEach((stateElement: modelState) => {
       if (stateElement.name === handlerName) {
         // eslint-disable-next-line no-param-reassign
         stateElement.value = this.findTheClosestBreakpoint(Number(value));
@@ -149,19 +149,19 @@ class Model {
     this.eventObserver.broadcast({ type: СustomEvents.SetState, data: { state: this.state } });
   }
 
-  public setState(currentHandler: StateHandler): void {
+  public setState(currentHandler: modelState): void {
     const stateLength = this.getStateLength();
 
-    if (!this.checkIncludeStateValue(currentHandler.$handler)) {
+    if (!this.checkIncludeStateValue(currentHandler.name)) {
       this.state[stateLength] = currentHandler;
     }
 
-    console.log(this.state);
+    // console.log(this.state);
 
     this.checkCollision(currentHandler.name);
 
-    this.state.forEach((stateElement: StateHandler) => {
-      if (stateElement.$handler[0] === currentHandler.$handler[0]) {
+    this.state.forEach((stateElement: modelState) => {
+      if (stateElement.name === currentHandler.name) {
         // eslint-disable-next-line no-param-reassign
         stateElement.value = this.findTheClosestBreakpoint(currentHandler.value);
       }
@@ -220,11 +220,11 @@ class Model {
     } as availableOptions;
   }
 
-  private checkIncludeStateValue($targetElement: JQuery<HTMLElement>): boolean {
+  private checkIncludeStateValue(targetElement: string): boolean {
     let isFoundItem = false;
 
-    this.state.map((stateElement: StateHandler) => {
-      if (stateElement.$handler[0] === $targetElement[0]) {
+    this.state.map((stateElement: modelState) => {
+      if (stateElement.name === targetElement) {
         isFoundItem = true;
       }
       return false;

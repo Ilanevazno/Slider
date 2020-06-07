@@ -42,7 +42,7 @@ class MainView {
     const dataForBroadcasting: ObserverEvent<StateHandler> = {
       type: CustomEvents.SetState,
       data: {
-        $handler: $caughtHandlerHtml,
+        // $handler: $caughtHandlerHtml,
         name: caughtHandlerName,
         value: minValue,
       },
@@ -61,7 +61,7 @@ class MainView {
   public setTooltipActivity(isTooltipActive: boolean): void {
     [this.minValueHandler, this.maxValueHandler].forEach((currentHandler: StateHandler) => {
       if (currentHandler) {
-        const tooltipPercent: number = currentHandler.statePercent || this.model.getOption('minValue');
+        const tooltipPercent: number = currentHandler.value || this.model.getOption('minValue');
         currentHandler.handler.changeTooltipActivity(isTooltipActive);
         currentHandler.handler.setTooltipValue(tooltipPercent);
       }
@@ -76,30 +76,31 @@ class MainView {
   }
 
   public prepareToMoveHandler(state) {
-    state.map((handler: StateHandler) => {
-      const $caughtHandler: JQuery<HTMLElement> = $(handler.$handler);
-      const currentValue: number = handler.value;
-      const htmlContainerWidth: number = this.sliderBody.getSliderBodyParams() - ($caughtHandler[0].offsetWidth / 2);
-      const optionList: ConvertingData = {
-        minPercent: this.model.getOption('minValue'),
-        maxPercent: this.model.getOption('maxValue'),
-        currentValue,
-        htmlContainerWidth,
-      };
-      const newHandlerPosition: number = this.convertPercentToPixel(optionList);
+    [this.minValueHandler, this.maxValueHandler].forEach((handler: StateHandler) => {
+      if (handler !== undefined) {
+        const findedState = state.filter((currentState) => currentState.name === handler.name);
+        if (findedState.length) {
+          const currentValue: number = findedState[0].value;
+          const htmlContainerWidth: number = this.sliderBody.getSliderBodyParams() - (handler.handler.getHandlerWidth() / 2);
+          const optionList: ConvertingData = {
+            minPercent: this.model.getOption('minValue'),
+            maxPercent: this.model.getOption('maxValue'),
+            currentValue,
+            htmlContainerWidth,
+          };
+          const newHandlerPosition: number = this.convertPercentToPixel(optionList);
+          const handlerForMoving: StateHandler = handler.name === 'min-value'
+            ? this.minValueHandler
+            : this.maxValueHandler;
 
-      const handlerForMoving: StateHandler = handler.name === 'min-value'
-        ? this.minValueHandler
-        : this.maxValueHandler;
+          handlerForMoving.handler.moveHandler(newHandlerPosition);
+          handlerForMoving.value = currentValue;
 
-      handlerForMoving.handler.moveHandler(newHandlerPosition);
-      handlerForMoving.statePercent = currentValue;
-
-      if (this.withTooltip()) {
-        handlerForMoving.handler.setTooltipValue(currentValue);
+          if (this.withTooltip()) {
+            handlerForMoving.handler.setTooltipValue(currentValue);
+          }
+        }
       }
-
-      return handler;
     });
   }
 
@@ -174,7 +175,7 @@ class MainView {
     const dataForBroadcasting: ObserverEvent<StateHandler> = {
       type: CustomEvents.SetState,
       data: {
-        $handler,
+        // $handler,
         value,
         name,
       },
@@ -271,7 +272,7 @@ class MainView {
         const dataForBroadcasting: ObserverEvent<StateHandler> = {
           type: CustomEvents.SetState,
           data: {
-            $handler: handler.$handler,
+            // $handler: handler.$handler,
             name: handler.name,
             value: targetPercent,
           },

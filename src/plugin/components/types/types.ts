@@ -14,6 +14,11 @@ export type availableOptions = {
   breakpoints?: any[];
 }
 
+export type modelState = {
+  name: string;
+  value: number;
+}
+
 export type SliderBreakpoint = {
   currentValue: number;
   pixelPosition: number;
