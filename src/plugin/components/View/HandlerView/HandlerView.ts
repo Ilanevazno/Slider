@@ -1,5 +1,5 @@
-import Observer from '../../Observer/Observer';
 import TooltipView from '../TooltipView/TooltipView';
+import Observer from '../../Observer/Observer';
 import { Axis } from '../../types/types';
 
 class HandlerView {

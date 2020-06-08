@@ -26,7 +26,7 @@ describe('Проверка класса Model', () => {
     it('Установка типа слайдера на двойное значение', () => {
       modelSpec.setValueType('double' as unknown as ValueType);
 
-      expect(modelSpec.valueType).toBe('doubleValue');
+      expect(modelSpec.valueType).toBe('double');
     });
 
     it('Установка направления по оси Y', () => {

@@ -1,11 +1,17 @@
+import {
+  ObserverEvent,
+  StateHandler,
+  SliderBreakpoint,
+  ConvertingData,
+  HandlerEvent,
+  ValueType,
+  Axis,
+} from '../types/types';
 import Model from '../Model/Model';
-import Observer from '../Observer/Observer';
 import SliderBodyView from './SliderBodyView/SliderBodyView';
 import HandlerView from './HandlerView/HandlerView';
 import CustomEvents from '../Observer/CustomEvents';
-import {
-  ObserverEvent, StateHandler, SliderBreakpoint, ConvertingData, HandlerEvent, ValueType, Axis,
-} from '../types/types';
+import Observer from '../Observer/Observer';
 
 class MainView {
   public eventObserver: Observer;

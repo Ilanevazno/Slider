@@ -1,9 +1,13 @@
-import Observer from '../Observer/Observer';
-import СustomEvents from '../Observer/CustomEvents';
 import {
-  availableOptions, modelState, ModelResponse, ValueType, Axis,
+  availableOptions,
+  modelState,
+  ModelResponse,
+  ValueType,
+  Axis,
 } from '../types/types';
 import Response from './ModelConstants/ModelConstants';
+import СustomEvents from '../Observer/CustomEvents';
+import Observer from '../Observer/Observer';
 
 class Model {
   public withLabels: boolean;

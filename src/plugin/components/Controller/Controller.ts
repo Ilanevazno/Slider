@@ -1,9 +1,14 @@
+import {
+  ObserverEvent,
+  ModelListener,
+  ModelResponse,
+  ValueType,
+  Axis,
+  modelState,
+} from '../types/types';
 import Model from '../Model/Model';
 import MainView from '../View/MainView';
 import СustomEvents from '../Observer/CustomEvents';
-import {
-  ObserverEvent, ModelListener, ModelResponse, ValueType, Axis, modelState,
-} from '../types/types';
 
 class Controller {
   private model: Model;

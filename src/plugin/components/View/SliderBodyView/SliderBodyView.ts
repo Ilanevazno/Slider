@@ -1,6 +1,6 @@
-import Observer from '../../Observer/Observer';
 import { SliderBreakpoint, Axis } from '../../types/types';
 import CustomEvents from '../../Observer/CustomEvents';
+import Observer from '../../Observer/Observer';
 
 class SliderBodyView {
   public $mainHtml: JQuery<HTMLElement>;
