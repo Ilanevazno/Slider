@@ -1,6 +1,6 @@
-import TooltipView from '../TooltipView/TooltipView';
-import Observer from '../../Observer/Observer';
 import { Axis } from '../../types/types';
+import Observer from '../../Observer/Observer';
+import TooltipView from '../TooltipView/TooltipView';
 
 class HandlerView {
   public $html: JQuery<HTMLElement>;
