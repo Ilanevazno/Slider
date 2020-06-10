@@ -67,10 +67,6 @@ export type ModelResponse = {
   message: string;
 }
 
-export type ValueType = {
-  readonly valueType: 'single' | 'double';
-};
+export type ValueType = 'single' | 'double';
 
-export type Axis = {
-  readonly axis: 'X' | 'Y';
-};
+export type Axis = 'X' | 'Y';
