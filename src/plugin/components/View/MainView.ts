@@ -3,6 +3,7 @@ import {
   StateHandler,
   SliderBreakpoint,
   ConvertingData,
+  CustomEvents,
   HandlerEvent,
   ValueType,
   Axis,
@@ -10,7 +11,6 @@ import {
 import Model from '../Model/Model';
 import SliderBodyView from './SliderBodyView/SliderBodyView';
 import HandlerView from './HandlerView/HandlerView';
-import CustomEvents from '../Observer/CustomEvents';
 import Observer from '../Observer/Observer';
 
 class MainView {
@@ -33,9 +33,9 @@ class MainView {
 
   public refreshView(): void {
     this.sliderBody.removeSliderBody();
-    this.eventObserver.broadcast({ type: CustomEvents.ClearState });
+    this.eventObserver.broadcast({ type: CustomEvents.STATE_CLEARED });
     this.createSliderComponents();
-    this.eventObserver.broadcast({ type: CustomEvents.RefreshState });
+    this.eventObserver.broadcast({ type: CustomEvents.STATE_REFRESHED });
   }
 
   public setState(handler: string): void {
@@ -45,7 +45,7 @@ class MainView {
     const minValue: number = this.model.getOption('minValue');
 
     const dataForBroadcasting: ObserverEvent<StateHandler> = {
-      type: CustomEvents.SetState,
+      type: CustomEvents.STATE_CHANGED,
       data: {
         name: caughtHandlerName,
         value: minValue,
@@ -178,7 +178,7 @@ class MainView {
 
     const value: number = this.convertPxToPercent(currentPixel);
     const dataForBroadcasting: ObserverEvent<StateHandler> = {
-      type: CustomEvents.SetState,
+      type: CustomEvents.STATE_CHANGED,
       data: {
         value,
         name,
@@ -228,11 +228,12 @@ class MainView {
   private initSliderBodyEvents(): void {
     this.sliderBody.eventObserver.subscribe((event: ObserverEvent<object>) => {
       switch (event.type) {
-        case CustomEvents.WindowResize:
+        case CustomEvents.WINDOW_RESIZED:
           this.changeBreakpointsActivity();
-          this.eventObserver.broadcast({ type: CustomEvents.RefreshState });
+          this.eventObserver.broadcast({ type: CustomEvents.STATE_REFRESHED });
           break;
-        case CustomEvents.ChangeStateByClick:
+        case CustomEvents.BODY_CLICKED:
+        case CustomEvents.BREAKPOINT_CLICKED:
           this.moveHandlerByBodyClick(event);
           break;
         default:
@@ -276,7 +277,7 @@ class MainView {
     currentState.forEach((handler: StateHandler) => {
       if (handler.value === findAvailableHandler) {
         const dataForBroadcasting: ObserverEvent<StateHandler> = {
-          type: CustomEvents.SetState,
+          type: CustomEvents.STATE_CHANGED,
           data: {
             name: handler.name,
             value: targetPercent,
@@ -316,7 +317,7 @@ class MainView {
   private initHandlerEvents(parent): void {
     parent.handler.observer.subscribe((event: ObserverEvent<HandlerEvent>) => {
       switch (event.type) {
-        case CustomEvents.Mousemove:
+        case CustomEvents.HANDLER_MOUSEMOVE:
           this.handleHandlerMove({
             $handler: parent.handler.$html,
             event: event.data.event,
@@ -324,7 +325,7 @@ class MainView {
             offset: event.data.offset,
           });
           break;
-        case CustomEvents.Touchmove:
+        case CustomEvents.HANDLER_TOUCHMOVE:
           this.handleHandlerMove({
             $handler: parent.handler.$html,
             event: event.data.event.touches[0],

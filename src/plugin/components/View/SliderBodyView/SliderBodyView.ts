@@ -1,5 +1,4 @@
-import { SliderBreakpoint, Axis } from '../../types/types';
-import CustomEvents from '../../Observer/CustomEvents';
+import { SliderBreakpoint, CustomEvents, Axis } from '../../types/types';
 import Observer from '../../Observer/Observer';
 
 class SliderBodyView {
@@ -81,7 +80,7 @@ class SliderBodyView {
   }
 
   private handleBreakpointClick(breakpointValue: number): void {
-    this.eventObserver.broadcast({ type: CustomEvents.ChangeStateByClick, percentValue: breakpointValue });
+    this.eventObserver.broadcast({ type: CustomEvents.BREAKPOINT_CLICKED, percentValue: breakpointValue });
   }
 
   private drawSliderBody($htmlContainer): JQuery<HTMLElement> {
@@ -95,7 +94,7 @@ class SliderBodyView {
   }
 
   private handleWindowResize(): void {
-    this.eventObserver.broadcast({ type: CustomEvents.WindowResize });
+    this.eventObserver.broadcast({ type: CustomEvents.WINDOW_RESIZED });
   }
 
   private handleSliderBodyClick(event): void {
@@ -105,7 +104,7 @@ class SliderBodyView {
       : event.offsetY;
 
     if (htmlEventTarget === this.$mainHtml[0]) {
-      this.eventObserver.broadcast({ type: CustomEvents.ChangeStateByClick, caughtCoords });
+      this.eventObserver.broadcast({ type: CustomEvents.BODY_CLICKED, caughtCoords });
     }
   }
 

@@ -64,14 +64,14 @@ class HandlerView {
       ? (event.clientX || event.touches[0].clientX) - this.$html[0].getBoundingClientRect().left
       : (event.clientY || event.touches[0].clientY) - this.$html[0].getBoundingClientRect().top;
 
-    this.observer.broadcast({ type: event.type, data: event });
+    this.observer.broadcast({ type: `HANDLER_${event.type.toUpperCase()}`, data: event });
     $(document).on('touchmove.documentTouchMove mousemove.documentMouseMove', this.handleDocumentMouseMove);
     $(document).on('touchend.documentTouchEnd mouseup.documentMouseUp', this.handleDocumentMouseUp);
   }
 
   private handleDocumentMouseMove(event): void {
     const offset = this.offset / 2;
-    this.observer.broadcast({ type: event.type.toUpperCase(), data: { event, offset } });
+    this.observer.broadcast({ type: `HANDLER_${event.type.toUpperCase()}`, data: { event, offset } });
   }
 
   private handleDocumentMouseUp(): void {

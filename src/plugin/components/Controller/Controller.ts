@@ -2,13 +2,13 @@ import {
   ObserverEvent,
   ModelListener,
   ModelResponse,
+  CustomEvents,
   ValueType,
   Axis,
   modelState,
 } from '../types/types';
 import Model from '../Model/Model';
 import MainView from '../View/MainView';
-import СustomEvents from '../Observer/CustomEvents';
 
 class Controller {
   private model: Model;
@@ -26,7 +26,7 @@ class Controller {
   public subscribeToChangeState(callback: Function): void {
     return this.model.eventObserver.subscribe((event: ObserverEvent<ModelListener>) => {
       switch (event.type) {
-        case СustomEvents.SetState:
+        case CustomEvents.STATE_CHANGED:
           callback(event.data.state);
           break;
         default:
@@ -78,13 +78,13 @@ class Controller {
   private subscribeViewObserver(): void {
     this.view.eventObserver.subscribe((event: ObserverEvent<modelState>) => {
       switch (event.type) {
-        case СustomEvents.SetState:
+        case CustomEvents.STATE_CHANGED:
           this.model.setState(event.data);
           break;
-        case СustomEvents.RefreshState:
+        case CustomEvents.STATE_REFRESHED:
           this.model.refreshState();
           break;
-        case СustomEvents.ClearState:
+        case CustomEvents.STATE_CLEARED:
           this.model.clearState();
           break;
         default:
@@ -96,24 +96,24 @@ class Controller {
   private subscribeModelObserver(): void {
     this.model.eventObserver.subscribe((event: ObserverEvent<ModelListener>) => {
       switch (event.type) {
-        case СustomEvents.SetState:
+        case CustomEvents.STATE_CHANGED:
           this.view.prepareToMoveHandler(event.data.state);
           break;
-        case СustomEvents.SetValueType:
+        case CustomEvents.VALUE_TYPE_CHANGED:
           this.view.refreshView();
           break;
-        case СustomEvents.SetMinValue:
-        case СustomEvents.SetMaxValue:
-        case СustomEvents.SetStepSize:
+        case CustomEvents.MIN_VALUE_CHANGED:
+        case CustomEvents.MAX_VALUE_CHANGED:
+        case CustomEvents.STEP_SIZE_CHANGED:
           this.view.changeBreakpointsActivity();
           break;
-        case СustomEvents.SetAxis:
+        case CustomEvents.AXIS_CHANGED:
           this.view.changeSliderBodyAxis(event.data.axis);
           break;
-        case СustomEvents.SetTooltipActivity:
+        case CustomEvents.TOOLTIP_ACTIVITY_CHANGED:
           this.view.setTooltipActivity(event.data.withTooltip);
           break;
-        case СustomEvents.SetLabelsActivity:
+        case CustomEvents.LABELS_ACTIVITY_CHANGED:
           this.view.changeBreakpointsActivity();
           break;
         default:

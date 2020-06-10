@@ -1,7 +1,11 @@
 /* eslint-disable no-unused-expressions */
 import '../../../plugin/components/sliderPlugin';
-import { availableOptions, ValueType, Axis } from '../../../plugin/components/types/types';
-import { JqueryPluginElement } from '../../../plugin/components/interfaces/interfaces';
+import {
+  availableOptions,
+  ValueType,
+  Axis,
+  JqueryPluginElement,
+} from '../../../plugin/components/types/types';
 
 class Panel {
   private sliderOptions: availableOptions;

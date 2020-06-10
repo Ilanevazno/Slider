@@ -2,11 +2,11 @@ import {
   availableOptions,
   modelState,
   ModelResponse,
+  CustomEvents,
+  Response,
   ValueType,
   Axis,
 } from '../types/types';
-import Response from './ModelConstants/ModelConstants';
-import СustomEvents from '../Observer/CustomEvents';
 import Observer from '../Observer/Observer';
 
 class Model {
@@ -48,31 +48,31 @@ class Model {
   public setValueType(valueType: ValueType): void {
     this.valueType = valueType;
 
-    this.eventObserver.broadcast({ type: СustomEvents.SetValueType, data: { valueType: this.valueType } });
+    this.eventObserver.broadcast({ type: CustomEvents.VALUE_TYPE_CHANGED, data: { valueType: this.valueType } });
   }
 
   public setAxis(axis: Axis) {
     this.axis = axis;
 
-    this.eventObserver.broadcast({ type: СustomEvents.SetAxis, data: { axis: this.axis } });
+    this.eventObserver.broadcast({ type: CustomEvents.AXIS_CHANGED, data: { axis: this.axis } });
   }
 
   public setLabelsActivity(isLabelsActive: boolean): void {
     this.withLabels = isLabelsActive;
 
-    this.eventObserver.broadcast({ type: СustomEvents.SetLabelsActivity, data: { isLabelsActive } });
+    this.eventObserver.broadcast({ type: CustomEvents.LABELS_ACTIVITY_CHANGED, data: { isLabelsActive } });
   }
 
   public showTooltip(): void {
     this.withTooltip = true;
 
-    this.eventObserver.broadcast({ type: СustomEvents.SetTooltipActivity, data: { withTooltip: this.withTooltip } });
+    this.eventObserver.broadcast({ type: CustomEvents.TOOLTIP_ACTIVITY_CHANGED, data: { withTooltip: this.withTooltip } });
   }
 
   public hideTooltip(): void {
     this.withTooltip = false;
 
-    this.eventObserver.broadcast({ type: СustomEvents.SetTooltipActivity, data: { withTooltip: this.withTooltip } });
+    this.eventObserver.broadcast({ type: CustomEvents.TOOLTIP_ACTIVITY_CHANGED, data: { withTooltip: this.withTooltip } });
   }
 
   public getOption<T>(targetOption: string): T {
@@ -93,7 +93,7 @@ class Model {
       this.updateBreakpointList();
       this.refreshState();
 
-      this.eventObserver.broadcast({ type: СustomEvents.SetMinValue, data: { minValue: this.minValue } });
+      this.eventObserver.broadcast({ type: CustomEvents.MIN_VALUE_CHANGED, data: { minValue: this.minValue } });
 
       return {
         response: Response.SuccessResponse,
@@ -113,7 +113,7 @@ class Model {
       this.updateBreakpointList();
       this.refreshState();
 
-      this.eventObserver.broadcast({ type: СustomEvents.SetMaxValue, data: { maxValue: this.maxValue } });
+      this.eventObserver.broadcast({ type: CustomEvents.MAX_VALUE_CHANGED, data: { maxValue: this.maxValue } });
 
       return {
         response: Response.SuccessResponse,
@@ -150,7 +150,7 @@ class Model {
 
     this.checkCollision(handlerName);
 
-    this.eventObserver.broadcast({ type: СustomEvents.SetState, data: { state: this.state } });
+    this.eventObserver.broadcast({ type: CustomEvents.STATE_CHANGED, data: { state: this.state } });
   }
 
   public setState(currentHandler: modelState): void {
@@ -171,7 +171,7 @@ class Model {
       return stateElement;
     });
 
-    this.eventObserver.broadcast({ type: СustomEvents.SetState, data: { state: this.state } });
+    this.eventObserver.broadcast({ type: CustomEvents.STATE_CHANGED, data: { state: this.state } });
   }
 
   public clearState(): void {
@@ -183,7 +183,7 @@ class Model {
       this.setState(item);
     });
 
-    this.eventObserver.broadcast({ type: СustomEvents.SetState, data: { state: this.state } });
+    this.eventObserver.broadcast({ type: CustomEvents.STATE_CHANGED, data: { state: this.state } });
   }
 
   public setStepSize(newStepSize: number): ModelResponse {
@@ -196,7 +196,7 @@ class Model {
       this.updateBreakpointList();
       this.refreshState();
 
-      this.eventObserver.broadcast({ type: СustomEvents.SetStepSize, data: { newBreakpoints: this.breakPoints } });
+      this.eventObserver.broadcast({ type: CustomEvents.STEP_SIZE_CHANGED, data: { newBreakpoints: this.breakPoints } });
 
       return {
         response: Response.SuccessResponse,
