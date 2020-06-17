@@ -3,12 +3,8 @@ import { Axis } from '../../types/types';
 class TooltipView {
   private $tooltip: JQuery<HTMLElement>;
 
-  private $htmlParent: JQuery<HTMLElement>;
-
-  constructor($htmlContainer, private axis: Axis) {
+  constructor(private $htmlContainer, private axis: Axis) {
     this.$tooltip = null;
-    this.$htmlParent = $htmlContainer;
-    this.axis = axis;
   }
 
   public setValue(percent: number): void {
@@ -20,7 +16,7 @@ class TooltipView {
       class: this.axis as unknown as string === 'X'
         ? 'slider__tooltip slider__tooltip_type_horizontal'
         : 'slider__tooltip slider__tooltip_type_vertical',
-    }).appendTo(this.$htmlParent);
+    }).appendTo(this.$htmlContainer);
     return this.$tooltip;
   }
 

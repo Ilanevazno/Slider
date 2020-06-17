@@ -169,7 +169,7 @@ class Model {
       if (stateElement.name === currentHandler.name) {
         return {
           ...stateElement,
-          value: this.findTheClosestBreakpoint(currentHandler.value)
+          value: this.findTheClosestBreakpoint(currentHandler.value),
         };
       }
 

@@ -11,14 +11,7 @@ import Model from '../Model/Model';
 import MainView from '../View/MainView';
 
 class Controller {
-  private model: Model;
-
-  private view: MainView;
-
-  constructor(model: Model, view: MainView) {
-    this.model = model;
-    this.view = view;
-
+  constructor(private model: Model, private view: MainView) {
     this.subscribeViewObserver();
     this.subscribeModelObserver();
   }
