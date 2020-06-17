@@ -8,10 +8,10 @@ const mockModelOptions: availableOptions = {
   maxValue: 100,
   minValueCurrent: 30,
   maxValueCurrent: 70,
-  axis: 'X' as unknown as Axis,
+  axis: 'X',
   withLabels: false,
   withTooltip: false,
-  valueType: 'single' as unknown as ValueType,
+  valueType: 'single',
 };
 
 const dummyHtmlElement = document.createElement('div');
@@ -55,7 +55,7 @@ describe('Тестирование класса MainView', () => {
     it('Смена направления слайдера на указанное значение', () => {
       spyOn(view, 'changeSliderBodyAxis').and.callThrough();
 
-      const currentAxis: Axis = 'Y' as unknown as Axis;
+      const currentAxis: Axis = 'Y';
       const newSliderBodyAxis = view.changeSliderBodyAxis(currentAxis);
 
       expect(view.changeSliderBodyAxis).toHaveBeenCalledWith(currentAxis);

@@ -7,10 +7,10 @@ const modelSpecOptions: availableOptions = {
   maxValue: 100,
   minValueCurrent: 30,
   maxValueCurrent: 70,
-  axis: 'X' as unknown as Axis,
+  axis: 'X',
   withLabels: false,
   withTooltip: false,
-  valueType: 'single' as unknown as ValueType,
+  valueType: 'single',
 };
 
 const modelSpec = new Model(modelSpecOptions);
@@ -24,13 +24,13 @@ describe('Проверка класса Model', () => {
 
   describe('Тест методов взаимодействия с опциями', () => {
     it('Установка типа слайдера на двойное значение', () => {
-      modelSpec.setValueType('double' as unknown as ValueType);
+      modelSpec.setValueType('double');
 
       expect(modelSpec.valueType).toBe('double');
     });
 
     it('Установка направления по оси Y', () => {
-      modelSpec.setAxis('Y' as unknown as Axis);
+      modelSpec.setAxis('Y');
 
       expect(modelSpec.axis).toBe('Y');
     });

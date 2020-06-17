@@ -12,10 +12,10 @@ import Controller from './Controller/Controller';
         maxValue: 100,
         minValueCurrent: 1,
         maxValueCurrent: 100,
-        axis: 'X' as unknown as Axis,
+        axis: 'X',
         withLabels: true,
         withTooltip: true,
-        valueType: 'single' as unknown as ValueType,
+        valueType: 'single',
       };
 
       Object.keys(args).forEach((setting) => {

@@ -204,7 +204,7 @@ class MainView {
       this.setState('min-value');
     });
 
-    if (valueType as unknown as string === 'double') {
+    if (valueType === 'double') {
       this.maxValueHandler = {
         name: 'max-value',
         handler: this.getHandlerComponent(this.sliderBody.$mainHtml),

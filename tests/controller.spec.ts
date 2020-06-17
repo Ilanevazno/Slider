@@ -1,7 +1,7 @@
 import Controller from '../src/plugin/components/Controller/Controller';
 import Model from '../src/plugin/components/Model/Model';
 import MainView from '../src/plugin/components/View/MainView';
-import { availableOptions, ValueType, Axis } from '../src/plugin/components/types/types';
+import { availableOptions } from '../src/plugin/components/types/types';
 
 const mockModelOptions: availableOptions = {
   stepSize: 1,
@@ -9,10 +9,10 @@ const mockModelOptions: availableOptions = {
   maxValue: 100,
   minValueCurrent: 30,
   maxValueCurrent: 70,
-  axis: 'X' as unknown as Axis,
+  axis: 'X',
   withLabels: false,
   withTooltip: false,
-  valueType: 'single' as unknown as ValueType,
+  valueType: 'single',
 };
 
 const dummyHtmlElement = document.createElement('div');
@@ -43,7 +43,7 @@ describe('Проверка класса Controller', () => {
 
   it('Запрос на изменение типа вида', () => {
     spyOn(controllerSpec, 'setValueType');
-    controllerSpec.setValueType('doubleValue' as unknown as ValueType);
+    controllerSpec.setValueType('double');
     expect(controllerSpec.setValueType).toBeCalledWith('doubleValue');
   });
 
@@ -73,7 +73,7 @@ describe('Проверка класса Controller', () => {
 
   it('Изменение направления', () => {
     spyOn(controllerSpec, 'setAxis');
-    controllerSpec.setAxis('Y' as unknown as Axis);
+    controllerSpec.setAxis('Y');
     expect(controllerSpec.setAxis).toBeCalledWith('Y');
   });
 });

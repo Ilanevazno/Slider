@@ -84,13 +84,13 @@ class Panel {
   }
 
   private prepareSelectLabels(): void {
-    const currentValueType = this.sliderOptions.valueType === 'single' as unknown as ValueType
+    const currentValueType = this.sliderOptions.valueType === 'single'
       ? 'Одиночное'
       : 'Интервал';
 
     this.$valueTypeSelect.val(currentValueType);
 
-    const currentAxis = this.sliderOptions.axis === 'X' as unknown as Axis
+    const currentAxis = this.sliderOptions.axis === 'X'
       ? 'Горизонтальный'
       : 'Вертикальный';
 
@@ -112,7 +112,7 @@ class Panel {
   }
 
   private prepareLabelsData(): void {
-    this.changeViewTypeInputState(this.sliderOptions.valueType as unknown as string);
+    this.changeViewTypeInputState(this.sliderOptions.valueType);
     this.prepareCheckboxes();
     this.prepareInputLabels();
     this.prepareSelectLabels();

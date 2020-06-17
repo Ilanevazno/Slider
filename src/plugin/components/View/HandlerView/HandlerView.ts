@@ -22,7 +22,7 @@ class HandlerView {
   }
 
   public moveHandler(newHandlerPosition: number): void {
-    const direction: string = this.axis as unknown as string === 'X' ? 'left' : 'top';
+    const direction: string = this.axis === 'X' ? 'left' : 'top';
     this.$html.css(direction, `${newHandlerPosition}px`);
   }
 
@@ -46,7 +46,7 @@ class HandlerView {
 
   private drawHandler($htmlContainer: JQuery<HTMLElement>): JQuery<HTMLElement> {
     const handler: JQuery<HTMLElement> = $('<div/>', {
-      class: this.axis as unknown as string === 'X'
+      class: this.axis === 'X'
         ? 'slider__handler slider__handler_type_horizontal'
         : 'slider__handler slider__handler_type_vertical',
     }).appendTo($htmlContainer);
@@ -60,7 +60,7 @@ class HandlerView {
 
   private handleHandlerMouseDown(event): void {
     event.preventDefault();
-    this.offset = this.axis as unknown as string === 'X'
+    this.offset = this.axis === 'X'
       ? (event.clientX || event.touches[0].clientX) - this.$html[0].getBoundingClientRect().left
       : (event.clientY || event.touches[0].clientY) - this.$html[0].getBoundingClientRect().top;
 

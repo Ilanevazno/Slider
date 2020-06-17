@@ -28,7 +28,7 @@ class SliderBodyView {
   }
 
   public getSliderBodyParams(): number {
-    return this.axis as unknown as string === 'X'
+    return this.axis === 'X'
       ? this.$mainHtml[0].getBoundingClientRect().width
       : this.$mainHtml[0].getBoundingClientRect().height;
   }
@@ -36,7 +36,7 @@ class SliderBodyView {
   public drawBreakPoints(breakpoints: SliderBreakpoint[]): void {
     this.removeBreakpoints();
 
-    const direction: string = this.axis as unknown as string === 'X' ? 'left' : 'top';
+    const direction: string = this.axis === 'X' ? 'left' : 'top';
     let shortStepCounter: number = Math.trunc((breakpoints.length - 1) / 10);
     const shortBreakpoints: SliderBreakpoint[] = [];
     shortBreakpoints.push(breakpoints[0]);
@@ -85,7 +85,7 @@ class SliderBodyView {
 
   private drawSliderBody($htmlContainer): JQuery<HTMLElement> {
     const sliderBody: JQuery<HTMLElement> = $('<div/>', {
-      class: this.axis as unknown as string === 'X'
+      class: this.axis === 'X'
         ? 'slider__body slider__body_type_horizontal'
         : 'slider__body slider__body_type_vertical',
     }).appendTo($htmlContainer);
@@ -99,7 +99,7 @@ class SliderBodyView {
 
   private handleSliderBodyClick(event): void {
     const htmlEventTarget = event.target;
-    const caughtCoords: number = this.axis as unknown as string === 'X'
+    const caughtCoords: number = this.axis === 'X'
       ? event.offsetX
       : event.offsetY;
 

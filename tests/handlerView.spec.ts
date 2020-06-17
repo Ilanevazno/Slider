@@ -4,7 +4,7 @@ import { Axis } from '../src/plugin/components/types/types';
 const $dummyHtmlElement = $(document.createElement('div'));
 document.getElementById = jasmine.createSpy('HTML Element').and.returnValue($dummyHtmlElement);
 
-const currentAxis: Axis = 'Y' as unknown as Axis;
+const currentAxis: Axis = 'Y';
 
 const handlerView = new HandlerView($dummyHtmlElement, currentAxis);
 

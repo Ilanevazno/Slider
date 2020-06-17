@@ -4,7 +4,7 @@ import { Axis } from '../src/plugin/components/types/types';
 const dummyHtmlElement = document.createElement('div');
 document.getElementById = jasmine.createSpy('HTML Element').and.returnValue(dummyHtmlElement);
 
-const currentAxis: Axis = 'X' as unknown as Axis;
+const currentAxis: Axis = 'X';
 
 const tooltipView = new TooltipView(dummyHtmlElement, currentAxis);
 

@@ -38,11 +38,6 @@ export type StateHandler = {
   value?: number;
 }
 
-export type BreakpointsData = {
-  breakpoints: number[] | null;
-  isActiveBreakpoints: boolean;
-}
-
 export type ModelListener = {
   state: StateHandler;
   axis: Axis;
@@ -62,7 +57,7 @@ export type ConvertingData = {
 }
 
 export type ModelResponse = {
-  readonly response: 'SUCCESS' | 'ERROR';
+  readonly response: Response;
   message: string;
 }
 
@@ -79,8 +74,8 @@ export interface JQueryExtendedEvent extends JQueryEventObject {
 }
 
 export enum Response {
-  SuccessResponse = 'SUCCESS',
-  FailedResponse = 'ERROR',
+  SUCCESS = 'SUCCESS',
+  ERROR = 'ERROR',
 }
 
 export enum CustomEvents {

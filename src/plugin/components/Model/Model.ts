@@ -96,12 +96,12 @@ class Model {
       this.eventObserver.broadcast({ type: CustomEvents.MIN_VALUE_CHANGED, data: { minValue: this.minValue } });
 
       return {
-        response: Response.SuccessResponse,
+        response: Response.SUCCESS,
         message: `Минимальное значение установлено на ${value}`,
       };
     }
     return {
-      response: Response.FailedResponse,
+      response: Response.ERROR,
       message: 'Невалидное значение. Минимальное значение не может быть больше чем максимальное.',
     };
   }
@@ -116,12 +116,12 @@ class Model {
       this.eventObserver.broadcast({ type: CustomEvents.MAX_VALUE_CHANGED, data: { maxValue: this.maxValue } });
 
       return {
-        response: Response.SuccessResponse,
+        response: Response.SUCCESS,
         message: `Максимальное значение установлено на ${value}`,
       };
     }
     return {
-      response: Response.FailedResponse,
+      response: Response.ERROR,
       message: 'Невалидное значение. Максимальное значение не может быть меньше чем минимальное.',
     };
   }
@@ -204,12 +204,12 @@ class Model {
       this.eventObserver.broadcast({ type: CustomEvents.STEP_SIZE_CHANGED, data: { newBreakpoints: this.breakPoints } });
 
       return {
-        response: Response.SuccessResponse,
+        response: Response.SUCCESS,
         message: `Размер шага установлен на ${convertedNewStepSize}`,
       };
     }
     return {
-      response: Response.FailedResponse,
+      response: Response.ERROR,
       message: `Размер шага должен быть от 1 до ${convertedMaxValue}`,
     };
   }
