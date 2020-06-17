@@ -5,9 +5,9 @@ class TooltipView {
 
   private $htmlParent: JQuery<HTMLElement>;
 
-  constructor($HTMLContainer, private axis: Axis) {
+  constructor($htmlContainer, private axis: Axis) {
     this.$tooltip = null;
-    this.$htmlParent = $HTMLContainer;
+    this.$htmlParent = $htmlContainer;
     this.axis = axis;
   }
 
