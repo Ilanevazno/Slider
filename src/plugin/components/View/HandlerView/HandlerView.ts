@@ -34,7 +34,7 @@ class HandlerView {
     this.tooltip.setValue(value);
   }
 
-  public changeTooltipActivity(isActive: boolean): JQuery<HTMLElement> {
+  public changeTooltipActivity(isActive: boolean) {
     return isActive
       ? this.tooltip.drawTooltip()
       : this.tooltip.removeTooltip();
