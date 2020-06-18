@@ -3,7 +3,7 @@ import Observer from '../../Observer/Observer';
 import TooltipView from '../TooltipView/TooltipView';
 
 class HandlerView {
-  public $html: JQuery<HTMLElement>;
+  public $handler: JQuery<HTMLElement>;
 
   public observer: Observer;
 
@@ -13,8 +13,8 @@ class HandlerView {
 
   constructor($htmlContainer: JQuery<HTMLElement>, private axis: Axis) {
     this.axis = axis;
-    this.$html = this.drawHandler($htmlContainer);
-    this.tooltip = new TooltipView(this.$html, this.axis);
+    this.$handler = this.drawHandler($htmlContainer);
+    this.tooltip = new TooltipView(this.$handler, this.axis);
     this.observer = new Observer();
 
     useAutoBind(this);
@@ -23,7 +23,7 @@ class HandlerView {
 
   public moveHandler(newHandlerPosition: number): void {
     const direction: string = this.axis === 'X' ? 'left' : 'top';
-    this.$html.css(direction, `${newHandlerPosition}px`);
+    this.$handler.css(direction, `${newHandlerPosition}px`);
   }
 
   public getTooltip(): void {
@@ -41,7 +41,7 @@ class HandlerView {
   }
 
   public getHandlerWidth() {
-    return this.$html.width();
+    return this.$handler.width();
   }
 
   private drawHandler($htmlContainer: JQuery<HTMLElement>): JQuery<HTMLElement> {
@@ -55,14 +55,14 @@ class HandlerView {
   }
 
   private initEvents(): void {
-    this.$html.on('touchstart.documentTouchStart mousedown.handlerMouseDown', this.handleHandlerMouseDown);
+    this.$handler.on('touchstart.handlerTouchStart mousedown.handlerMouseDown', this.handleHandlerMouseDown);
   }
 
   private handleHandlerMouseDown(event): void {
     event.preventDefault();
     this.offset = this.axis === 'X'
-      ? (event.clientX || event.touches[0].clientX) - this.$html[0].getBoundingClientRect().left
-      : (event.clientY || event.touches[0].clientY) - this.$html[0].getBoundingClientRect().top;
+      ? (event.clientX || event.touches[0].clientX) - this.$handler[0].getBoundingClientRect().left
+      : (event.clientY || event.touches[0].clientY) - this.$handler[0].getBoundingClientRect().top;
 
     this.observer.broadcast({ type: `HANDLER_${event.type.toUpperCase()}`, data: event });
     $(document).on('touchmove.documentTouchMove mousemove.documentMouseMove', this.handleDocumentMouseMove);

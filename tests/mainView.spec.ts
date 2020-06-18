@@ -68,7 +68,7 @@ describe('Тестирование класса MainView', () => {
       const currentState = [];
 
       const currentHandler = {
-        $handler: view.minValueHandler.handler.$html,
+        $handler: view.minValueHandler.handler.$handler,
         name: view.minValueHandler.name,
         value: 50,
       };

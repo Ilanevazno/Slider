@@ -16,7 +16,7 @@ describe('Проверка класса SliderBodyView', () => {
 
   describe('Проверяем метод получения ширины хандлера', () => {
     const mockHandlerWidth = 200;
-    handlerView.$html.css('width', `${mockHandlerWidth}px`);
+    handlerView.$handler.css('width', `${mockHandlerWidth}px`);
 
     it(`Ширина слайдера должна быть ${mockHandlerWidth}`, () => {
       spyOn(handlerView, 'getHandlerWidth').and.callThrough();
@@ -36,7 +36,7 @@ describe('Проверка класса SliderBodyView', () => {
 
       handlerView.moveHandler(newHandlerPosition);
 
-      expect(handlerView.$html.css('top')).toBe(`${newHandlerPosition}px`);
+      expect(handlerView.$handler.css('top')).toBe(`${newHandlerPosition}px`);
       expect(handlerView.moveHandler).toBeCalledWith(newHandlerPosition);
     });
   });

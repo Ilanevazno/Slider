@@ -319,7 +319,7 @@ class MainView {
       switch (event.type) {
         case CustomEvents.HANDLER_MOUSEMOVE:
           this.handleHandlerMove({
-            $handler: parent.handler.$html,
+            $handler: parent.handler.$handler,
             event: event.data.event,
             name: parent.name,
             offset: event.data.offset,
@@ -327,7 +327,7 @@ class MainView {
           break;
         case CustomEvents.HANDLER_TOUCHMOVE:
           this.handleHandlerMove({
-            $handler: parent.handler.$html,
+            $handler: parent.handler.$handler,
             event: event.data.event.touches[0],
             name: parent.name,
             offset: event.data.offset,
