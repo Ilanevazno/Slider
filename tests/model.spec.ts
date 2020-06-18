@@ -3,8 +3,8 @@ import { availableOptions, ValueType, Axis } from '../src/plugin/components/type
 
 const modelSpecOptions: availableOptions = {
   stepSize: 1,
-  minValue: 1,
-  maxValue: 100,
+  minAvailableValue: 1,
+  maxAvailableValue: 100,
   minValueCurrent: 30,
   maxValueCurrent: 70,
   axis: 'X',
@@ -77,13 +77,13 @@ describe('Проверка класса Model', () => {
 
     describe('Установка минимального значения', () => {
       it('Должно вернуть ошибку, т.к значение больше максимального', () => {
-        const newMinValue = modelSpec.setMinValue(modelSpecOptions.maxValue + 1);
+        const newMinValue = modelSpec.setMinAvailableValue(modelSpecOptions.maxAvailableValue + 1);
 
         expect(newMinValue.response).toBe('ERROR');
       });
 
       it('Установка минимального значения должна быть без ошибок', () => {
-        const newMinValue = modelSpec.setMinValue(modelSpecOptions.maxValue - 10);
+        const newMinValue = modelSpec.setMinAvailableValue(modelSpecOptions.maxAvailableValue - 10);
 
         expect(newMinValue.response).toBe('SUCCESS');
       });
@@ -91,13 +91,13 @@ describe('Проверка класса Model', () => {
 
     describe('Установка максимального значения', () => {
       it('Должно вернуть ошибку, т.к значение меньше минимального', () => {
-        const newMaxValue = modelSpec.setMaxValue(modelSpecOptions.minValue + -10);
+        const newMaxValue = modelSpec.setMaxAvailableValue(modelSpecOptions.minAvailableValue + -10);
 
         expect(newMaxValue.response).toBe('ERROR');
       });
 
       it('Установка минимального значения должна быть без ошибок', () => {
-        const newMaxValue = modelSpec.setMaxValue(modelSpecOptions.maxValue + 10);
+        const newMaxValue = modelSpec.setMaxAvailableValue(modelSpecOptions.maxAvailableValue + 10);
 
         expect(newMaxValue.response).toBe('SUCCESS');
       });
@@ -105,22 +105,22 @@ describe('Проверка класса Model', () => {
 
     describe('Установка шага', () => {
       it('Должна быть возвращена ошибка, новое значение больше чем максимальное', () => {
-        const newStepSize = modelSpec.setStepSize(modelSpecOptions.maxValue * 2);
+        const newStepSize = modelSpec.setStepSize(modelSpecOptions.maxAvailableValue * 2);
         expect(newStepSize.response).toBe('ERROR');
       });
 
-      it(`Новое новый шаг должен быть установлен на ${modelSpecOptions.maxValue / 2}`, () => {
-        const newStepSize = modelSpec.setStepSize(modelSpecOptions.maxValue / 2);
+      it(`Новое новый шаг должен быть установлен на ${modelSpecOptions.maxAvailableValue / 2}`, () => {
+        const newStepSize = modelSpec.setStepSize(modelSpecOptions.maxAvailableValue / 2);
         expect(newStepSize.response).toBe('SUCCESS');
       });
 
       it('Отрицательные значения должны работать', () => {
-        const newStepSize = modelSpec.setStepSize(-modelSpecOptions.maxValue);
+        const newStepSize = modelSpec.setStepSize(-modelSpecOptions.maxAvailableValue);
         expect(newStepSize.response).toBe('SUCCESS');
       });
 
       it('Дробные значения должны работать', () => {
-        const newStepSize = modelSpec.setStepSize(modelSpecOptions.maxValue / 2.5);
+        const newStepSize = modelSpec.setStepSize(modelSpecOptions.maxAvailableValue / 2.5);
         expect(newStepSize.response).toBe('SUCCESS');
       });
     });
@@ -140,7 +140,7 @@ describe('Проверка класса Model', () => {
       const handler = {
         $handler: dummyHtmlElement,
         name: 'min-value',
-        value: modelSpecOptions.minValue,
+        value: modelSpecOptions.minAvailableValue,
       };
 
       beforeEach(() => {
@@ -157,10 +157,10 @@ describe('Проверка класса Model', () => {
       it('Изменение состояния по имени хандлера', () => {
         const newHandlerValue = 50;
 
-        spyOn(modelSpec, 'changeStateByHandlerName').and.callThrough();
-        modelSpec.changeStateByHandlerName('min-value', newHandlerValue);
+        spyOn(modelSpec, 'changeStateByItemName').and.callThrough();
+        modelSpec.changeStateByItemName('min-value', newHandlerValue);
 
-        expect(modelSpec.changeStateByHandlerName).toBeCalledWith('min-value', newHandlerValue);
+        expect(modelSpec.changeStateByItemName).toBeCalledWith('min-value', newHandlerValue);
       });
 
       it('Обновить состояние', () => {

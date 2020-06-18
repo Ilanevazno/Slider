@@ -90,7 +90,7 @@ $("#slider").sliderPlugin({ options })
 | setAxis| axis: string | 'X', 'Y' | change slider axis|
 | showTooltip||| show tooltip with current value |
 | hideTooltip||| hide tooltip with current value |
-| changeStateByHandlerName|handlerName: string, newValue: number|'min-value', -∞ -  +∞ or 'max-value', -∞ -  +∞| hide tooltip with current value |
+| changeStateByItemName|handlerName: string, newValue: number|'min-value', -∞ -  +∞ or 'max-value', -∞ -  +∞| hide tooltip with current value |
 | setValueType |valueType: string|singleValue, doubleValue| change slider value type|
 
 ## Architecture description

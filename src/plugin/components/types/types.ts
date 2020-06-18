@@ -2,8 +2,8 @@ import HandlerView from '../View/HandlerView/HandlerView';
 
 export type availableOptions = {
   stepSize: number;
-  minValue: number;
-  maxValue: number;
+  minAvailableValue: number;
+  maxAvailableValue: number;
   minValueCurrent?: number;
   maxValueCurrent?: number;
   axis: Axis;
@@ -53,7 +53,7 @@ export type ConvertingData = {
   minPercent: number;
   maxPercent: number;
   currentValue: number;
-  htmlContainerWidth: number;
+  maxValue: number;
 }
 
 export type ModelResponse = {

@@ -40,8 +40,8 @@ class Panel {
 
     this.sliderOptions = {
       stepSize: this.$slider.data('stepsize'),
-      minValue: this.$slider.data('minvalue'),
-      maxValue: this.$slider.data('maxvalue'),
+      minAvailableValue: this.$slider.data('minvalue'),
+      maxAvailableValue: this.$slider.data('maxvalue'),
       minValueCurrent: this.$slider.data('minvaluecurrent'),
       maxValueCurrent: this.$slider.data('maxvaluecurrent'),
       valueType: this.$slider.data('valuetype'),
@@ -107,8 +107,8 @@ class Panel {
     });
 
     this.$stepSizeInput?.val(this.sliderOptions.stepSize);
-    this.$minValueInput?.val(this.sliderOptions.minValue);
-    this.$maxValueInput?.val(this.sliderOptions.maxValue);
+    this.$minValueInput?.val(this.sliderOptions.minAvailableValue);
+    this.$maxValueInput?.val(this.sliderOptions.maxAvailableValue);
   }
 
   private prepareLabelsData(): void {
@@ -195,13 +195,13 @@ class Panel {
   private setMinValueHandler($targetLabel: JQuery<HTMLElement>): void {
     const newStateValue = $targetLabel.val();
 
-    this.$slider.sliderPlugin('changeStateByHandlerName', 'min-value', newStateValue);
+    this.$slider.sliderPlugin('changeStateByItemName', 'min-value', newStateValue);
   }
 
   private setMaxValueHandler($targetLabel: JQuery<HTMLElement>): void {
     const newStateValue = $targetLabel.val();
 
-    this.$slider.sliderPlugin('changeStateByHandlerName', 'max-value', newStateValue);
+    this.$slider.sliderPlugin('changeStateByItemName', 'max-value', newStateValue);
   }
 
   private changeValueType($targetLabel: JQuery<HTMLElement>): void {

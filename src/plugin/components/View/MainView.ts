@@ -32,7 +32,7 @@ class MainView {
   }
 
   public refreshView(): void {
-    this.sliderBody.removeSliderBody();
+    this.sliderBody.remove();
     this.eventObserver.broadcast({ type: CustomEvents.STATE_CLEARED });
     this.createSliderComponents();
     this.eventObserver.broadcast({ type: CustomEvents.STATE_REFRESHED });
@@ -42,7 +42,7 @@ class MainView {
     const caughtHandlerIndex: number = handler === 'min-value' ? 0 : 1;
     const caughtHandlerInstance: StateHandler = [this.minValueHandler, this.maxValueHandler][caughtHandlerIndex];
     const caughtHandlerName = caughtHandlerInstance.name;
-    const minValue: number = this.model.getOption('minValue');
+    const minValue: number = this.model.getOption('minAvailableValue');
 
     const dataForBroadcasting: ObserverEvent<StateHandler> = {
       type: CustomEvents.STATE_CHANGED,
@@ -65,7 +65,7 @@ class MainView {
   public setTooltipActivity(isTooltipActive: boolean): void {
     [this.minValueHandler, this.maxValueHandler].forEach((currentHandler: StateHandler) => {
       if (currentHandler) {
-        const tooltipPercent: number = currentHandler.value || this.model.getOption('minValue');
+        const tooltipPercent: number = currentHandler.value || this.model.getOption('minAvailableValue');
         currentHandler.handler.changeTooltipActivity(isTooltipActive);
         currentHandler.handler.setTooltipValue(tooltipPercent);
       }
@@ -85,12 +85,12 @@ class MainView {
         const foundState = state.filter((currentState) => currentState.name === handler.name);
         if (foundState.length) {
           const currentValue: number = foundState[0].value;
-          const htmlContainerWidth: number = this.sliderBody.getSliderBodyParams() - handler.handler.getHandlerWidth();
+          const maxValue: number = this.sliderBody.getSliderBodyParams() - handler.handler.getHandlerWidth();
           const optionList: ConvertingData = {
-            minPercent: this.model.getOption('minValue'),
-            maxPercent: this.model.getOption('maxValue'),
+            minPercent: this.model.getOption('minAvailableValue'),
+            maxPercent: this.model.getOption('maxAvailableValue'),
             currentValue,
-            htmlContainerWidth,
+            maxValue,
           };
           const newHandlerPosition: number = this.convertPercentToPixel(optionList);
           const handlerForMoving: StateHandler = handler.name === 'min-value'
@@ -115,15 +115,15 @@ class MainView {
   private getConvertedBreakpoints() {
     const axisDivisionOffset = this.model.getOption('axis') === 'X' ? 4 : 2;
     const offsetHandlerWidth = this.minValueHandler.handler.getHandlerWidth();
-    const htmlContainerWidth: number = this.sliderBody.getSliderBodyParams() - offsetHandlerWidth;
+    const sliderBodyParams: number = this.sliderBody.getSliderBodyParams() - offsetHandlerWidth;
     const availableBreakpoints: number[] = this.model.getOption('breakpoints');
 
     return availableBreakpoints.map((currentValue: number) => {
       const optionList: ConvertingData = {
-        minPercent: this.model.getOption('minValue'),
-        maxPercent: this.model.getOption('maxValue'),
+        minPercent: this.model.getOption('minAvailableValue'),
+        maxPercent: this.model.getOption('maxAvailableValue'),
+        maxValue: sliderBodyParams,
         currentValue,
-        htmlContainerWidth,
       };
 
       return {
@@ -138,9 +138,9 @@ class MainView {
       maxPercent,
       minPercent,
       currentValue,
-      htmlContainerWidth,
+      maxValue,
     } = data;
-    return (currentValue * (maxPercent - minPercent)) / htmlContainerWidth;
+    return (currentValue * (maxPercent - minPercent)) / maxValue;
   }
 
   public convertPercentToPixel(data: ConvertingData): number {
@@ -148,20 +148,20 @@ class MainView {
       minPercent,
       maxPercent,
       currentValue,
-      htmlContainerWidth,
+      maxValue,
     } = data;
 
-    return ((currentValue - minPercent) / (maxPercent - minPercent)) * htmlContainerWidth;
+    return ((currentValue - minPercent) / (maxPercent - minPercent)) * maxValue;
   }
 
   private convertPxToPercent(currentValue: number): number {
     const optionsForConverting: ConvertingData = {
-      minPercent: this.model.getOption('minValue'),
-      maxPercent: this.model.getOption('maxValue'),
-      htmlContainerWidth: this.sliderBody.getSliderBodyParams(),
+      minPercent: this.model.getOption('minAvailableValue'),
+      maxPercent: this.model.getOption('maxAvailableValue'),
+      maxValue: this.sliderBody.getSliderBodyParams(),
       currentValue,
     };
-    const minValueOption: number = this.model.getOption('minValue');
+    const minValueOption: number = this.model.getOption('minAvailableValue');
     return this.convertPixelToPercent(optionsForConverting) + minValueOption;
   }
 
@@ -173,8 +173,8 @@ class MainView {
     } = data;
 
     const currentPixel: number = this.model.getOption('axis') === 'X'
-      ? event.clientX - offset - this.sliderBody.$mainHtml[0].getBoundingClientRect().left
-      : event.clientY - offset - this.sliderBody.$mainHtml[0].getBoundingClientRect().top;
+      ? event.clientX - offset - this.sliderBody.$sliderBody[0].getBoundingClientRect().left
+      : event.clientY - offset - this.sliderBody.$sliderBody[0].getBoundingClientRect().top;
 
     const value: number = this.convertPxToPercent(currentPixel);
     const dataForBroadcasting: ObserverEvent<StateHandler> = {
@@ -194,7 +194,7 @@ class MainView {
     this.sliderBody = this.drawSliderBody(this.$sliderContainer);
     this.minValueHandler = {
       name: 'min-value',
-      handler: this.getHandlerComponent(this.sliderBody.$mainHtml),
+      handler: this.getHandlerComponent(this.sliderBody.$sliderBody),
     };
 
     const callFunctionAfterAll = (callbackFunction) => setTimeout(callbackFunction, 0);
@@ -207,7 +207,7 @@ class MainView {
     if (valueType === 'double') {
       this.maxValueHandler = {
         name: 'max-value',
-        handler: this.getHandlerComponent(this.sliderBody.$mainHtml),
+        handler: this.getHandlerComponent(this.sliderBody.$sliderBody),
       };
 
       this.initHandlerEvents(this.maxValueHandler);

@@ -4,8 +4,8 @@ import { availableOptions, ValueType, Axis } from '../src/plugin/components/type
 
 const mockModelOptions: availableOptions = {
   stepSize: 1,
-  minValue: 1,
-  maxValue: 100,
+  minAvailableValue: 1,
+  maxAvailableValue: 100,
   minValueCurrent: 30,
   maxValueCurrent: 70,
   axis: 'X',

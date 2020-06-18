@@ -27,7 +27,7 @@ class HandlerView {
   }
 
   public getTooltip(): void {
-    this.tooltip.drawTooltip();
+    this.tooltip.draw();
   }
 
   public setTooltipValue(value: number): void {
@@ -36,8 +36,8 @@ class HandlerView {
 
   public changeTooltipActivity(isActive: boolean) {
     return isActive
-      ? this.tooltip.drawTooltip()
-      : this.tooltip.removeTooltip();
+      ? this.tooltip.draw()
+      : this.tooltip.remove();
   }
 
   public getHandlerWidth() {

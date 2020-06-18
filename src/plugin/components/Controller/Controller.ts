@@ -28,8 +28,8 @@ class Controller {
     });
   }
 
-  public changeStateByHandlerName(handlerName: string, value: number): void {
-    this.model.changeStateByHandlerName(handlerName, value);
+  public changeStateByItemName(handlerName: string, value: number): void {
+    this.model.changeStateByItemName(handlerName, value);
   }
 
   public setValueType(valueType: ValueType): void {
@@ -61,11 +61,11 @@ class Controller {
   }
 
   public setMinValue(value: number): ModelResponse {
-    return this.model.setMinValue(value);
+    return this.model.setMinAvailableValue(value);
   }
 
   public setMaxValue(value: number): ModelResponse {
-    return this.model.setMaxValue(value);
+    return this.model.setMaxAvailableValue(value);
   }
 
   private subscribeViewObserver(): void {

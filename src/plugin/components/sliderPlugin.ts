@@ -8,8 +8,8 @@ import Controller from './Controller/Controller';
     _init(args) {
       const initSliderOptions: availableOptions = {
         stepSize: 1,
-        minValue: 1,
-        maxValue: 100,
+        minAvailableValue: 1,
+        maxAvailableValue: 100,
         minValueCurrent: 1,
         maxValueCurrent: 100,
         axis: 'X',
@@ -28,8 +28,8 @@ import Controller from './Controller/Controller';
       this.data('controller', controller);
 
       setTimeout(() => {
-        controller.changeStateByHandlerName('min-value', args.minValueCurrent);
-        controller.changeStateByHandlerName('max-value', args.maxValueCurrent);
+        controller.changeStateByItemName('min-value', args.minValueCurrent);
+        controller.changeStateByItemName('max-value', args.maxValueCurrent);
       }, 0);
 
       return this;

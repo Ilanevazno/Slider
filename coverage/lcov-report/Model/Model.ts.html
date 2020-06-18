@@ -750,7 +750,7 @@ class Model {
     return this.breakPoints;
   }
 &nbsp;
-  public changeStateByHandlerName(handlerName: string, value: number): void {
+  public changeStateByItemName(handlerName: string, value: number): void {
     this.state.map((stateElement: StateHandler) =&gt; {
       <span class="missing-if-branch" title="else path not taken" >E</span>if (stateElement.name === handlerName) {
         stateElement.value = this.findTheClosestBreakpoint(Number(value));

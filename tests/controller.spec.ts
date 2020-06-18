@@ -5,8 +5,8 @@ import { availableOptions } from '../src/plugin/components/types/types';
 
 const mockModelOptions: availableOptions = {
   stepSize: 1,
-  minValue: 1,
-  maxValue: 100,
+  minAvailableValue: 1,
+  maxAvailableValue: 100,
   minValueCurrent: 30,
   maxValueCurrent: 70,
   axis: 'X',
@@ -36,9 +36,9 @@ describe('Проверка класса Controller', () => {
   });
 
   it('Запрос на изменение состояния по имени', () => {
-    spyOn(controllerSpec, 'changeStateByHandlerName');
-    controllerSpec.changeStateByHandlerName('minValue', 50);
-    expect(controllerSpec.changeStateByHandlerName).toBeCalledWith('minValue', 50);
+    spyOn(controllerSpec, 'changeStateByItemName');
+    controllerSpec.changeStateByItemName('minValue', 50);
+    expect(controllerSpec.changeStateByItemName).toBeCalledWith('minValue', 50);
   });
 
   it('Запрос на изменение типа вида', () => {

@@ -2,7 +2,7 @@ import { SliderBreakpoint, CustomEvents, Axis } from '../../types/types';
 import Observer from '../../Observer/Observer';
 
 class SliderBodyView {
-  public $mainHtml: JQuery<HTMLElement>;
+  public $sliderBody: JQuery<HTMLElement>;
 
   public eventObserver: Observer;
 
@@ -11,7 +11,7 @@ class SliderBodyView {
   constructor($htmlContainer: JQuery<HTMLElement>, private axis: Axis) {
     this.eventObserver = new Observer();
     this.axis = axis;
-    this.$mainHtml = this.drawSliderBody($htmlContainer);
+    this.$sliderBody = this.drawBody($htmlContainer);
     this.breakpointElements = [];
 
     useAutoBind(this);
@@ -23,14 +23,14 @@ class SliderBodyView {
     return this.axis;
   }
 
-  public removeSliderBody(): void {
-    this.$mainHtml.remove();
+  public remove(): void {
+    this.$sliderBody.remove();
   }
 
   public getSliderBodyParams(): number {
     return this.axis === 'X'
-      ? this.$mainHtml[0].getBoundingClientRect().width
-      : this.$mainHtml[0].getBoundingClientRect().height;
+      ? this.$sliderBody[0].getBoundingClientRect().width
+      : this.$sliderBody[0].getBoundingClientRect().height;
   }
 
   public drawBreakPoints(breakpoints: SliderBreakpoint[]): void {
@@ -60,7 +60,7 @@ class SliderBodyView {
         })
           .css(direction, `${breakpoint.pixelPosition}px`)
           .text(icon)
-          .appendTo(this.$mainHtml)
+          .appendTo(this.$sliderBody)
           .on('click', this.handleBreakpointClick.bind(null, icon));
       });
   }
@@ -83,7 +83,7 @@ class SliderBodyView {
     this.eventObserver.broadcast({ type: CustomEvents.BREAKPOINT_CLICKED, percentValue: breakpointValue });
   }
 
-  private drawSliderBody($htmlContainer): JQuery<HTMLElement> {
+  private drawBody($htmlContainer): JQuery<HTMLElement> {
     const sliderBody: JQuery<HTMLElement> = $('<div/>', {
       class: this.axis === 'X'
         ? 'slider__body slider__body_type_horizontal'
@@ -103,14 +103,14 @@ class SliderBodyView {
       ? event.offsetX
       : event.offsetY;
 
-    if (htmlEventTarget === this.$mainHtml[0]) {
+    if (htmlEventTarget === this.$sliderBody[0]) {
       this.eventObserver.broadcast({ type: CustomEvents.BODY_CLICKED, caughtCoords });
     }
   }
 
   private bindActions(): void {
     $(window).on('resize.windowResize', this.handleWindowResize);
-    this.$mainHtml.on('click.mainHtmlClick', this.handleSliderBodyClick);
+    this.$sliderBody.on('click.sliderBodyClick', this.handleSliderBodyClick);
   }
 }
 

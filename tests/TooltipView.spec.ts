@@ -18,9 +18,9 @@ describe('Проверка класса ValidateView', () => {
     let tooltip: JQuery<HTMLElement> | undefined;
 
     beforeEach(() => {
-      spyOn(tooltipView, 'drawTooltip').and.callThrough();
-      tooltip = tooltipView.drawTooltip();
-      expect(tooltipView.drawTooltip).toBeCalled();
+      spyOn(tooltipView, 'draw').and.callThrough();
+      tooltip = tooltipView.draw();
+      expect(tooltipView.draw).toBeCalled();
     });
 
     it('Создание элемента', () => {
@@ -28,11 +28,11 @@ describe('Проверка класса ValidateView', () => {
     });
 
     it('Удаление элемента', () => {
-      spyOn(tooltipView, 'removeTooltip').and.callThrough();
+      spyOn(tooltipView, 'remove').and.callThrough();
 
-      tooltipView.removeTooltip();
+      tooltipView.remove();
 
-      expect(tooltipView.removeTooltip).toBeCalled();
+      expect(tooltipView.remove).toBeCalled();
     });
   });
 

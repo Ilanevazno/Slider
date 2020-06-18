@@ -11,7 +11,7 @@ class TooltipView {
     this.$tooltip.text(percent);
   }
 
-  public drawTooltip() {
+  public draw(): JQuery<HTMLElement> {
     this.$tooltip = $('<div/>', {
       class: this.axis === 'X'
         ? 'slider__tooltip slider__tooltip_type_horizontal'
@@ -20,8 +20,8 @@ class TooltipView {
     return this.$tooltip;
   }
 
-  public removeTooltip() {
-    this.$tooltip.remove();
+  public remove(): JQuery<HTMLElement> {
+    return this.$tooltip.remove();
   }
 }
 
