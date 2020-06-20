@@ -1,6 +1,6 @@
 import {
   availableOptions,
-  modelState,
+  unconvertedStateItem,
   ModelResponse,
   CustomEvents,
   Response,
@@ -18,7 +18,7 @@ class Model {
 
   public valueType: ValueType;
 
-  public state: modelState[];
+  public state: object;
 
   public minAvailableValue: number;
 
@@ -32,7 +32,7 @@ class Model {
 
   constructor(options: availableOptions) {
     this.eventObserver = new Observer();
-    this.state = [];
+    this.state = {};
     this.withLabels = options.withLabels;
     this.axis = options.axis;
     this.valueType = options.valueType;
@@ -63,17 +63,12 @@ class Model {
     this.eventObserver.broadcast({ type: CustomEvents.LABELS_ACTIVITY_CHANGED, data: { isLabelsActive } });
   }
 
-  public showTooltip(): void {
-    this.withTooltip = true;
+  public setTooltipActivity(isActive: boolean): void {
+    this.withTooltip = isActive;
 
     this.eventObserver.broadcast({ type: CustomEvents.TOOLTIP_ACTIVITY_CHANGED, data: { withTooltip: this.withTooltip } });
   }
 
-  public hideTooltip(): void {
-    this.withTooltip = false;
-
-    this.eventObserver.broadcast({ type: CustomEvents.TOOLTIP_ACTIVITY_CHANGED, data: { withTooltip: this.withTooltip } });
-  }
 
   public getOption<T>(targetOption: string): T {
     const OptionsList: object = this.getOptionList();
@@ -82,7 +77,7 @@ class Model {
     return OptionsList[targetOption];
   }
 
-  public getState(): modelState[] {
+  public getState(): object {
     return this.state;
   }
 
@@ -140,54 +135,34 @@ class Model {
     return this.breakPoints;
   }
 
-  public changeStateByItemName(stateItemName: string, value: number): void {
-    this.state = this.state.map((stateElement: modelState) => {
-      if (stateElement.name === stateItemName) {
-        return {
-          ...stateElement,
-          value: this.findTheClosestBreakpoint(Number(value)),
-        };
-      }
-      return stateElement;
-    });
+  public changeStateByItemName(name: string, value: number): void {
+    this.setState({ value, name });
 
-    this.checkCollision(stateItemName);
+    if (Object.keys(this.state).length > 1) {
+      this.checkCollision(name);
+    }
 
     this.eventObserver.broadcast({ type: CustomEvents.STATE_CHANGED, data: { state: this.state } });
   }
 
-  public setState(targetStateItem: modelState): void {
-    const stateLength = this.getStateLength();
-
+  public setState(targetStateItem: unconvertedStateItem): void {
     if (!this.checkIncludeStateValue(targetStateItem.name)) {
-      this.state[stateLength] = targetStateItem;
+      this.state[targetStateItem.name] = { value: targetStateItem.value };
     }
 
-    this.checkCollision(targetStateItem.name);
+    if (Object.keys(this.state).length > 1) {
+      this.checkCollision(targetStateItem.name);
+    }
 
-    this.state = this.state.map((stateElement: modelState) => {
-      if (stateElement.name === targetStateItem.name) {
-        return {
-          ...stateElement,
-          value: this.findTheClosestBreakpoint(targetStateItem.value),
-        };
-      }
-
-      return stateElement;
-    });
-
+    this.state[targetStateItem.name].value = this.findTheClosestBreakpoint(targetStateItem.value);
     this.eventObserver.broadcast({ type: CustomEvents.STATE_CHANGED, data: { state: this.state } });
   }
 
   public clearState(): void {
-    this.state = [];
+    this.state = {};
   }
 
   public refreshState(): void {
-    this.state.forEach((item) => {
-      this.setState(item);
-    });
-
     this.eventObserver.broadcast({ type: CustomEvents.STATE_CHANGED, data: { state: this.state } });
   }
 
@@ -220,6 +195,8 @@ class Model {
       valueType: this.valueType,
       minAvailableValue: this.minAvailableValue,
       maxAvailableValue: this.maxAvailableValue,
+      minValueCurrent: this.state['min-value'] ? this.state['min-value'].value : 'Значение не найдено',
+      maxValueCurrent: this.state['max-value'] ? this.state['max-value'].value : 'Значение не найдено',
       stepSize: this.stepSize,
       breakpoints: this.breakPoints,
       withTooltip: this.withTooltip,
@@ -228,38 +205,23 @@ class Model {
   }
 
   private checkIncludeStateValue(targetElement: string): boolean {
-    let isFoundItem = false;
-
-    this.state.map((stateElement: modelState) => {
-      if (stateElement.name === targetElement) {
-        isFoundItem = true;
-      }
-      return false;
-    });
-
-    return isFoundItem;
-  }
-
-  private getStateLength(): number {
-    return this.state.length;
+    return Object.prototype.hasOwnProperty.call(this.state, targetElement);
   }
 
   private checkCollision(currentStateItem): void {
-    const stateLength: number = this.getStateLength();
-    const firstStateItemCurrent: number = this.state[0].value;
-    const lastStateItemCurrent: number = this.state[stateLength - 1].value;
-
+    const firstStateItemCurrent: number = this.state['min-value'].value;
+    const lastStateItemCurrent: number = this.state['max-value'].value;
 
     if (currentStateItem === 'min-value') {
-      this.state[stateLength - 1].value = firstStateItemCurrent > lastStateItemCurrent
-        ? this.state[0].value
-        : this.state[stateLength - 1].value;
+      this.state['max-value'].value = firstStateItemCurrent > lastStateItemCurrent
+        ? firstStateItemCurrent
+        : lastStateItemCurrent;
     }
 
     if (currentStateItem === 'max-value') {
-      this.state[0].value = lastStateItemCurrent < firstStateItemCurrent
-        ? this.state[stateLength - 1].value
-        : this.state[0].value;
+      this.state['min-value'].value = lastStateItemCurrent < firstStateItemCurrent
+        ? lastStateItemCurrent
+        : firstStateItemCurrent;
     }
   }
 

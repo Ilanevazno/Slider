@@ -29,7 +29,10 @@ import Controller from './Controller/Controller';
 
       setTimeout(() => {
         controller.changeStateByItemName('min-value', args.minValueCurrent);
-        controller.changeStateByItemName('max-value', args.maxValueCurrent);
+
+        if (initSliderOptions.valueType === 'double') {
+          controller.changeStateByItemName('max-value', args.maxValueCurrent);
+        }
       }, 0);
 
       return this;

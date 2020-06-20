@@ -40,15 +40,15 @@ class Panel {
 
     this.sliderOptions = {
       stepSize: this.$slider.data('stepsize'),
-      minAvailableValue: this.$slider.data('minvalue'),
-      maxAvailableValue: this.$slider.data('maxvalue'),
+      minAvailableValue: this.$slider.data('minavailablevalue'),
+      maxAvailableValue: this.$slider.data('maxavailablevalue'),
       minValueCurrent: this.$slider.data('minvaluecurrent'),
       maxValueCurrent: this.$slider.data('maxvaluecurrent'),
       valueType: this.$slider.data('valuetype'),
       axis: this.$slider.data('axis'),
       withTooltip: this.$slider.data('withtooltip') !== undefined,
       withLabels: this.$slider.data('withlabels') !== undefined,
-    } as availableOptions;
+    };
 
     this.drawSlider();
     this.connectLabels();
@@ -100,8 +100,8 @@ class Panel {
   private prepareInputLabels(): void {
     this.$slider.sliderPlugin('subscribeToChangeState', (newState) => {
       try {
-        this.$minValueHandlerInput?.val(newState[0].value);
-        this.$maxValueHandlerInput?.val(newState[Object.values(newState).length - 1].value);
+        this.$minValueHandlerInput?.val(newState['min-value'].value);
+        this.$maxValueHandlerInput?.val(newState['max-value'].value);
         // eslint-disable-next-line no-empty
       } catch (err) { }
     });
@@ -134,8 +134,8 @@ class Panel {
     this.$setLabelsActivity?.on('change.labelsActivity', this.handleLabelChange.bind(this, 'setLabelsActivity'));
     this.$viewTypeSelect?.on('change.viewTypeSelect', this.handleLabelChange.bind(this, 'changeAxis'));
     this.$valueTypeSelect?.on('change.ValueTypeSelect', this.handleLabelChange.bind(this, 'changeValueType'));
-    this.$minValueInput?.on('focusout.minValueInput', this.handleLabelChange.bind(this, 'setMinValue'));
-    this.$maxValueInput?.on('blur.maxValueInput', this.handleLabelChange.bind(this, 'setMaxValue'));
+    this.$minValueInput?.on('focusout.minValueInput', this.handleLabelChange.bind(this, 'setMinAvailableValue'));
+    this.$maxValueInput?.on('blur.maxValueInput', this.handleLabelChange.bind(this, 'setMaxAvailableValue'));
     this.$stepSizeInput?.on('blur.stepSizeInput', this.handleLabelChange.bind(this, 'setStepSize'));
     this.$minValueHandlerInput?.on('blur.minValueHandlerInput', this.handleLabelChange.bind(this, 'setMinValueHandler'));
     this.$maxValueHandlerInput?.on('blur.maxValueHandlerInput', this.handleLabelChange.bind(this, 'setMaxValueHandler'));
@@ -172,11 +172,11 @@ class Panel {
       case 'changeValueType':
         this.changeValueType($caughtElement);
         break;
-      case 'setMinValue':
-        this.setMinValue($caughtElement);
+      case 'setMinAvailableValue':
+        this.setMinAvailableValue($caughtElement);
         break;
-      case 'setMaxValue':
-        this.setMaxValue($caughtElement);
+      case 'setMaxAvailableValue':
+        this.setMaxAvailableValue($caughtElement);
         break;
       case 'setStepSize':
         this.setStepSize($caughtElement);
@@ -236,10 +236,10 @@ class Panel {
     }
   }
 
-  private setMinValue($targetLabel: JQuery<HTMLElement>): void {
+  private setMinAvailableValue($targetLabel: JQuery<HTMLElement>): void {
     const caughtNewValue = Number($targetLabel.val());
     const $targetLabelParent = $targetLabel.parent();
-    const setNewValueRequest = this.$slider.sliderPlugin('setMinValue', caughtNewValue);
+    const setNewValueRequest = this.$slider.sliderPlugin('setMinAvailableValue', caughtNewValue);
 
     if (setNewValueRequest.response === 'ERROR') {
       this.getErrorNotify(setNewValueRequest.message, $targetLabelParent);
@@ -247,10 +247,10 @@ class Panel {
     }
   }
 
-  private setMaxValue($targetLabel: JQuery<HTMLElement>): void {
+  private setMaxAvailableValue($targetLabel: JQuery<HTMLElement>): void {
     const caughtNewValue = Number($targetLabel.val());
     const $targetLabelParent = $targetLabel.parent();
-    const setMaxValueRequest = this.$slider.sliderPlugin('setMaxValue', caughtNewValue);
+    const setMaxValueRequest = this.$slider.sliderPlugin('setMaxAvailableValue', caughtNewValue);
 
     if (setMaxValueRequest.response === 'ERROR') {
       this.getErrorNotify(setMaxValueRequest.message, $targetLabelParent);
@@ -259,7 +259,9 @@ class Panel {
   }
 
   private setActivityTooltip($targetLabel: JQuery<HTMLElement>): void {
-    $targetLabel.is(':checked') ? this.$slider.sliderPlugin('showTooltip') : this.$slider.sliderPlugin('hideTooltip');
+    $targetLabel.is(':checked')
+      ? this.$slider.sliderPlugin('setTooltipActivity', true)
+      : this.$slider.sliderPlugin('setTooltipActivity', false);
   }
 
   private changeAxis($targetLabel: JQuery<HTMLElement>): void {

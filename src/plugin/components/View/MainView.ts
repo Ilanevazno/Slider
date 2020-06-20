@@ -1,6 +1,6 @@
 import {
   ObserverEvent,
-  StateHandler,
+  ViewHandlerData,
   SliderBreakpoint,
   ConvertingData,
   CustomEvents,
@@ -20,15 +20,16 @@ class MainView {
 
   public sliderBody: SliderBodyView;
 
-  public minValueHandler: StateHandler;
+  public minValueHandler: ViewHandlerData;
 
-  public maxValueHandler: StateHandler;
+  public maxValueHandler: ViewHandlerData;
 
   constructor(private model: Model, initHtmlElement: HTMLElement) {
     this.eventObserver = new Observer();
     this.$sliderContainer = this.drawSliderContainer(initHtmlElement);
 
     this.createSliderComponents();
+    console.log(this.minValueHandler);
   }
 
   public refreshView(): void {
@@ -40,11 +41,11 @@ class MainView {
 
   public setState(handler: string): void {
     const caughtHandlerIndex: number = handler === 'min-value' ? 0 : 1;
-    const caughtHandlerInstance: StateHandler = [this.minValueHandler, this.maxValueHandler][caughtHandlerIndex];
+    const caughtHandlerInstance: ViewHandlerData = [this.minValueHandler, this.maxValueHandler][caughtHandlerIndex];
     const caughtHandlerName = caughtHandlerInstance.name;
     const minValue: number = this.model.getOption('minAvailableValue');
 
-    const dataForBroadcasting: ObserverEvent<StateHandler> = {
+    const dataForBroadcasting: ObserverEvent<ViewHandlerData> = {
       type: CustomEvents.STATE_CHANGED,
       data: {
         name: caughtHandlerName,
@@ -63,7 +64,7 @@ class MainView {
   }
 
   public setTooltipActivity(isTooltipActive: boolean): void {
-    [this.minValueHandler, this.maxValueHandler].forEach((currentHandler: StateHandler) => {
+    [this.minValueHandler, this.maxValueHandler].forEach((currentHandler: ViewHandlerData) => {
       if (currentHandler) {
         const tooltipPercent: number = currentHandler.value || this.model.getOption('minAvailableValue');
         currentHandler.handler.changeTooltipActivity(isTooltipActive);
@@ -79,12 +80,13 @@ class MainView {
     return this.model.getOption('axis');
   }
 
-  public prepareToMoveHandler(state) {
-    [this.minValueHandler, this.maxValueHandler].forEach((handler: StateHandler) => {
+  public prepareToMoveHandler(dataForMoving) {
+    [this.minValueHandler, this.maxValueHandler].forEach((handler: ViewHandlerData) => {
       if (handler !== undefined) {
-        const foundState = state.filter((currentState) => currentState.name === handler.name);
-        if (foundState.length) {
-          const currentValue: number = foundState[0].value;
+        const foundedHandlerInData = Object.keys(dataForMoving).filter((currentStateItem) => currentStateItem === handler.name);
+
+        if (foundedHandlerInData.length) {
+          const currentValue: any = dataForMoving[handler.name].value;
           const maxValue: number = this.sliderBody.getSliderBodyParams() - handler.handler.getHandlerWidth();
           const optionList: ConvertingData = {
             minPercent: this.model.getOption('minAvailableValue'),
@@ -93,7 +95,7 @@ class MainView {
             maxValue,
           };
           const newHandlerPosition: number = this.convertPercentToPixel(optionList);
-          const handlerForMoving: StateHandler = handler.name === 'min-value'
+          const handlerForMoving: ViewHandlerData = handler.name === 'min-value'
             ? this.minValueHandler
             : this.maxValueHandler;
 
@@ -177,7 +179,7 @@ class MainView {
       : event.clientY - offset - this.sliderBody.$sliderBody[0].getBoundingClientRect().top;
 
     const value: number = this.convertPxToPercent(currentPixel);
-    const dataForBroadcasting: ObserverEvent<StateHandler> = {
+    const dataForBroadcasting: ObserverEvent<ViewHandlerData> = {
       type: CustomEvents.STATE_CHANGED,
       data: {
         value,
@@ -262,21 +264,24 @@ class MainView {
   }
 
   private moveHandlerByBodyClick(event): void {
+    const availableHandlers = [this.minValueHandler, this.maxValueHandler];
     const targetPercent: number = event.caughtCoords
       ? this.convertPxToPercent(event.caughtCoords)
       : event.percentValue;
-    const currentState: StateHandler[] = this.model.getState();
+
     const availableHandlerValues: number[] = [];
 
-    currentState.forEach((_stateHandler, index) => {
-      availableHandlerValues.push(currentState[index].value);
+    availableHandlers.forEach((current, index) => {
+      if (current !== undefined) {
+        availableHandlerValues.push(availableHandlers[index].value);
+      }
     });
 
     const findAvailableHandler: number = this.findTheClosestArrayValue(availableHandlerValues, targetPercent);
 
-    currentState.forEach((handler: StateHandler) => {
-      if (handler.value === findAvailableHandler) {
-        const dataForBroadcasting: ObserverEvent<StateHandler> = {
+    availableHandlers.forEach((handler) => {
+      if (handler !== undefined && handler.value === findAvailableHandler) {
+        const dataForBroadcasting: ObserverEvent<ViewHandlerData> = {
           type: CustomEvents.STATE_CHANGED,
           data: {
             name: handler.name,

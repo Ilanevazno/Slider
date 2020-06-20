@@ -42,21 +42,9 @@ describe('Проверка класса Model', () => {
     });
 
     it('Включение тултипа', () => {
-      modelSpec.showTooltip();
+      modelSpec.setTooltipActivity(true);
 
       expect(modelSpec.withTooltip).toBe(true);
-    });
-
-    it('Отключение тултипа', () => {
-      modelSpec.hideTooltip();
-
-      expect(modelSpec.withTooltip).toBe(false);
-    });
-
-    it('Отключение тултипа', () => {
-      modelSpec.hideTooltip();
-
-      expect(modelSpec.withTooltip).toBe(false);
     });
 
     it('Получение всех возможных опций', () => {

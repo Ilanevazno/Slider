@@ -1,19 +1,19 @@
 mixin slider (data)
   -
     const {
-      minValue = 0,
-      maxValue = 100,
+      minAvailableValue = 0,
+      maxAvailableValue = 100,
       stepSize = 10,
       minValueCurrent = 0,
-      maxValueCurrent = 0,
+      maxValueCurrent = 1,
       axis = 'X',
-      valueType = 'singleValue',
+      valueType = 'single',
       withTooltip = true,
       withLabels = true,
     } = data;
   section.slider.js-slider(
-    data-minValue= minValue
-    data-maxValue= maxValue
+    data-minAvailableValue= minAvailableValue
+    data-maxAvailableValue= maxAvailableValue
     data-stepSize= stepSize
     data-minValueCurrent = minValueCurrent
     data-maxValueCurrent = maxValueCurrent

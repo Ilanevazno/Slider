@@ -616,7 +616,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/* eslint-disable no-param-reassign */
 import Observer from '../Observer/Observer';
 import СustomEvents from '../Observer/CustomEvents';
-import { Options, StateHandler, ModelResponse } from '../types/types';
+import { Options, ViewHandlerData, ModelResponse } from '../types/types';
 import ModelConstants from './ModelConstants/ModelConstants';
 &nbsp;
 class Model {
@@ -628,7 +628,7 @@ class Model {
 &nbsp;
   public valueType: string;
 &nbsp;
-  public state: StateHandler[];
+  public state: ViewHandlerData[];
 &nbsp;
   public minValue: number;
 &nbsp;
@@ -692,7 +692,7 @@ class Model {
     return OptionsList[targetOption];
   }
 &nbsp;
-  public getState(): StateHandler[] {
+  public getState(): ViewHandlerData[] {
     return this.state;
   }
 &nbsp;
@@ -751,7 +751,7 @@ class Model {
   }
 &nbsp;
   public changeStateByItemName(handlerName: string, value: number): void {
-    this.state.map((stateElement: StateHandler) =&gt; {
+    this.state.map((stateElement: ViewHandlerData) =&gt; {
       <span class="missing-if-branch" title="else path not taken" >E</span>if (stateElement.name === handlerName) {
         stateElement.value = this.findTheClosestBreakpoint(Number(value));
       }
@@ -763,7 +763,7 @@ class Model {
     this.eventObserver.broadcast({ type: СustomEvents.SetState, data: { state: this.state } });
   }
 &nbsp;
-  public setState(currentHandler: StateHandler): void {
+  public setState(currentHandler: ViewHandlerData): void {
     const stateLength = this.getStateLength();
 &nbsp;
     if (!this.checkIncludeStateValue(currentHandler.$handler)) {
@@ -772,7 +772,7 @@ class Model {
 &nbsp;
     this.checkCollision(currentHandler.name);
 &nbsp;
-    this.state.map((stateElement: StateHandler) =&gt; {
+    this.state.map((stateElement: ViewHandlerData) =&gt; {
       <span class="missing-if-branch" title="else path not taken" >E</span>if (stateElement.$handler[0] === currentHandler.$handler[0]) {
         stateElement.value = this.findTheClosestBreakpoint(currentHandler.value);
       }
@@ -837,7 +837,7 @@ class Model {
   private checkIncludeStateValue($targetElement: JQuery&lt;HTMLElement&gt;): boolean {
     let isFoundItem = false;
 &nbsp;
-    this.state.map((stateElement: StateHandler) =&gt; {
+    this.state.map((stateElement: ViewHandlerData) =&gt; {
       <span class="missing-if-branch" title="else path not taken" >E</span>if (stateElement.$handler[0] === $targetElement[0]) {
         isFoundItem = true;
       }

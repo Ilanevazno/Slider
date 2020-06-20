@@ -5,7 +5,7 @@ import {
   CustomEvents,
   ValueType,
   Axis,
-  modelState,
+  unconvertedStateItem,
 } from '../types/types';
 import Model from '../Model/Model';
 import MainView from '../View/MainView';
@@ -44,12 +44,8 @@ class Controller {
     this.model.setLabelsActivity(false);
   }
 
-  public showTooltip(): void {
-    this.model.showTooltip();
-  }
-
-  public hideTooltip(): void {
-    this.model.hideTooltip();
+  public setTooltipActivity(isActive: boolean): void {
+    this.model.setTooltipActivity(isActive);
   }
 
   public setAxis(axis: Axis) {
@@ -60,16 +56,16 @@ class Controller {
     return this.model.setStepSize(newStepSize);
   }
 
-  public setMinValue(value: number): ModelResponse {
+  public setMinAvailableValue(value: number): ModelResponse {
     return this.model.setMinAvailableValue(value);
   }
 
-  public setMaxValue(value: number): ModelResponse {
+  public setMaxAvailableValue(value: number): ModelResponse {
     return this.model.setMaxAvailableValue(value);
   }
 
   private subscribeViewObserver(): void {
-    this.view.eventObserver.subscribe((event: ObserverEvent<modelState>) => {
+    this.view.eventObserver.subscribe((event: ObserverEvent<unconvertedStateItem>) => {
       switch (event.type) {
         case CustomEvents.STATE_CHANGED:
           this.model.setState(event.data);

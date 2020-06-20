@@ -13,7 +13,7 @@ export type availableOptions = {
   breakpoints?: any[];
 }
 
-export type modelState = {
+export type unconvertedStateItem = {
   name: string;
   value: number;
 }
@@ -30,7 +30,7 @@ export type HandlerEvent = {
   offset: number;
 }
 
-export type StateHandler = {
+export type ViewHandlerData = {
   handler?: HandlerView;
   $handler?: JQuery<HTMLElement>;
   name: string;
@@ -39,7 +39,7 @@ export type StateHandler = {
 }
 
 export type ModelListener = {
-  state: StateHandler;
+  state: ViewHandlerData;
   axis: Axis;
   withTooltip: boolean;
 }

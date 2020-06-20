@@ -60,15 +60,9 @@ describe('Проверка класса Controller', () => {
   });
 
   it('Запрос на включение Tooltip', () => {
-    spyOn(controllerSpec, 'showTooltip');
-    controllerSpec.showTooltip();
-    expect(controllerSpec.showTooltip).toBeCalled();
-  });
-
-  it('Запрос на отключение Tooltip', () => {
-    spyOn(controllerSpec, 'hideTooltip');
-    controllerSpec.hideTooltip();
-    expect(controllerSpec.hideTooltip).toBeCalled();
+    spyOn(controllerSpec, 'setTooltipActivity');
+    controllerSpec.setTooltipActivity(true);
+    expect(controllerSpec.setTooltipActivity).toBeCalled();
   });
 
   it('Изменение направления', () => {

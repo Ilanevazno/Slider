@@ -26,6 +26,7 @@
     "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/unbound-method": "off",
 
+    "react/no-access-state-in-setstate": "off",
     "linebreak-style": "off",
     "no-underscore-dangle": "off",
     "consistent-return": "off",
