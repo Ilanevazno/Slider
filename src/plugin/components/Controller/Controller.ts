@@ -53,11 +53,11 @@ class Controller {
   }
 
   public setMinAvailableValue(value: number): ModelResponse<number> {
-    return this.model.setMinAvailableValue(value);
+    return this.model.requestToSetMinAvailableValue(value);
   }
 
   public setMaxAvailableValue(value: number): ModelResponse<number> {
-    return this.model.setMaxAvailableValue(value);
+    return this.model.requestToSetMaxAvailableValue(value);
   }
 
   private subscribeViewObserver(): void {

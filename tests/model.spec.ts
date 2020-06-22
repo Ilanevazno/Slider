@@ -65,13 +65,13 @@ describe('Проверка класса Model', () => {
 
     describe('Установка минимального значения', () => {
       it('Должно вернуть ошибку, т.к значение больше максимального', () => {
-        const newMinValue = modelSpec.setMinAvailableValue(modelSpecOptions.maxAvailableValue + 1);
+        const newMinValue = modelSpec.requestToSetMinAvailableValue(modelSpecOptions.maxAvailableValue + 1);
 
         expect(newMinValue.response).toBe('ERROR');
       });
 
       it('Установка минимального значения должна быть без ошибок', () => {
-        const newMinValue = modelSpec.setMinAvailableValue(modelSpecOptions.maxAvailableValue - 10);
+        const newMinValue = modelSpec.requestToSetMinAvailableValue(modelSpecOptions.maxAvailableValue - 10);
 
         expect(newMinValue.response).toBe('SUCCESS');
       });
@@ -79,13 +79,13 @@ describe('Проверка класса Model', () => {
 
     describe('Установка максимального значения', () => {
       it('Должно вернуть ошибку, т.к значение меньше минимального', () => {
-        const newMaxValue = modelSpec.setMaxAvailableValue(modelSpecOptions.minAvailableValue + -10);
+        const newMaxValue = modelSpec.requestToSetMaxAvailableValue(modelSpecOptions.minAvailableValue + -10);
 
         expect(newMaxValue.response).toBe('ERROR');
       });
 
       it('Установка минимального значения должна быть без ошибок', () => {
-        const newMaxValue = modelSpec.setMaxAvailableValue(modelSpecOptions.maxAvailableValue + 10);
+        const newMaxValue = modelSpec.requestToSetMaxAvailableValue(modelSpecOptions.maxAvailableValue + 10);
 
         expect(newMaxValue.response).toBe('SUCCESS');
       });

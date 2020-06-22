@@ -87,6 +87,9 @@ class Panel {
   }
 
   private prepareInputLabels(): void {
+    const minValueCurrent = this.$slider.sliderPlugin('setMinAvailableValue', this.sliderOptions.minAvailableValue);
+    const maxValueCurrent = this.$slider.sliderPlugin('setMaxAvailableValue', this.sliderOptions.maxAvailableValue);
+
     this.$slider.sliderPlugin('subscribeToChangeState', (newState) => {
       try {
         this.$minValueHandlerInput?.val(newState['min-value'].value);
@@ -96,8 +99,8 @@ class Panel {
     });
 
     this.$stepSizeInput?.val(this.sliderOptions.stepSize);
-    this.$minValueInput?.val(this.sliderOptions.minAvailableValue);
-    this.$maxValueInput?.val(this.sliderOptions.maxAvailableValue);
+    this.$minValueInput?.val(minValueCurrent.newValue);
+    this.$maxValueInput?.val(maxValueCurrent.newValue);
   }
 
   private prepareLabelsData(): void {

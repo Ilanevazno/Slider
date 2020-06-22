@@ -6,6 +6,7 @@ import {
   Response,
   ValueType,
   Axis,
+  ModelState,
   Values,
 } from '../types/types';
 import Observer from '../Observer/Observer';
@@ -19,7 +20,7 @@ class Model {
 
   public valueType: ValueType;
 
-  public state: object;
+  public state: ModelState;
 
   public minAvailableValue: number;
 
@@ -43,8 +44,8 @@ class Model {
     this.stepSize = options.stepSize;
     this.breakPoints = this.updateBreakpointList();
 
-    this.setMinAvailableValue(options.minAvailableValue);
-    this.setMaxAvailableValue(options.maxAvailableValue);
+    this.requestToSetMinAvailableValue(options.minAvailableValue);
+    this.requestToSetMaxAvailableValue(options.maxAvailableValue);
     this.setStepSize(options.stepSize);
     this.setValueType(options.valueType);
     this.setAxis(options.axis);
@@ -120,14 +121,9 @@ class Model {
     return this.state;
   }
 
-  public setMinAvailableValue(value: number): ModelResponse<number> {
+  public requestToSetMinAvailableValue(value: number): ModelResponse<number> {
     if (value <= this.maxAvailableValue) {
-      this.minAvailableValue = value;
-
-      this.updateBreakpointList();
-      this.refreshState();
-
-      this.eventObserver.broadcast({ type: CustomEvents.MIN_AVAILABLE_VALUE_CHANGED, data: { minAvailableValue: this.minAvailableValue } });
+      this.setMinAvailableValue(value);
 
       return {
         response: Response.SUCCESS,
@@ -135,29 +131,34 @@ class Model {
         newValue: value,
       };
     }
+
+    this.setMinAvailableValue(0);
+
     return {
       response: Response.ERROR,
       message: 'Невалидное значение. Минимальное значение не может быть больше чем максимальное.',
+      newValue: 0,
     };
   }
 
-  public setMaxAvailableValue<T>(value: number): ModelResponse<T> {
+  public requestToSetMaxAvailableValue(value: number): ModelResponse<number> {
     if (value >= this.minAvailableValue) {
-      this.maxAvailableValue = value;
-
-      this.updateBreakpointList();
-      this.refreshState();
-
-      this.eventObserver.broadcast({ type: CustomEvents.MAX_AVAILABLE_VALUE_CHANGED, data: { maxAvailableValue: this.maxAvailableValue } });
+      this.setMaxAvailableValue(value);
 
       return {
         response: Response.SUCCESS,
         message: `Максимальное значение установлено на ${value}`,
+        newValue: value,
       };
     }
+
+    this.setMaxAvailableValue(100);
+
+
     return {
       response: Response.ERROR,
       message: 'Невалидное значение. Максимальное значение не может быть меньше чем минимальное.',
+      newValue: 100,
     };
   }
 
@@ -228,6 +229,23 @@ class Model {
       response: Response.ERROR,
       message: `Размер шага должен быть от 1 до ${convertedMaxValue}`,
     };
+  }
+
+  private setMinAvailableValue(value: number): void {
+    this.minAvailableValue = value;
+    this.updateBreakpointList();
+    this.refreshState();
+
+    this.eventObserver.broadcast({ type: CustomEvents.MIN_AVAILABLE_VALUE_CHANGED, data: { minAvailableValue: this.minAvailableValue } });
+  }
+
+  private setMaxAvailableValue(value: number): void {
+    this.maxAvailableValue = value;
+
+    this.updateBreakpointList();
+    this.refreshState();
+
+    this.eventObserver.broadcast({ type: CustomEvents.MAX_AVAILABLE_VALUE_CHANGED, data: { maxAvailableValue: this.maxAvailableValue } });
   }
 
   private getOptionList(): availableOptions {

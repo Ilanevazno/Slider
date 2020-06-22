@@ -6,6 +6,7 @@ import {
   HandlerEvent,
   ValueType,
   Axis,
+  ModelState,
 } from '../types/types';
 import Model from '../Model/Model';
 import Observer from '../Observer/Observer';
@@ -81,28 +82,26 @@ class MainView {
     return this.model.getOption('axis');
   }
 
-  public prepareToMoveHandler(dataForMoving) {
-    [this.minValueHandler, this.maxValueHandler].forEach((handler: ViewHandlerData) => {
-      if (handler !== undefined) {
-        const foundedHandlerInData = Object.keys(dataForMoving).filter((currentStateItem) => currentStateItem === handler.name);
+  public prepareToMoveHandler(dataForMoving: ModelState) {
+    [this.minValueHandler, this.maxValueHandler].forEach((currentHandler: ViewHandlerData) => {
+      if (currentHandler !== undefined) {
+        const foundedHandlerInData = Object.keys(dataForMoving).filter((currentStateItem) => currentStateItem === currentHandler.name);
 
         if (foundedHandlerInData.length) {
-          const currentValue: number = dataForMoving[handler.name].value;
-          const handlerForMoving: ViewHandlerData = handler.name === 'min-value'
-            ? this.minValueHandler
-            : this.maxValueHandler;
+          const currentValue: number = dataForMoving[currentHandler.name].value;
 
-          handlerForMoving.handler.calculateNewPosition({
+          currentHandler.handler.calculateNewPosition({
             minPercent: this.model.getOption('minAvailableValue'),
             maxPercent: this.model.getOption('maxAvailableValue'),
             maxValue: this.sliderBody.getSliderBodyParams(),
             currentValue,
           });
 
-          handlerForMoving.value = currentValue;
+          // eslint-disable-next-line no-param-reassign
+          currentHandler.value = currentValue;
 
           if (this.withTooltip()) {
-            handlerForMoving.handler.setTooltipValue(currentValue);
+            currentHandler.handler.setTooltipValue(currentValue);
           }
         }
       }
@@ -265,9 +264,9 @@ class MainView {
   private getHandlerComponent($HtmlContainer): HandlerView {
     const handler = new HandlerView($HtmlContainer, this.model.getOption('axis'));
 
-    const isTooltipActive: boolean = this.model.getOption('withTooltip');
+    const withTooltip: boolean = this.model.getOption('withTooltip');
 
-    if (isTooltipActive) {
+    if (withTooltip) {
       handler.getTooltip();
     }
 

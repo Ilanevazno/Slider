@@ -65,7 +65,7 @@ describe('Тестирование класса MainView', () => {
   describe('Попытка смены положения хандлера, метод prepareToMoveHandler', () => {
     it('Вызываем метод', () => {
       spyOn(view, 'prepareToMoveHandler').and.callThrough();
-      const currentState = [];
+      const currentState: any = {};
 
       const currentHandler = {
         $handler: view.minValueHandler.handler.$handler,
