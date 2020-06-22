@@ -19,12 +19,12 @@ describe('Проверка класса SliderBodyView', () => {
     handlerView.$handler.css('width', `${mockHandlerWidth}px`);
 
     it(`Ширина слайдера должна быть ${mockHandlerWidth}`, () => {
-      spyOn(handlerView, 'getHandlerWidth').and.callThrough();
+      spyOn(handlerView, 'getWidth').and.callThrough();
 
-      const handlerWidth = handlerView.getHandlerWidth();
+      const handlerWidth = handlerView.getWidth();
 
       expect(handlerWidth).toBe(mockHandlerWidth);
-      expect(handlerView.getHandlerWidth).toBeCalled();
+      expect(handlerView.getWidth).toBeCalled();
     });
   });
 
@@ -32,12 +32,12 @@ describe('Проверка класса SliderBodyView', () => {
     const newHandlerPosition = 150;
 
     it(`handler должнен сместиться на ${newHandlerPosition} пикселей позиции top`, () => {
-      spyOn(handlerView, 'moveHandler').and.callThrough();
+      spyOn(handlerView, 'move').and.callThrough();
 
-      handlerView.moveHandler(newHandlerPosition);
+      handlerView.move(newHandlerPosition);
 
       expect(handlerView.$handler.css('top')).toBe(`${newHandlerPosition}px`);
-      expect(handlerView.moveHandler).toBeCalledWith(newHandlerPosition);
+      expect(handlerView.move).toBeCalledWith(newHandlerPosition);
     });
   });
 });

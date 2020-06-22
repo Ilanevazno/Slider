@@ -32,35 +32,31 @@ class Controller {
     this.model.changeStateByItemName(handlerName, value);
   }
 
-  public setValueType(valueType: ValueType): void {
-    this.model.setValueType(valueType);
+  public setValueType(valueType: ValueType): ModelResponse<string> {
+    return this.model.setValueType(valueType);
   }
 
-  public showLabels(): void {
-    this.model.setLabelsActivity(true);
-  }
-
-  public hideLabels(): void {
-    this.model.setLabelsActivity(false);
+  public setLabelsActivity(isActive: boolean): void {
+    this.model.setLabelsActivity(isActive);
   }
 
   public setTooltipActivity(isActive: boolean): void {
     this.model.setTooltipActivity(isActive);
   }
 
-  public setAxis(axis: Axis) {
-    this.model.setAxis(axis);
+  public setAxis(axis: Axis): ModelResponse<string> {
+    return this.model.setAxis(axis);
   }
 
-  public setStepSize(newStepSize: number): ModelResponse {
+  public setStepSize(newStepSize: number): ModelResponse<number> {
     return this.model.setStepSize(newStepSize);
   }
 
-  public setMinAvailableValue(value: number): ModelResponse {
+  public setMinAvailableValue(value: number): ModelResponse<number> {
     return this.model.setMinAvailableValue(value);
   }
 
-  public setMaxAvailableValue(value: number): ModelResponse {
+  public setMaxAvailableValue(value: number): ModelResponse<number> {
     return this.model.setMaxAvailableValue(value);
   }
 
@@ -91,10 +87,10 @@ class Controller {
         case CustomEvents.VALUE_TYPE_CHANGED:
           this.view.refreshView();
           break;
-        case CustomEvents.MIN_VALUE_CHANGED:
-        case CustomEvents.MAX_VALUE_CHANGED:
+        case CustomEvents.MIN_AVAILABLE_VALUE_CHANGED:
+        case CustomEvents.MAX_AVAILABLE_VALUE_CHANGED:
         case CustomEvents.STEP_SIZE_CHANGED:
-          this.view.changeBreakpointsActivity();
+          this.view.setBreakpointsActivity();
           break;
         case CustomEvents.AXIS_CHANGED:
           this.view.changeSliderBodyAxis(event.data.axis);
@@ -103,7 +99,7 @@ class Controller {
           this.view.setTooltipActivity(event.data.withTooltip);
           break;
         case CustomEvents.LABELS_ACTIVITY_CHANGED:
-          this.view.changeBreakpointsActivity();
+          this.view.setBreakpointsActivity();
           break;
         default:
           break;

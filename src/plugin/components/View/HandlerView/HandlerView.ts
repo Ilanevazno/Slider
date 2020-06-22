@@ -1,4 +1,4 @@
-import { Axis } from '../../types/types';
+import { Axis, ConvertingData } from '../../types/types';
 import Observer from '../../Observer/Observer';
 import TooltipView from '../TooltipView/TooltipView';
 
@@ -21,9 +21,21 @@ class HandlerView {
     this.initEvents();
   }
 
-  public moveHandler(newHandlerPosition: number): void {
+  public move(newHandlerPosition: number): void {
     const direction: string = this.axis === 'X' ? 'left' : 'top';
     this.$handler.css(direction, `${newHandlerPosition}px`);
+  }
+
+  public calculateNewPosition(data: ConvertingData): void {
+    const {
+      minPercent,
+      maxPercent,
+      currentValue,
+      maxValue,
+    } = data;
+    const newPosition = ((currentValue - minPercent) / (maxPercent - minPercent)) * (maxValue - this.getWidth());
+
+    this.move(newPosition);
   }
 
   public getTooltip(): void {
@@ -40,7 +52,7 @@ class HandlerView {
       : this.tooltip.remove();
   }
 
-  public getHandlerWidth() {
+  public getWidth() {
     return this.$handler.width();
   }
 

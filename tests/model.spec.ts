@@ -1,5 +1,5 @@
 import Model from '../src/plugin/components/Model/Model';
-import { availableOptions, ValueType, Axis } from '../src/plugin/components/types/types';
+import { availableOptions, Values } from '../src/plugin/components/types/types';
 
 const modelSpecOptions: availableOptions = {
   stepSize: 1,
@@ -10,7 +10,7 @@ const modelSpecOptions: availableOptions = {
   axis: 'X',
   withLabels: false,
   withTooltip: false,
-  valueType: 'single',
+  valueType: Values.SINGLE,
 };
 
 const modelSpec = new Model(modelSpecOptions);
@@ -24,7 +24,7 @@ describe('Проверка класса Model', () => {
 
   describe('Тест методов взаимодействия с опциями', () => {
     it('Установка типа слайдера на двойное значение', () => {
-      modelSpec.setValueType('double');
+      modelSpec.setValueType(Values.DOUBLE);
 
       expect(modelSpec.valueType).toBe('double');
     });

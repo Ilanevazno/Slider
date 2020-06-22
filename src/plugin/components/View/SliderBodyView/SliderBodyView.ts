@@ -1,4 +1,6 @@
-import { SliderBreakpoint, CustomEvents, Axis } from '../../types/types';
+import {
+  SliderBreakpoint, CustomEvents, Axis, BodyBreakpointsData,
+} from '../../types/types';
 import Observer from '../../Observer/Observer';
 
 class SliderBodyView {
@@ -71,12 +73,34 @@ class SliderBodyView {
     });
   }
 
-  public changeBreakpointsActivity(isActive: boolean, availableBreakpoints: SliderBreakpoint[]): void {
+  public changeBreakpointsActivity(isActive: boolean, breakpointsData: BodyBreakpointsData): void {
     if (isActive) {
+      const availableBreakpoints = this.getConvertedBreakpoints(breakpointsData);
       this.drawBreakPoints(availableBreakpoints);
     } else {
       this.removeBreakpoints();
     }
+  }
+
+  private getConvertedBreakpoints(data: BodyBreakpointsData) {
+    const {
+      axis,
+      offsetHandlerWidth,
+      currentBreakpointList,
+      minAvailableValue,
+      maxAvailableValue,
+    } = data;
+    const axisDivisionOffset = axis === 'X' ? 4 : 2;
+    const sliderBodyParams: number = this.getSliderBodyParams() - offsetHandlerWidth;
+
+    return currentBreakpointList.map((currentValue: number) => {
+      const currentPixel = ((currentValue - minAvailableValue) / (maxAvailableValue - minAvailableValue)) * sliderBodyParams;
+
+      return {
+        currentValue,
+        pixelPosition: currentPixel + (offsetHandlerWidth / axisDivisionOffset),
+      };
+    });
   }
 
   private handleBreakpointClick(breakpointValue: number): void {

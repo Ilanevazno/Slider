@@ -49,6 +49,14 @@ export type ObserverEvent<T> = {
   data: T;
 }
 
+export type BodyBreakpointsData = {
+  axis: string;
+  offsetHandlerWidth: number;
+  currentBreakpointList: number[];
+  minAvailableValue: number;
+  maxAvailableValue: number;
+}
+
 export type ConvertingData = {
   minPercent: number;
   maxPercent: number;
@@ -56,12 +64,18 @@ export type ConvertingData = {
   maxValue: number;
 }
 
-export type ModelResponse = {
+export type ModelResponse<T> = {
   readonly response: Response;
   message: string;
+  newValue?: T;
 }
 
-export type ValueType = 'single' | 'double';
+export enum Values {
+  SINGLE = 'single',
+  DOUBLE = 'double'
+}
+
+export type ValueType = Values.SINGLE | Values.DOUBLE;
 
 export type Axis = 'X' | 'Y';
 
@@ -85,13 +99,11 @@ export enum CustomEvents {
   HANDLER_MOUSEMOVE = 'HANDLER_MOUSEMOVE',
   HANDLER_TOUCHMOVE = 'HANDLER_TOUCHMOVE',
   WINDOW_RESIZED = 'WINDOW_RESIZED',
-  BREAKPOINTS_ACTIVITY_CHANGED = 'BREAKPOINTS_ACTIVITY_CHANGED',
-  STATE_BY_CLICK_CHANGED = 'STATE_BY_CLICK_CHANGED',
   TOOLTIP_ACTIVITY_CHANGED = 'TOOLTIP_ACTIVITY_CHANGED',
   LABELS_ACTIVITY_CHANGED = 'LABELS_ACTIVITY_CHANGED',
   TOOLTIP_VALUE_CHANGED = 'TOOLTIP_VALUE_CHANGED',
-  MIN_VALUE_CHANGED = 'MIN_VALUE_CHANGED',
-  MAX_VALUE_CHANGED = 'MAX_VALUE_CHANGED',
+  MIN_AVAILABLE_VALUE_CHANGED = 'MIN_AVAILABLE_VALUE_CHANGED',
+  MAX_AVAILABLE_VALUE_CHANGED = 'MAX_AVAILABLE_VALUE_CHANGED',
   STATE_CHANGED = 'STATE_CHANGED',
   STATE_CLEARED = 'STATE_CLEARED',
   STATE_REFRESHED = 'STATE_REFRESHED',

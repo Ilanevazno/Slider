@@ -1,4 +1,4 @@
-import { availableOptions, Axis, ValueType } from './types/types';
+import { availableOptions, Values } from './types/types';
 import MainView from './View/MainView';
 import Model from './Model/Model';
 import Controller from './Controller/Controller';
@@ -15,7 +15,7 @@ import Controller from './Controller/Controller';
         axis: 'X',
         withLabels: true,
         withTooltip: true,
-        valueType: 'single',
+        valueType: Values.SINGLE,
       };
 
       Object.keys(args).forEach((setting) => {

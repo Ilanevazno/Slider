@@ -1,6 +1,6 @@
 import Model from '../src/plugin/components/Model/Model';
 import MainView from '../src/plugin/components/View/MainView';
-import { availableOptions, ValueType, Axis } from '../src/plugin/components/types/types';
+import { availableOptions, Values, Axis } from '../src/plugin/components/types/types';
 
 const mockModelOptions: availableOptions = {
   stepSize: 1,
@@ -11,7 +11,7 @@ const mockModelOptions: availableOptions = {
   axis: 'X',
   withLabels: false,
   withTooltip: false,
-  valueType: 'single',
+  valueType: Values.SINGLE,
 };
 
 const dummyHtmlElement = document.createElement('div');
@@ -47,9 +47,9 @@ describe('Тестирование класса MainView', () => {
     });
 
     it('Обновляем необходимость рендера брейкпоинтов', () => {
-      spyOn(view, 'changeBreakpointsActivity');
-      view.changeBreakpointsActivity();
-      expect(view.changeBreakpointsActivity).toHaveBeenCalled();
+      spyOn(view, 'setBreakpointsActivity');
+      view.setBreakpointsActivity();
+      expect(view.setBreakpointsActivity).toHaveBeenCalled();
     });
 
     it('Смена направления слайдера на указанное значение', () => {

@@ -1,7 +1,7 @@
 import Controller from '../src/plugin/components/Controller/Controller';
 import Model from '../src/plugin/components/Model/Model';
 import MainView from '../src/plugin/components/View/MainView';
-import { availableOptions } from '../src/plugin/components/types/types';
+import { availableOptions, Values } from '../src/plugin/components/types/types';
 
 const mockModelOptions: availableOptions = {
   stepSize: 1,
@@ -12,7 +12,7 @@ const mockModelOptions: availableOptions = {
   axis: 'X',
   withLabels: false,
   withTooltip: false,
-  valueType: 'single',
+  valueType: Values.SINGLE,
 };
 
 const dummyHtmlElement = document.createElement('div');
@@ -43,20 +43,14 @@ describe('Проверка класса Controller', () => {
 
   it('Запрос на изменение типа вида', () => {
     spyOn(controllerSpec, 'setValueType');
-    controllerSpec.setValueType('double');
+    controllerSpec.setValueType(Values.DOUBLE);
     expect(controllerSpec.setValueType).toBeCalledWith('doubleValue');
   });
 
   it('Запрос на включение индикатора шагов', () => {
-    spyOn(controllerSpec, 'showLabels');
-    controllerSpec.showLabels();
-    expect(controllerSpec.showLabels).toBeCalled();
-  });
-
-  it('Запрос на отключение индикатора шагов', () => {
-    spyOn(controllerSpec, 'hideLabels');
-    controllerSpec.hideLabels();
-    expect(controllerSpec.hideLabels).toBeCalled();
+    spyOn(controllerSpec, 'setLabelsActivity');
+    controllerSpec.setLabelsActivity(true);
+    expect(controllerSpec.setLabelsActivity).toBeCalled();
   });
 
   it('Запрос на включение Tooltip', () => {

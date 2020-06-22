@@ -1,11 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import '../../../plugin/components/sliderPlugin';
-import {
-  availableOptions,
-  ValueType,
-  Axis,
-  JqueryPluginElement,
-} from '../../../plugin/components/types/types';
+import { availableOptions, JqueryPluginElement } from '../../../plugin/components/types/types';
 
 class Panel {
   private sliderOptions: availableOptions;
@@ -84,17 +79,11 @@ class Panel {
   }
 
   private prepareSelectLabels(): void {
-    const currentValueType = this.sliderOptions.valueType === 'single'
-      ? 'Одиночное'
-      : 'Интервал';
+    const valueType = this.$slider.sliderPlugin('setValueType', this.sliderOptions.valueType);
+    const axis = this.$slider.sliderPlugin('setAxis', this.sliderOptions.axis);
 
-    this.$valueTypeSelect.val(currentValueType);
-
-    const currentAxis = this.sliderOptions.axis === 'X'
-      ? 'Горизонтальный'
-      : 'Вертикальный';
-
-    this.$viewTypeSelect.val(currentAxis);
+    this.$valueTypeSelect.val(valueType.newValue === 'single' ? 'Одиночное' : 'Интервал');
+    this.$viewTypeSelect.val(axis.newValue === 'X' ? 'Горизонтальный' : 'Вертикальный');
   }
 
   private prepareInputLabels(): void {
@@ -112,7 +101,8 @@ class Panel {
   }
 
   private prepareLabelsData(): void {
-    this.changeViewTypeInputState(this.sliderOptions.valueType);
+    const viewType = this.$slider.sliderPlugin('setValueType', this.sliderOptions.valueType);
+    this.changeViewTypeInputState(viewType.newValue);
     this.prepareCheckboxes();
     this.prepareInputLabels();
     this.prepareSelectLabels();
@@ -222,7 +212,9 @@ class Panel {
   }
 
   private setLabelsActivity($targetLabel: JQuery<HTMLElement>): void {
-    $targetLabel.is(':checked') ? this.$slider.sliderPlugin('showLabels') : this.$slider.sliderPlugin('hideLabels');
+    $targetLabel.is(':checked')
+      ? this.$slider.sliderPlugin('setLabelsActivity', true)
+      : this.$slider.sliderPlugin('setLabelsActivity', false);
   }
 
   private setStepSize($targetLabel: JQuery<HTMLElement>): void {

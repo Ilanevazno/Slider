@@ -6,6 +6,7 @@ import {
   Response,
   ValueType,
   Axis,
+  Values,
 } from '../types/types';
 import Observer from '../Observer/Observer';
 
@@ -42,19 +43,57 @@ class Model {
     this.stepSize = options.stepSize;
     this.breakPoints = this.updateBreakpointList();
 
+    this.setMinAvailableValue(options.minAvailableValue);
+    this.setMaxAvailableValue(options.maxAvailableValue);
     this.setStepSize(options.stepSize);
+    this.setValueType(options.valueType);
+    this.setAxis(options.axis);
   }
 
-  public setValueType(valueType: ValueType): void {
-    this.valueType = valueType;
+  public setValueType(valueType: ValueType): ModelResponse<string> {
+    if (valueType === Values.SINGLE || valueType === Values.DOUBLE) {
+      this.valueType = valueType;
+      this.eventObserver.broadcast({ type: CustomEvents.VALUE_TYPE_CHANGED, data: { valueType: this.valueType } });
 
+      return {
+        response: Response.SUCCESS,
+        message: `Тип значения установлен на ${valueType}`,
+        newValue: valueType,
+      };
+    }
+
+    this.valueType = Values.SINGLE;
     this.eventObserver.broadcast({ type: CustomEvents.VALUE_TYPE_CHANGED, data: { valueType: this.valueType } });
+
+    return {
+      response: Response.ERROR,
+      message: `Не удалось найти указанное значение ${valueType}, установлено значение на ${Values.SINGLE}`,
+      newValue: Values.SINGLE,
+    };
   }
 
-  public setAxis(axis: Axis) {
-    this.axis = axis;
+  public setAxis(axis: Axis): ModelResponse<string> {
+    if (axis === 'X' || axis === 'Y') {
+      this.axis = axis;
+
+      this.eventObserver.broadcast({ type: CustomEvents.AXIS_CHANGED, data: { axis: this.axis } });
+
+      return {
+        response: Response.SUCCESS,
+        message: `Тип отображения установлен на ${axis}`,
+        newValue: axis,
+      };
+    }
+
+    this.axis = 'X';
 
     this.eventObserver.broadcast({ type: CustomEvents.AXIS_CHANGED, data: { axis: this.axis } });
+
+    return {
+      response: Response.ERROR,
+      message: `Не удалось найти тип отображения ${axis}, установлено значение X`,
+      newValue: 'X',
+    };
   }
 
   public setLabelsActivity(isLabelsActive: boolean): void {
@@ -81,18 +120,19 @@ class Model {
     return this.state;
   }
 
-  public setMinAvailableValue(value: number): ModelResponse {
+  public setMinAvailableValue(value: number): ModelResponse<number> {
     if (value <= this.maxAvailableValue) {
       this.minAvailableValue = value;
 
       this.updateBreakpointList();
       this.refreshState();
 
-      this.eventObserver.broadcast({ type: CustomEvents.MIN_VALUE_CHANGED, data: { minAvailableValue: this.minAvailableValue } });
+      this.eventObserver.broadcast({ type: CustomEvents.MIN_AVAILABLE_VALUE_CHANGED, data: { minAvailableValue: this.minAvailableValue } });
 
       return {
         response: Response.SUCCESS,
         message: `Минимальное значение установлено на ${value}`,
+        newValue: value,
       };
     }
     return {
@@ -101,14 +141,14 @@ class Model {
     };
   }
 
-  public setMaxAvailableValue(value: number): ModelResponse {
+  public setMaxAvailableValue<T>(value: number): ModelResponse<T> {
     if (value >= this.minAvailableValue) {
       this.maxAvailableValue = value;
 
       this.updateBreakpointList();
       this.refreshState();
 
-      this.eventObserver.broadcast({ type: CustomEvents.MAX_VALUE_CHANGED, data: { maxAvailableValue: this.maxAvailableValue } });
+      this.eventObserver.broadcast({ type: CustomEvents.MAX_AVAILABLE_VALUE_CHANGED, data: { maxAvailableValue: this.maxAvailableValue } });
 
       return {
         response: Response.SUCCESS,
@@ -166,7 +206,7 @@ class Model {
     this.eventObserver.broadcast({ type: CustomEvents.STATE_CHANGED, data: { state: this.state } });
   }
 
-  public setStepSize(newStepSize: number): ModelResponse {
+  public setStepSize(newStepSize: number): ModelResponse<number> {
     const convertedNewStepSize = Math.abs(newStepSize);
     const convertedMaxValue = Math.abs(this.maxAvailableValue);
 
@@ -181,6 +221,7 @@ class Model {
       return {
         response: Response.SUCCESS,
         message: `Размер шага установлен на ${convertedNewStepSize}`,
+        newValue: convertedNewStepSize,
       };
     }
     return {
