@@ -82,8 +82,12 @@ class HandlerView {
   }
 
   private handleDocumentMouseMove(event): void {
-    const offset = this.offset / 2;
-    this.observer.broadcast({ type: `HANDLER_${event.type.toUpperCase()}`, data: { event, offset } });
+    const data = {
+      posX: (event.clientX || event.touches[0].clientX) - (this.offset / 2),
+      poxY: (event.clientX || event.touches[0].clientY) - (this.offset / 2),
+    };
+
+    this.observer.broadcast({ type: `HANDLER_${event.type.toUpperCase()}`, data });
   }
 
   private handleDocumentMouseUp(): void {

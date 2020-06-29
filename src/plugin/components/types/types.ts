@@ -24,10 +24,9 @@ export type SliderBreakpoint = {
 }
 
 export type HandlerEvent = {
-  $handler: JQuery<HTMLElement>;
-  event: JQueryExtendedEvent;
+  posX: number;
+  posY: number;
   name: string;
-  offset: number;
 }
 
 export type ViewHandlerData = {

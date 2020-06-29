@@ -123,14 +123,14 @@ class MainView {
 
   private handleHandlerMove(data: HandlerEvent): number {
     const {
-      event,
       name,
-      offset,
+      posX,
+      posY,
     } = data;
 
     const currentPixel: number = this.model.getOption('axis') === 'X'
-      ? event.clientX - offset - this.sliderBody.$sliderBody[0].getBoundingClientRect().left
-      : event.clientY - offset - this.sliderBody.$sliderBody[0].getBoundingClientRect().top;
+      ? posX - this.sliderBody.$sliderBody[0].getBoundingClientRect().left
+      : posY - this.sliderBody.$sliderBody[0].getBoundingClientRect().top;
 
     const value: number = this.convertPxToPercent(currentPixel);
     const dataForBroadcasting: ObserverEvent<ViewHandlerData> = {
@@ -156,9 +156,7 @@ class MainView {
     const callFunctionAfterAll = (callbackFunction) => setTimeout(callbackFunction, 0);
 
     this.initHandlerEvents(this.minValueHandler);
-    callFunctionAfterAll(() => {
-      this.registerHandlerInState('min-value');
-    });
+    this.registerHandlerInState('min-value');
 
     if (valueType === 'double') {
       this.maxValueHandler = {
@@ -167,9 +165,7 @@ class MainView {
       };
 
       this.initHandlerEvents(this.maxValueHandler);
-      callFunctionAfterAll(() => {
-        this.registerHandlerInState('max-value');
-      });
+      this.registerHandlerInState('max-value');
     }
 
     if (this.model.getOption('withLabels')) {
@@ -277,19 +273,11 @@ class MainView {
     parent.handler.observer.subscribe((event: ObserverEvent<HandlerEvent>) => {
       switch (event.type) {
         case CustomEvents.HANDLER_MOUSEMOVE:
-          this.handleHandlerMove({
-            $handler: parent.handler.$handler,
-            event: event.data.event,
-            name: parent.name,
-            offset: event.data.offset,
-          });
-          break;
         case CustomEvents.HANDLER_TOUCHMOVE:
           this.handleHandlerMove({
-            $handler: parent.handler.$handler,
-            event: event.data.event.touches[0],
+            posX: event.data.posX,
+            posY: event.data.posY,
             name: parent.name,
-            offset: event.data.offset,
           });
           break;
         default:
