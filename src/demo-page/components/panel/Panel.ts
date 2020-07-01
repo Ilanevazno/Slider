@@ -92,8 +92,8 @@ class Panel {
 
     this.$slider.sliderPlugin('subscribeToChangeState', (newState) => {
       try {
-        this.$minValueHandlerInput?.val(newState['min-value'].value);
-        this.$maxValueHandlerInput?.val(newState['max-value'].value);
+        this.$minValueHandlerInput?.val(newState.minValue);
+        this.$maxValueHandlerInput?.val(newState.maxValue);
         // eslint-disable-next-line no-empty
       } catch (err) { }
     });
@@ -188,13 +188,13 @@ class Panel {
   private setMinValueHandler($targetLabel: JQuery<HTMLElement>): void {
     const newStateValue = $targetLabel.val();
 
-    this.$slider.sliderPlugin('changeStateByItemName', 'min-value', newStateValue);
+    this.$slider.sliderPlugin('changeStateByItemName', 'minValue', newStateValue);
   }
 
   private setMaxValueHandler($targetLabel: JQuery<HTMLElement>): void {
     const newStateValue = $targetLabel.val();
 
-    this.$slider.sliderPlugin('changeStateByItemName', 'max-value', newStateValue);
+    this.$slider.sliderPlugin('changeStateByItemName', 'maxValue', newStateValue);
   }
 
   private changeValueType($targetLabel: JQuery<HTMLElement>): void {

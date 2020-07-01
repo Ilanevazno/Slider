@@ -127,7 +127,7 @@ describe('Проверка класса Model', () => {
 
       const handler = {
         $handler: dummyHtmlElement,
-        name: 'min-value',
+        name: 'minValue',
         value: modelSpecOptions.minAvailableValue,
       };
 
@@ -146,9 +146,9 @@ describe('Проверка класса Model', () => {
         const newHandlerValue = 50;
 
         spyOn(modelSpec, 'changeStateByItemName').and.callThrough();
-        modelSpec.changeStateByItemName('min-value', newHandlerValue);
+        modelSpec.changeStateByItemName('minValue', newHandlerValue);
 
-        expect(modelSpec.changeStateByItemName).toBeCalledWith('min-value', newHandlerValue);
+        expect(modelSpec.changeStateByItemName).toBeCalledWith('minValue', newHandlerValue);
       });
 
       it('Обновить состояние', () => {

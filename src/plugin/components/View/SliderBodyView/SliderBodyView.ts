@@ -35,7 +35,7 @@ class SliderBodyView {
       : this.$sliderBody[0].getBoundingClientRect().height;
   }
 
-  public drawBreakPoints(breakpoints: SliderBreakpoint[]): void {
+  public drawBreakpoints(breakpoints: SliderBreakpoint[]): void {
     this.removeBreakpoints();
 
     const direction: string = this.axis === 'X' ? 'left' : 'top';
@@ -76,7 +76,7 @@ class SliderBodyView {
   public changeBreakpointsActivity(isActive: boolean, breakpointsData: BodyBreakpointsData): void {
     if (isActive) {
       const availableBreakpoints = this.getConvertedBreakpoints(breakpointsData);
-      this.drawBreakPoints(availableBreakpoints);
+      this.drawBreakpoints(availableBreakpoints);
     } else {
       this.removeBreakpoints();
     }

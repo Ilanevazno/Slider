@@ -28,7 +28,7 @@ class Model {
 
   public stepSize: number;
 
-  public breakPoints: number[];
+  public breakpoints: number[];
 
   public eventObserver: Observer;
 
@@ -42,7 +42,7 @@ class Model {
     this.minAvailableValue = options.minAvailableValue;
     this.maxAvailableValue = options.maxAvailableValue;
     this.stepSize = options.stepSize;
-    this.breakPoints = this.updateBreakpointList();
+    this.breakpoints = this.updateBreakpointList();
 
     this.requestToSetMinAvailableValue(options.minAvailableValue);
     this.requestToSetMaxAvailableValue(options.maxAvailableValue);
@@ -111,14 +111,13 @@ class Model {
 
 
   public getOption<T>(targetOption: string): T {
-    const OptionsList: object = this.getOptionList();
+    const optionsList: object = this.getOptionList();
 
-
-    return OptionsList[targetOption];
+    return optionsList[targetOption];
   }
 
-  public getState(): object {
-    return this.state;
+  public getState(): ModelState {
+    return { ...this.state };
   }
 
   public requestToSetMinAvailableValue(value: number): ModelResponse<number> {
@@ -164,16 +163,16 @@ class Model {
 
   public updateBreakpointList(): number[] {
     const stepsBreakpointList: number[] = [];
-    let breakPoint: number = this.minAvailableValue;
+    let breakpoint: number = this.minAvailableValue;
 
-    while (breakPoint <= this.maxAvailableValue) {
-      stepsBreakpointList.push(breakPoint);
-      breakPoint += Math.abs(this.stepSize);
+    while (breakpoint <= this.maxAvailableValue) {
+      stepsBreakpointList.push(breakpoint);
+      breakpoint += Math.abs(this.stepSize);
     }
 
-    this.breakPoints = stepsBreakpointList;
+    this.breakpoints = stepsBreakpointList;
 
-    return this.breakPoints;
+    return this.breakpoints;
   }
 
   public changeStateByItemName(name: string, value: number): void {
@@ -195,7 +194,7 @@ class Model {
       this.checkCollision(targetStateItem.name);
     }
 
-    this.state[targetStateItem.name].value = this.findTheClosestBreakpoint(targetStateItem.value);
+    this.state[targetStateItem.name] = this.findTheClosestBreakpoint(targetStateItem.value);
     this.eventObserver.broadcast({ type: CustomEvents.STATE_CHANGED, data: { state: this.state } });
   }
 
@@ -217,7 +216,7 @@ class Model {
       this.updateBreakpointList();
       this.refreshState();
 
-      this.eventObserver.broadcast({ type: CustomEvents.STEP_SIZE_CHANGED, data: { newBreakpoints: this.breakPoints } });
+      this.eventObserver.broadcast({ type: CustomEvents.STEP_SIZE_CHANGED, data: { newBreakpoints: this.breakpoints } });
 
       return {
         response: Response.SUCCESS,
@@ -254,10 +253,10 @@ class Model {
       valueType: this.valueType,
       minAvailableValue: this.minAvailableValue,
       maxAvailableValue: this.maxAvailableValue,
-      minValueCurrent: this.state['min-value'] ? this.state['min-value'].value : 'Значение не найдено',
-      maxValueCurrent: this.state['max-value'] ? this.state['max-value'].value : 'Значение не найдено',
+      minValueCurrent: this.state.minValue ? this.state.minValue : 'Значение не найдено',
+      maxValueCurrent: this.state.maxValue ? this.state.maxValue : 'Значение не найдено',
       stepSize: this.stepSize,
-      breakpoints: this.breakPoints,
+      breakpoints: this.breakpoints,
       withTooltip: this.withTooltip,
       withLabels: this.withLabels,
     } as availableOptions;
@@ -268,17 +267,17 @@ class Model {
   }
 
   private checkCollision(currentStateItem): void {
-    const firstStateItemCurrent: number = this.state['min-value'].value;
-    const lastStateItemCurrent: number = this.state['max-value'].value;
+    const firstStateItemCurrent: number = this.state.minValue;
+    const lastStateItemCurrent: number = this.state.maxValue;
 
-    if (currentStateItem === 'min-value') {
-      this.state['max-value'].value = firstStateItemCurrent > lastStateItemCurrent
+    if (currentStateItem === 'minValue') {
+      this.state.maxValue = firstStateItemCurrent > lastStateItemCurrent
         ? firstStateItemCurrent
         : lastStateItemCurrent;
     }
 
-    if (currentStateItem === 'max-value') {
-      this.state['min-value'].value = lastStateItemCurrent < firstStateItemCurrent
+    if (currentStateItem === 'maxValue') {
+      this.state.minValue = lastStateItemCurrent < firstStateItemCurrent
         ? lastStateItemCurrent
         : firstStateItemCurrent;
     }
@@ -289,12 +288,12 @@ class Model {
     let temp; let
       arrayElement;
 
-    this.breakPoints.map((element, index) => {
-      temp = Math.abs(this.breakPoints[index] - newStateValue);
+    this.breakpoints.map((element, index) => {
+      temp = Math.abs(this.breakpoints[index] - newStateValue);
 
       if (temp < theClosest) {
         theClosest = temp;
-        arrayElement = this.breakPoints[index];
+        arrayElement = this.breakpoints[index];
       }
 
       return element;

@@ -35,9 +35,9 @@ describe('Проверка класса SliderBodyView', () => {
 
   describe('Рисуем полосу со значениями', () => {
     const mockBreakpoints = Array(10).fill('').map((_element, index) => Object({ currentPercent: index, pixelPosition: index * 100 }));
-    sliderBody.drawBreakPoints(mockBreakpoints);
+    sliderBody.drawBreakpoints(mockBreakpoints);
 
-    it('метод drawBreakPoints, в тестовом элементе должны быть сгенерированы брейкпоинты.', () => {
+    it('метод drawBreakpoints, в тестовом элементе должны быть сгенерированы брейкпоинты.', () => {
       expect($dummyHtmlElement.find('.slider__breakpoint').length).toBeGreaterThan(0);
     });
 

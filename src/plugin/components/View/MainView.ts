@@ -39,7 +39,7 @@ class MainView {
   }
 
   public registerHandlerInState(handler: string): void {
-    const minValue: number = this.model.getOption('minAvailableValue');
+    const minValue: number = this.model.getOption<number>('minAvailableValue');
 
     const dataForBroadcasting: ObserverEvent<ViewHandlerData> = {
       type: CustomEvents.STATE_CHANGED,
@@ -53,13 +53,13 @@ class MainView {
   }
 
   public setBreakpointsActivity(): void {
-    const isActiveBreakpoints: boolean = this.model.getOption('withLabels');
+    const isActiveBreakpoints: boolean = this.model.getOption<boolean>('withLabels');
     const data: BodyBreakpointsData = {
-      axis: this.model.getOption('axis'),
+      axis: this.model.getOption<Axis>('axis'),
       offsetHandlerWidth: this.minValueHandler.handler.getWidth(),
-      currentBreakpointList: this.model.getOption('breakpoints'),
-      minAvailableValue: this.model.getOption('minAvailableValue'),
-      maxAvailableValue: this.model.getOption('maxAvailableValue'),
+      currentBreakpointList: this.model.getOption<number[]>('breakpoints'),
+      minAvailableValue: this.model.getOption<number>('minAvailableValue'),
+      maxAvailableValue: this.model.getOption<number>('maxAvailableValue'),
     };
 
     this.sliderBody.changeBreakpointsActivity(isActiveBreakpoints, data);
@@ -68,18 +68,18 @@ class MainView {
   public setTooltipActivity(isTooltipActive: boolean): void {
     [this.minValueHandler, this.maxValueHandler].forEach((currentHandler: ViewHandlerData) => {
       if (currentHandler) {
-        const tooltipPercent: number = currentHandler.value || this.model.getOption('minAvailableValue');
+        const tooltipPercent: number = currentHandler.value || this.model.getOption<number>('minAvailableValue');
         currentHandler.handler.changeTooltipActivity(isTooltipActive);
         currentHandler.handler.setTooltipValue(tooltipPercent);
       }
     });
   }
 
-  public changeSliderBodyAxis(axis: Axis): void {
+  public changeSliderBodyAxis(axis: Axis): string {
     this.sliderBody.setAxis(axis);
     this.refreshView();
 
-    return this.model.getOption('axis');
+    return this.model.getOption<Axis>('axis');
   }
 
   public prepareToMoveHandler(dataForMoving: ModelState) {
@@ -88,11 +88,11 @@ class MainView {
         const foundedHandlerInData = Object.keys(dataForMoving).filter((currentStateItem) => currentStateItem === currentHandler.name);
 
         if (foundedHandlerInData.length) {
-          const currentValue: number = dataForMoving[currentHandler.name].value;
+          const currentValue: number = dataForMoving[currentHandler.name];
 
           currentHandler.handler.calculateNewPosition({
-            minPercent: this.model.getOption('minAvailableValue'),
-            maxPercent: this.model.getOption('maxAvailableValue'),
+            minPercent: this.model.getOption<number>('minAvailableValue'),
+            maxPercent: this.model.getOption<number>('maxAvailableValue'),
             maxValue: this.sliderBody.getSliderBodyParams(),
             currentValue,
           });
@@ -109,14 +109,14 @@ class MainView {
   }
 
   private withTooltip(): boolean {
-    return this.model.getOption('withTooltip');
+    return this.model.getOption<boolean>('withTooltip');
   }
 
   private convertPxToPercent(currentValue: number): number {
-    const minPercent: number = this.model.getOption('minAvailableValue');
-    const maxPercent: number = this.model.getOption('maxAvailableValue');
+    const minPercent: number = this.model.getOption<number>('minAvailableValue');
+    const maxPercent: number = this.model.getOption<number>('maxAvailableValue');
     const maxValue: number = this.sliderBody.getSliderBodyParams();
-    const minValueOption: number = this.model.getOption('minAvailableValue');
+    const minValueOption: number = this.model.getOption<number>('minAvailableValue');
 
     return (currentValue * (maxPercent - minPercent)) / maxValue + minValueOption;
   }
@@ -124,13 +124,12 @@ class MainView {
   private handleHandlerMove(data: HandlerEvent): number {
     const {
       name,
-      posX,
-      posY,
+      pos,
     } = data;
 
-    const currentPixel: number = this.model.getOption('axis') === 'X'
-      ? posX - this.sliderBody.$sliderBody[0].getBoundingClientRect().left
-      : posY - this.sliderBody.$sliderBody[0].getBoundingClientRect().top;
+    const direction = this.model.getOption<string>('axis') === 'X' ? 'left' : 'top';
+
+    const currentPixel: number = pos - this.sliderBody.$sliderBody[0].getBoundingClientRect()[direction];
 
     const value: number = this.convertPxToPercent(currentPixel);
     const dataForBroadcasting: ObserverEvent<ViewHandlerData> = {
@@ -146,29 +145,29 @@ class MainView {
   }
 
   private createSliderComponents() {
-    const valueType: ValueType = this.model.getOption('valueType');
+    const valueType: ValueType = this.model.getOption<ValueType>('valueType');
     this.sliderBody = this.drawSliderBody(this.$sliderContainer);
     this.minValueHandler = {
-      name: 'min-value',
+      name: 'minValue',
       handler: this.getHandlerComponent(this.sliderBody.$sliderBody),
     };
 
     const callFunctionAfterAll = (callbackFunction) => setTimeout(callbackFunction, 0);
 
     this.initHandlerEvents(this.minValueHandler);
-    this.registerHandlerInState('min-value');
+    this.registerHandlerInState('minValue');
 
     if (valueType === 'double') {
       this.maxValueHandler = {
-        name: 'max-value',
+        name: 'maxValue',
         handler: this.getHandlerComponent(this.sliderBody.$sliderBody),
       };
 
       this.initHandlerEvents(this.maxValueHandler);
-      this.registerHandlerInState('max-value');
+      this.registerHandlerInState('maxValue');
     }
 
-    if (this.model.getOption('withLabels')) {
+    if (this.model.getOption<boolean>('withLabels')) {
       callFunctionAfterAll(() => {
         this.setBreakpointsActivity();
       });
@@ -252,15 +251,15 @@ class MainView {
   }
 
   private drawSliderBody($HtmlContainer: JQuery<HTMLElement>): SliderBodyView {
-    const sliderBody: SliderBodyView = new SliderBodyView($HtmlContainer, this.model.getOption('axis'));
+    const sliderBody: SliderBodyView = new SliderBodyView($HtmlContainer, this.model.getOption<Axis>('axis'));
 
     return sliderBody;
   }
 
   private getHandlerComponent($HtmlContainer): HandlerView {
-    const handler = new HandlerView($HtmlContainer, this.model.getOption('axis'));
+    const handler = new HandlerView($HtmlContainer, this.model.getOption<Axis>('axis'));
 
-    const withTooltip: boolean = this.model.getOption('withTooltip');
+    const withTooltip: boolean = this.model.getOption<boolean>('withTooltip');
 
     if (withTooltip) {
       handler.getTooltip();
@@ -275,8 +274,7 @@ class MainView {
         case CustomEvents.HANDLER_MOUSEMOVE:
         case CustomEvents.HANDLER_TOUCHMOVE:
           this.handleHandlerMove({
-            posX: event.data.posX,
-            posY: event.data.posY,
+            pos: this.model.getOption<Axis>('axis') === 'X' ? event.data.posX : event.data.posY,
             name: parent.name,
           });
           break;

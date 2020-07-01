@@ -10,7 +10,7 @@ export type availableOptions = {
   withLabels: boolean;
   withTooltip: boolean;
   valueType: ValueType;
-  breakpoints?: any[];
+  breakpoints?: number[];
 }
 
 export type unconvertedStateItem = {
@@ -24,8 +24,9 @@ export type SliderBreakpoint = {
 }
 
 export type HandlerEvent = {
-  posX: number;
-  posY: number;
+  pos?: number;
+  posX?: number;
+  posY?: number;
   name: string;
 }
 
@@ -55,8 +56,8 @@ export type BodyBreakpointsData = {
 }
 
 export type ModelState = {
-  ['min-value']?: { value: number };
-  ['max-value']?: { value: number };
+  minValue?: number;
+  maxValue?: number;
 }
 
 export type ConvertingData = {
