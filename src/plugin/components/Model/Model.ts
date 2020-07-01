@@ -33,22 +33,8 @@ class Model {
   public eventObserver: Observer;
 
   constructor(options: AvailableOptions) {
-    this.eventObserver = new Observer();
-    this.state = {};
-    this.withLabels = options.withLabels;
-    this.axis = options.axis;
-    this.valueType = options.valueType;
-    this.withTooltip = options.withTooltip;
-    this.minAvailableValue = options.minAvailableValue;
-    this.maxAvailableValue = options.maxAvailableValue;
-    this.stepSize = options.stepSize;
-    this.breakpoints = this.updateBreakpointList();
-
-    this.requestToSetMinAvailableValue(options.minAvailableValue);
-    this.requestToSetMaxAvailableValue(options.maxAvailableValue);
-    this.setStepSize(options.stepSize);
-    this.setValueType(options.valueType);
-    this.setAxis(options.axis);
+    this.prepareModelData(options);
+    this.callInitialMethods(options);
   }
 
   public setValueType(valueType: ValueType): ModelResponse<string> {
@@ -260,6 +246,27 @@ class Model {
       withTooltip: this.withTooltip,
       withLabels: this.withLabels,
     } as AvailableOptions;
+  }
+
+  private callInitialMethods(options: AvailableOptions) {
+    this.requestToSetMinAvailableValue(options.minAvailableValue);
+    this.requestToSetMaxAvailableValue(options.maxAvailableValue);
+    this.setStepSize(options.stepSize);
+    this.setValueType(options.valueType);
+    this.setAxis(options.axis);
+  }
+
+  private prepareModelData(options: AvailableOptions) {
+    this.eventObserver = new Observer();
+    this.state = {};
+    this.withLabels = options.withLabels;
+    this.axis = options.axis;
+    this.valueType = options.valueType;
+    this.withTooltip = options.withTooltip;
+    this.minAvailableValue = options.minAvailableValue;
+    this.maxAvailableValue = options.maxAvailableValue;
+    this.stepSize = options.stepSize;
+    this.breakpoints = this.updateBreakpointList();
   }
 
   private checkIncludeStateValue(targetElement: string): boolean {
