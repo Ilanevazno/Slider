@@ -1,4 +1,4 @@
-import { availableOptions, Values } from './types/types';
+import { AvailableOptions, Values } from './types/types';
 import MainView from './View/MainView';
 import Model from './Model/Model';
 import Controller from './Controller/Controller';
@@ -6,7 +6,7 @@ import Controller from './Controller/Controller';
 (function ($) {
   const methods = {
     _init(args) {
-      const initSliderOptions: availableOptions = {
+      const initSliderOptions: AvailableOptions = {
         stepSize: 1,
         minAvailableValue: 1,
         maxAvailableValue: 100,

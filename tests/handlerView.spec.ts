@@ -27,17 +27,4 @@ describe('Проверка класса SliderBodyView', () => {
       expect(handlerView.getWidth).toBeCalled();
     });
   });
-
-  describe('Попытаемся переместить хандлер на другую позицию', () => {
-    const newHandlerPosition = 150;
-
-    it(`handler должнен сместиться на ${newHandlerPosition} пикселей позиции top`, () => {
-      spyOn(handlerView, 'move').and.callThrough();
-
-      handlerView.move(newHandlerPosition);
-
-      expect(handlerView.$handler.css('top')).toBe(`${newHandlerPosition}px`);
-      expect(handlerView.move).toBeCalledWith(newHandlerPosition);
-    });
-  });
 });

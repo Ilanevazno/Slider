@@ -1,8 +1,8 @@
 import Model from '../src/plugin/components/Model/Model';
 import MainView from '../src/plugin/components/View/MainView';
-import { availableOptions, Values, Axis } from '../src/plugin/components/types/types';
+import { AvailableOptions, Values, Axis } from '../src/plugin/components/types/types';
 
-const mockModelOptions: availableOptions = {
+const mockModelOptions: AvailableOptions = {
   stepSize: 1,
   minAvailableValue: 1,
   maxAvailableValue: 100,
@@ -62,9 +62,9 @@ describe('Тестирование класса MainView', () => {
     });
   });
 
-  describe('Попытка смены положения хандлера, метод prepareToMoveHandler', () => {
+  describe('Попытка смены положения хандлера, метод moveHandler', () => {
     it('Вызываем метод', () => {
-      spyOn(view, 'prepareToMoveHandler').and.callThrough();
+      spyOn(view, 'moveHandler').and.callThrough();
       const currentState: any = {};
 
       const currentHandler = {
@@ -75,8 +75,8 @@ describe('Тестирование класса MainView', () => {
 
       currentState[0] = currentHandler;
 
-      view.prepareToMoveHandler(currentState);
-      expect(view.prepareToMoveHandler).toHaveBeenCalledWith(currentState);
+      view.moveHandler(currentState);
+      expect(view.moveHandler).toHaveBeenCalledWith(currentState);
     });
   });
 

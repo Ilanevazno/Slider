@@ -399,7 +399,7 @@ class Controller {
     this.model.eventObserver.subscribe(<span class="fstat-no" title="function not covered" >(e</span>vent: ObserverEvent&lt;ModelListener&gt;) =&gt; {
 <span class="cstat-no" title="statement not covered" >      switch (event.type) {</span>
         case СustomEvents.SetState:
-<span class="cstat-no" title="statement not covered" >          this.view.prepareToMoveHandler(event.data.state);</span>
+<span class="cstat-no" title="statement not covered" >          this.view.moveHandler(event.data.state);</span>
 <span class="cstat-no" title="statement not covered" >          break;</span>
         case СustomEvents.SetValueType:
 <span class="cstat-no" title="statement not covered" >          this.view.refreshView();</span>

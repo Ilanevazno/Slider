@@ -5,7 +5,7 @@ import {
   CustomEvents,
   ValueType,
   Axis,
-  unconvertedStateItem,
+  UnconvertedStateItem,
 } from '../types/types';
 import Model from '../Model/Model';
 import MainView from '../View/MainView';
@@ -61,7 +61,7 @@ class Controller {
   }
 
   private subscribeViewObserver(): void {
-    this.view.eventObserver.subscribe((event: ObserverEvent<unconvertedStateItem>) => {
+    this.view.eventObserver.subscribe((event: ObserverEvent<UnconvertedStateItem>) => {
       switch (event.type) {
         case CustomEvents.STATE_CHANGED:
           this.model.setState(event.data);
@@ -82,7 +82,7 @@ class Controller {
     this.model.eventObserver.subscribe((event: ObserverEvent<ModelListener>) => {
       switch (event.type) {
         case CustomEvents.STATE_CHANGED:
-          this.view.prepareToMoveHandler(event.data.state);
+          this.view.moveHandler(event.data.state);
           break;
         case CustomEvents.VALUE_TYPE_CHANGED:
           this.view.refreshView();

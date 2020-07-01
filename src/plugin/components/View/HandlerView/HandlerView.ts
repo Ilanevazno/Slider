@@ -21,21 +21,21 @@ class HandlerView {
     this.initEvents();
   }
 
-  public move(newHandlerPosition: number): void {
-    const direction: string = this.axis === 'X' ? 'left' : 'top';
-    this.$handler.css(direction, `${newHandlerPosition}px`);
-  }
-
-  public calculateNewPosition(data: ConvertingData): void {
+  private calculateNewPosition(data: ConvertingData): number {
     const {
       minPercent,
       maxPercent,
       currentValue,
       maxValue,
     } = data;
-    const newPosition = ((currentValue - minPercent) / (maxPercent - minPercent)) * (maxValue - this.getWidth());
+    return ((currentValue - minPercent) / (maxPercent - minPercent)) * (maxValue - this.getWidth());
+  }
 
-    this.move(newPosition);
+  public move(data: ConvertingData): void {
+    const newPosition: number = this.calculateNewPosition(data);
+    const direction: string = this.axis === 'X' ? 'left' : 'top';
+
+    this.$handler.css(direction, `${newPosition}px`);
   }
 
   public getTooltip(): void {

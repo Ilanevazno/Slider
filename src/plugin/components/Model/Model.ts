@@ -1,6 +1,6 @@
 import {
-  availableOptions,
-  unconvertedStateItem,
+  AvailableOptions,
+  UnconvertedStateItem,
   ModelResponse,
   CustomEvents,
   Response,
@@ -32,7 +32,7 @@ class Model {
 
   public eventObserver: Observer;
 
-  constructor(options: availableOptions) {
+  constructor(options: AvailableOptions) {
     this.eventObserver = new Observer();
     this.state = {};
     this.withLabels = options.withLabels;
@@ -185,7 +185,7 @@ class Model {
     this.eventObserver.broadcast({ type: CustomEvents.STATE_CHANGED, data: { state: this.state } });
   }
 
-  public setState(targetStateItem: unconvertedStateItem): void {
+  public setState(targetStateItem: UnconvertedStateItem): void {
     if (!this.checkIncludeStateValue(targetStateItem.name)) {
       this.state[targetStateItem.name] = { value: targetStateItem.value };
     }
@@ -247,7 +247,7 @@ class Model {
     this.eventObserver.broadcast({ type: CustomEvents.MAX_AVAILABLE_VALUE_CHANGED, data: { maxAvailableValue: this.maxAvailableValue } });
   }
 
-  private getOptionList(): availableOptions {
+  private getOptionList(): AvailableOptions {
     return {
       axis: this.axis,
       valueType: this.valueType,
@@ -259,7 +259,7 @@ class Model {
       breakpoints: this.breakpoints,
       withTooltip: this.withTooltip,
       withLabels: this.withLabels,
-    } as availableOptions;
+    } as AvailableOptions;
   }
 
   private checkIncludeStateValue(targetElement: string): boolean {

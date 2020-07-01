@@ -1,6 +1,6 @@
 import HandlerView from '../View/HandlerView/HandlerView';
 
-export type availableOptions = {
+export type AvailableOptions = {
   stepSize: number;
   minAvailableValue: number;
   maxAvailableValue: number;
@@ -13,7 +13,7 @@ export type availableOptions = {
   breakpoints?: number[];
 }
 
-export type unconvertedStateItem = {
+export type UnconvertedStateItem = {
   name: string;
   value: number;
 }

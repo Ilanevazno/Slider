@@ -810,7 +810,7 @@ class MainView {
     return this.model.getOption('axis');
   }
 &nbsp;
-  public prepareToMoveHandler(state) {
+  public moveHandler(state) {
     state.map((handler: ViewHandlerData) =&gt; {
       const $caughtHandler: JQuery&lt;HTMLElement&gt; = $(handler.$handler);
       const currentValue: number = handler.value;

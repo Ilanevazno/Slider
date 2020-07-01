@@ -82,7 +82,7 @@ class MainView {
     return this.model.getOption<Axis>('axis');
   }
 
-  public prepareToMoveHandler(dataForMoving: ModelState) {
+  public moveHandler(dataForMoving: ModelState) {
     [this.minValueHandler, this.maxValueHandler].forEach((currentHandler: ViewHandlerData) => {
       if (currentHandler !== undefined) {
         const foundedHandlerInData = Object.keys(dataForMoving).filter((currentStateItem) => currentStateItem === currentHandler.name);
@@ -90,7 +90,7 @@ class MainView {
         if (foundedHandlerInData.length) {
           const currentValue: number = dataForMoving[currentHandler.name];
 
-          currentHandler.handler.calculateNewPosition({
+          currentHandler.handler.move({
             minPercent: this.model.getOption<number>('minAvailableValue'),
             maxPercent: this.model.getOption<number>('maxAvailableValue'),
             maxValue: this.sliderBody.getSliderBodyParams(),
