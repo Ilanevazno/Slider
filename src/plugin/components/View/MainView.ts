@@ -7,6 +7,7 @@ import {
   ValueType,
   Axis,
   ModelState,
+  HandlerName,
 } from '../types/types';
 import Model from '../Model/Model';
 import Observer from '../Observer/Observer';
@@ -38,7 +39,7 @@ class MainView {
     this.eventObserver.broadcast({ type: CustomEvents.STATE_REFRESHED });
   }
 
-  public registerHandlerInState(handler: string): void {
+  public registerHandlerInState(handler: HandlerName): void {
     const minValue: number = this.model.getOption<number>('minAvailableValue');
 
     const dataForBroadcasting: ObserverEvent<ViewHandlerData> = {
@@ -127,7 +128,7 @@ class MainView {
       pos,
     } = data;
 
-    const direction = this.model.getOption<string>('axis') === 'X' ? 'left' : 'top';
+    const direction = this.model.getOption<Axis>('axis') === 'X' ? 'left' : 'top';
 
     const currentPixel: number = pos - this.sliderBody.$sliderBody[0].getBoundingClientRect()[direction];
 

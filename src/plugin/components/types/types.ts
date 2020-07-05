@@ -14,9 +14,11 @@ export type AvailableOptions = {
 }
 
 export type UnconvertedStateItem = {
-  name: string;
+  name: 'minValue' | 'maxValue';
   value: number;
 }
+
+export type HandlerName = 'minValue' | 'maxValue';
 
 export type SliderBreakpoint = {
   currentValue: number;
@@ -27,12 +29,12 @@ export type HandlerEvent = {
   pos?: number;
   posX?: number;
   posY?: number;
-  name: string;
+  name: HandlerName;
 }
 
 export type ViewHandlerData = {
   handler?: HandlerView;
-  name: string;
+  name: HandlerName;
   value?: number;
 }
 
@@ -73,12 +75,10 @@ export type ModelResponse<T> = {
   newValue?: T;
 }
 
-export enum Values {
+export enum ValueType {
   SINGLE = 'single',
   DOUBLE = 'double'
 }
-
-export type ValueType = Values.SINGLE | Values.DOUBLE;
 
 export type Axis = 'X' | 'Y';
 

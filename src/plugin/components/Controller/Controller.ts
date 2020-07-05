@@ -6,6 +6,7 @@ import {
   ValueType,
   Axis,
   UnconvertedStateItem,
+  HandlerName,
 } from '../types/types';
 import Model from '../Model/Model';
 import MainView from '../View/MainView';
@@ -28,7 +29,7 @@ class Controller {
     });
   }
 
-  public changeStateByItemName(handlerName: string, value: number): void {
+  public changeStateByItemName(handlerName: HandlerName, value: number): void {
     this.model.changeStateByItemName(handlerName, value);
   }
 

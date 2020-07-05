@@ -1,5 +1,5 @@
 import Model from '../src/plugin/components/Model/Model';
-import { AvailableOptions, Values } from '../src/plugin/components/types/types';
+import { AvailableOptions, ValueType, UnconvertedStateItem } from '../src/plugin/components/types/types';
 
 const modelSpecOptions: AvailableOptions = {
   stepSize: 1,
@@ -10,7 +10,7 @@ const modelSpecOptions: AvailableOptions = {
   axis: 'X',
   withLabels: false,
   withTooltip: false,
-  valueType: Values.SINGLE,
+  valueType: ValueType.SINGLE,
 };
 
 const modelSpec = new Model(modelSpecOptions);
@@ -24,7 +24,7 @@ describe('Проверка класса Model', () => {
 
   describe('Тест методов взаимодействия с опциями', () => {
     it('Установка типа слайдера на двойное значение', () => {
-      modelSpec.setValueType(Values.DOUBLE);
+      modelSpec.setValueType(ValueType.DOUBLE);
 
       expect(modelSpec.valueType).toBe('double');
     });
@@ -125,8 +125,7 @@ describe('Проверка класса Model', () => {
       const dummyHtmlElement = $(document.createElement('div'));
       document.getElementById = jasmine.createSpy('HTML Element').and.returnValue(dummyHtmlElement);
 
-      const handler = {
-        $handler: dummyHtmlElement,
+      const handler: UnconvertedStateItem = {
         name: 'minValue',
         value: modelSpecOptions.minAvailableValue,
       };

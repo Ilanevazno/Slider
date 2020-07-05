@@ -1,6 +1,6 @@
 import Model from '../src/plugin/components/Model/Model';
 import MainView from '../src/plugin/components/View/MainView';
-import { AvailableOptions, Values, Axis } from '../src/plugin/components/types/types';
+import { AvailableOptions, ValueType, Axis } from '../src/plugin/components/types/types';
 
 const mockModelOptions: AvailableOptions = {
   stepSize: 1,
@@ -11,7 +11,7 @@ const mockModelOptions: AvailableOptions = {
   axis: 'X',
   withLabels: false,
   withTooltip: false,
-  valueType: Values.SINGLE,
+  valueType: ValueType.SINGLE,
 };
 
 const dummyHtmlElement = document.createElement('div');

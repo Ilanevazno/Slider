@@ -1,7 +1,7 @@
 import Controller from '../src/plugin/components/Controller/Controller';
 import Model from '../src/plugin/components/Model/Model';
 import MainView from '../src/plugin/components/View/MainView';
-import { AvailableOptions, Values } from '../src/plugin/components/types/types';
+import { AvailableOptions, ValueType } from '../src/plugin/components/types/types';
 
 const mockModelOptions: AvailableOptions = {
   stepSize: 1,
@@ -12,7 +12,7 @@ const mockModelOptions: AvailableOptions = {
   axis: 'X',
   withLabels: false,
   withTooltip: false,
-  valueType: Values.SINGLE,
+  valueType: ValueType.SINGLE,
 };
 
 const dummyHtmlElement = document.createElement('div');
@@ -43,7 +43,7 @@ describe('Проверка класса Controller', () => {
 
   it('Запрос на изменение типа вида', () => {
     spyOn(controllerSpec, 'setValueType');
-    controllerSpec.setValueType(Values.DOUBLE);
+    controllerSpec.setValueType(ValueType.DOUBLE);
     expect(controllerSpec.setValueType).toBeCalledWith('doubleValue');
   });
 

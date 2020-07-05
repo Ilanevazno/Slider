@@ -7,7 +7,7 @@ import {
   ValueType,
   Axis,
   ModelState,
-  Values,
+  HandlerName,
 } from '../types/types';
 import Observer from '../Observer/Observer';
 
@@ -38,7 +38,7 @@ class Model {
   }
 
   public setValueType(valueType: ValueType): ModelResponse<string> {
-    if (valueType === Values.SINGLE || valueType === Values.DOUBLE) {
+    if (valueType === ValueType.SINGLE || valueType === ValueType.DOUBLE) {
       this.valueType = valueType;
       this.eventObserver.broadcast({ type: CustomEvents.VALUE_TYPE_CHANGED, data: { valueType: this.valueType } });
 
@@ -49,13 +49,13 @@ class Model {
       };
     }
 
-    this.valueType = Values.SINGLE;
+    this.valueType = ValueType.SINGLE;
     this.eventObserver.broadcast({ type: CustomEvents.VALUE_TYPE_CHANGED, data: { valueType: this.valueType } });
 
     return {
       response: Response.ERROR,
-      message: `Не удалось найти указанное значение ${valueType}, установлено значение на ${Values.SINGLE}`,
-      newValue: Values.SINGLE,
+      message: `Не удалось найти указанное значение ${valueType}, установлено значение на ${ValueType.SINGLE}`,
+      newValue: ValueType.SINGLE,
     };
   }
 
@@ -117,7 +117,7 @@ class Model {
       };
     }
 
-    this.setMinAvailableValue(0);
+    this.setMinAvailableValue(this.minAvailableValue);
 
     return {
       response: Response.ERROR,
@@ -137,7 +137,7 @@ class Model {
       };
     }
 
-    this.setMaxAvailableValue(100);
+    this.setMaxAvailableValue(this.maxAvailableValue);
 
 
     return {
@@ -161,8 +161,8 @@ class Model {
     return this.breakpoints;
   }
 
-  public changeStateByItemName(name: string, value: number): void {
-    this.setState({ value, name });
+  public changeStateByItemName(name: HandlerName, value: number): void {
+    this.setState({ name, value });
 
     if (Object.keys(this.state).length > 1) {
       this.checkCollision(name);
@@ -173,7 +173,7 @@ class Model {
 
   public setState(targetStateItem: UnconvertedStateItem): void {
     if (!this.checkIncludeStateValue(targetStateItem.name)) {
-      this.state[targetStateItem.name] = { value: targetStateItem.value };
+      this.state[targetStateItem.name as string] = { value: targetStateItem.value };
     }
 
     if (Object.keys(this.state).length > 1) {
