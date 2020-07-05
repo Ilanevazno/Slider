@@ -34,16 +34,15 @@ class MainView {
 
   public refreshView(): void {
     this.sliderBody.remove();
-    this.eventObserver.broadcast({ type: CustomEvents.STATE_CLEARED });
     this.createSliderComponents();
-    this.eventObserver.broadcast({ type: CustomEvents.STATE_REFRESHED });
+    this.eventObserver.broadcast({ type: CustomEvents.VIEW_REFRESHED });
   }
 
-  public registerHandlerInState(handler: HandlerName): void {
+  public handlerDidMount(handler: HandlerName): void {
     const minValue: number = this.model.getOption<number>('minAvailableValue');
 
     const dataForBroadcasting: ObserverEvent<ViewHandlerData> = {
-      type: CustomEvents.STATE_CHANGED,
+      type: CustomEvents.HANDLER_DID_MOUNT,
       data: {
         name: handler,
         value: minValue,
@@ -54,7 +53,7 @@ class MainView {
   }
 
   public setBreakpointsActivity(): void {
-    const isActiveBreakpoints: boolean = this.model.getOption<boolean>('withLabels');
+    const withLabels: boolean = this.model.getOption<boolean>('withLabels');
     const data: BodyBreakpointsData = {
       axis: this.model.getOption<Axis>('axis'),
       offsetHandlerWidth: this.minValueHandler.handler.getWidth(),
@@ -63,14 +62,14 @@ class MainView {
       maxAvailableValue: this.model.getOption<number>('maxAvailableValue'),
     };
 
-    this.sliderBody.changeBreakpointsActivity(isActiveBreakpoints, data);
+    this.sliderBody.changeBreakpointsActivity(withLabels, data);
   }
 
-  public setTooltipActivity(isTooltipActive: boolean): void {
+  public setTooltipActivity(withTooltip: boolean): void {
     [this.minValueHandler, this.maxValueHandler].forEach((currentHandler: ViewHandlerData) => {
       if (currentHandler) {
         const tooltipPercent: number = currentHandler.value || this.model.getOption<number>('minAvailableValue');
-        currentHandler.handler.changeTooltipActivity(isTooltipActive);
+        currentHandler.handler.changeTooltipActivity(withTooltip);
         currentHandler.handler.setTooltipValue(tooltipPercent);
       }
     });
@@ -134,7 +133,7 @@ class MainView {
 
     const value: number = this.convertPxToPercent(currentPixel);
     const dataForBroadcasting: ObserverEvent<ViewHandlerData> = {
-      type: CustomEvents.STATE_CHANGED,
+      type: CustomEvents.HANDLER_MOUSEMOVE,
       data: {
         value,
         name,
@@ -156,7 +155,7 @@ class MainView {
     const callFunctionAfterAll = (callbackFunction) => setTimeout(callbackFunction, 0);
 
     this.initHandlerEvents(this.minValueHandler);
-    this.registerHandlerInState('minValue');
+    this.handlerDidMount('minValue');
 
     if (valueType === 'double') {
       this.maxValueHandler = {
@@ -165,7 +164,7 @@ class MainView {
       };
 
       this.initHandlerEvents(this.maxValueHandler);
-      this.registerHandlerInState('maxValue');
+      this.handlerDidMount('maxValue');
     }
 
     if (this.model.getOption<boolean>('withLabels')) {
@@ -182,7 +181,7 @@ class MainView {
       switch (event.type) {
         case CustomEvents.WINDOW_RESIZED:
           this.setBreakpointsActivity();
-          this.eventObserver.broadcast({ type: CustomEvents.STATE_REFRESHED });
+          this.eventObserver.broadcast({ type: CustomEvents.WINDOW_RESIZED });
           break;
         case CustomEvents.BODY_CLICKED:
         case CustomEvents.BREAKPOINT_CLICKED:
@@ -232,7 +231,7 @@ class MainView {
     availableHandlers.forEach((handler) => {
       if (handler !== undefined && handler.value === findAvailableHandler) {
         const dataForBroadcasting: ObserverEvent<ViewHandlerData> = {
-          type: CustomEvents.STATE_CHANGED,
+          type: CustomEvents.BREAKPOINT_CLICKED,
           data: {
             name: handler.name,
             value: targetPercent,

@@ -172,7 +172,9 @@ class Model {
   }
 
   public setState(targetStateItem: UnconvertedStateItem): void {
-    if (!this.checkIncludeStateValue(targetStateItem.name)) {
+    const has = Object.prototype.hasOwnProperty;
+
+    if (has.call(this.state, targetStateItem.name)) {
       this.state[targetStateItem.name as string] = { value: targetStateItem.value };
     }
 
@@ -239,8 +241,8 @@ class Model {
       valueType: this.valueType,
       minAvailableValue: this.minAvailableValue,
       maxAvailableValue: this.maxAvailableValue,
-      minValueCurrent: this.state.minValue ?? 'Значение не найдено',
-      maxValueCurrent: this.state.maxValue ?? 'Значение не найдено',
+      minCurrentValue: this.state.minValue ?? 'Значение не найдено',
+      maxCurrentValue: this.state.maxValue ?? 'Значение не найдено',
       stepSize: this.stepSize,
       breakpoints: this.breakpoints,
       withTooltip: this.withTooltip,
@@ -267,10 +269,6 @@ class Model {
     this.maxAvailableValue = options.maxAvailableValue;
     this.stepSize = options.stepSize;
     this.breakpoints = this.updateBreakpointList();
-  }
-
-  private checkIncludeStateValue(targetElement: string): boolean {
-    return Object.prototype.hasOwnProperty.call(this.state, targetElement);
   }
 
   private checkCollision(currentStateItem): void {

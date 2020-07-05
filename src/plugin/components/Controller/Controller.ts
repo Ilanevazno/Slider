@@ -64,14 +64,14 @@ class Controller {
   private subscribeViewObserver(): void {
     this.view.eventObserver.subscribe((event: ObserverEvent<UnconvertedStateItem>) => {
       switch (event.type) {
-        case CustomEvents.STATE_CHANGED:
+        case CustomEvents.HANDLER_DID_MOUNT:
+        case CustomEvents.BREAKPOINT_CLICKED:
+        case CustomEvents.HANDLER_MOUSEMOVE:
           this.model.setState(event.data);
           break;
-        case CustomEvents.STATE_REFRESHED:
+        case CustomEvents.WINDOW_RESIZED:
+        case CustomEvents.VIEW_REFRESHED:
           this.model.refreshState();
-          break;
-        case CustomEvents.STATE_CLEARED:
-          this.model.clearState();
           break;
         default:
           break;

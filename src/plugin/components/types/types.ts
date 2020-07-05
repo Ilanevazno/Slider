@@ -4,8 +4,8 @@ export type AvailableOptions = {
   stepSize: number;
   minAvailableValue: number;
   maxAvailableValue: number;
-  minValueCurrent?: number;
-  maxValueCurrent?: number;
+  minCurrentValue?: number;
+  maxCurrentValue?: number;
   axis: Axis;
   withLabels: boolean;
   withTooltip: boolean;
@@ -92,6 +92,8 @@ export enum Response {
 }
 
 export enum CustomEvents {
+  VIEW_REFRESHED = 'VIEW_REFRESHED',
+  HANDLER_DID_MOUNT = 'HANDLER_DID_MOUNT',
   BREAKPOINT_CLICKED = 'BREAKPOINT_CLICKED',
   BODY_CLICKED = 'BODY_CLICKED',
   HANDLER_MOUSEMOVE = 'HANDLER_MOUSEMOVE',

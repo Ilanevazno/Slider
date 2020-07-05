@@ -10,8 +10,8 @@ import Controller from './Controller/Controller';
         stepSize: 1,
         minAvailableValue: 1,
         maxAvailableValue: 100,
-        minValueCurrent: 1,
-        maxValueCurrent: 100,
+        minCurrentValue: 1,
+        maxCurrentValue: 100,
         axis: 'X',
         withLabels: true,
         withTooltip: true,
@@ -28,10 +28,10 @@ import Controller from './Controller/Controller';
       this.data('controller', controller);
 
       setTimeout(() => {
-        controller.changeStateByItemName('minValue', args.minValueCurrent);
+        controller.changeStateByItemName('minValue', args.minCurrentValue);
 
         if (initSliderOptions.valueType === 'double') {
-          controller.changeStateByItemName('maxValue', args.maxValueCurrent);
+          controller.changeStateByItemName('maxValue', args.maxCurrentValue);
         }
       }, 0);
 
