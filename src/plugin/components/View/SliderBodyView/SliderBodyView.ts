@@ -95,16 +95,10 @@ class SliderBodyView {
   }
 
   public getRangeValues(): number[] {
-    const availableHandlers = [this.mainView.minValueHandler, this.mainView.maxValueHandler];
-    const availableHandlerValues: number[] = [];
-
-    availableHandlers.forEach((current, index) => {
-      if (current !== undefined) {
-        availableHandlerValues.push(availableHandlers[index].value);
-      }
-    });
-
-    return availableHandlerValues;
+    return [
+      this.mainView.minValueHandler.handler.value,
+      this.mainView.maxValueHandler.handler.value,
+    ];
   }
 
   private convertPxToPercent(currentValue: number): number {

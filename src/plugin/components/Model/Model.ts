@@ -171,18 +171,18 @@ class Model {
     this.eventObserver.broadcast({ type: CustomEvents.STATE_CHANGED, data: { state: this.state } });
   }
 
-  public setState(targetStateItem: UnconvertedStateItem): void {
+  public setState({ name, value }: UnconvertedStateItem): void {
     const has = Object.prototype.hasOwnProperty;
 
-    if (has.call(this.state, targetStateItem.name)) {
-      this.state[targetStateItem.name as string] = { value: targetStateItem.value };
+    if (has.call(this.state, name)) {
+      this.state[name] = value;
     }
 
     if (Object.keys(this.state).length > 1) {
-      this.checkCollision(targetStateItem.name);
+      this.checkCollision(name);
     }
 
-    this.state[targetStateItem.name] = this.findTheClosestBreakpoint(targetStateItem.value);
+    this.state[name] = this.findTheClosestBreakpoint(value);
     this.eventObserver.broadcast({ type: CustomEvents.STATE_CHANGED, data: { state: this.state } });
   }
 
@@ -272,19 +272,21 @@ class Model {
   }
 
   private checkCollision(currentStateItem): void {
-    const firstStateItemCurrent: number = this.state.minValue;
-    const lastStateItemCurrent: number = this.state.maxValue;
+    const {
+      minValue,
+      maxValue,
+    } = this.state;
 
     if (currentStateItem === 'minValue') {
-      this.state.maxValue = firstStateItemCurrent > lastStateItemCurrent
-        ? firstStateItemCurrent
-        : lastStateItemCurrent;
+      this.state.maxValue = minValue > maxValue
+        ? minValue
+        : maxValue;
     }
 
     if (currentStateItem === 'maxValue') {
-      this.state.minValue = lastStateItemCurrent < firstStateItemCurrent
-        ? lastStateItemCurrent
-        : firstStateItemCurrent;
+      this.state.minValue = maxValue < minValue
+        ? maxValue
+        : minValue;
     }
   }
 

@@ -83,14 +83,15 @@ class MainView {
   }
 
   public moveHandler(dataForMoving: ModelState) {
-    [this.minValueHandler, this.maxValueHandler].forEach((currentHandler: ViewHandlerData) => {
-      if (currentHandler !== undefined) {
-        const foundedHandlerInData = Object.keys(dataForMoving).filter((currentStateItem) => currentStateItem === currentHandler.name);
+    [this.minValueHandler, this.maxValueHandler]
+      .filter((item) => item !== undefined)
+      .forEach(({ name, handler }: ViewHandlerData) => {
+        const foundedHandlerInData = Object.keys(dataForMoving).filter((currentStateItem) => currentStateItem === name);
 
         if (foundedHandlerInData.length) {
-          const currentValue: number = dataForMoving[currentHandler.name];
+          const currentValue: number = dataForMoving[name];
 
-          currentHandler.handler.move({
+          handler.move({
             currentValue,
             minPercent: this.model.getOption<number>('minAvailableValue'),
             maxPercent: this.model.getOption<number>('maxAvailableValue'),
@@ -98,14 +99,13 @@ class MainView {
           });
 
           // eslint-disable-next-line no-param-reassign
-          currentHandler.value = currentValue;
+          handler.value = currentValue;
 
           if (this.withTooltip()) {
-            currentHandler.handler.setTooltipValue(currentValue);
+            handler.setTooltipValue(currentValue);
           }
         }
-      }
-    });
+      });
   }
 
   private withTooltip(): boolean {
@@ -179,15 +179,16 @@ class MainView {
     });
   }
 
-  private callToChangeByBreakpointClicked(data: any): void {
-    const availableHandlers = [this.minValueHandler, this.maxValueHandler];
+  private callToChangeByBreakpointClicked({ oldValue, newValue }): void {
+    const availableHandlers = [this.minValueHandler, this.maxValueHandler]
+      .filter((handler) => handler !== undefined);
 
-    availableHandlers.forEach((handler) => {
-      if (handler !== undefined && handler.value === data.oldValue) {
+    availableHandlers.forEach((handler: ViewHandlerData) => {
+      if (handler.handler.value === oldValue) {
         const dataForBroadcasting: ObserverEvent<ViewHandlerData> = {
           type: CustomEvents.BREAKPOINT_CLICKED,
           data: {
-            value: data.newValue,
+            value: newValue,
             name: handler.name,
           },
         };

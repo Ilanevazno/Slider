@@ -14,6 +14,8 @@ class HandlerView {
 
   private axis: Axis;
 
+  public value: number;
+
   constructor(private mainView: MainView) {
     this.axis = this.mainView.model.getOption('axis');
     this.$handler = this.drawHandler(this.mainView.sliderBody.$sliderBody);
