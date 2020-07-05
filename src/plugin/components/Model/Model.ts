@@ -290,23 +290,8 @@ class Model {
     }
   }
 
-  private findTheClosestBreakpoint(newStateValue: number): number {
-    let theClosest = Infinity;
-    let temp; let
-      arrayElement;
-
-    this.breakpoints.map((element, index) => {
-      temp = Math.abs(this.breakpoints[index] - newStateValue);
-
-      if (temp < theClosest) {
-        theClosest = temp;
-        arrayElement = this.breakpoints[index];
-      }
-
-      return element;
-    });
-
-    return arrayElement;
+  private findTheClosestBreakpoint(target) {
+    return Math.min(...this.breakpoints.filter((breakpoint) => breakpoint >= target));
   }
 }
 
