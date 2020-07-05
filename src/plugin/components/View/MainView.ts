@@ -92,10 +92,10 @@ class MainView {
           const currentValue: number = dataForMoving[currentHandler.name];
 
           currentHandler.handler.move({
+            currentValue,
             minPercent: this.model.getOption<number>('minAvailableValue'),
             maxPercent: this.model.getOption<number>('maxAvailableValue'),
             maxValue: this.sliderBody.getSliderBodyParams(),
-            currentValue,
           });
 
           // eslint-disable-next-line no-param-reassign
