@@ -1,6 +1,7 @@
 import { Axis, ConvertingData } from '../../types/types';
 import Observer from '../../Observer/Observer';
 import TooltipView from '../TooltipView/TooltipView';
+import Model from '../../Model/Model';
 
 class HandlerView {
   public $handler: JQuery<HTMLElement>;
@@ -11,9 +12,11 @@ class HandlerView {
 
   private tooltip: TooltipView;
 
-  constructor($htmlContainer: JQuery<HTMLElement>, private axis: Axis) {
-    this.axis = axis;
-    this.$handler = this.drawHandler($htmlContainer);
+  private axis: Axis;
+
+  constructor(private $htmlContainer: JQuery<HTMLElement>, private model: Model) {
+    this.axis = this.model.getOption('axis');
+    this.$handler = this.drawHandler(this.$htmlContainer);
     this.tooltip = new TooltipView(this.$handler, this.axis);
     this.observer = new Observer();
 
@@ -82,12 +85,17 @@ class HandlerView {
   }
 
   private handleDocumentMouseMove(event): void {
-    const data = {
-      posX: (event.clientX || event.touches[0].clientX) - (this.offset / 2),
-      poxY: (event.clientX || event.touches[0].clientY) - (this.offset / 2),
-    };
+    const position = this.axis === 'X'
+      ? event.clientX || event.touches[0].clientX
+      : event.clientX || event.touches[0].clientY;
+    const direction = this.axis === 'X' ? 'left' : 'top';
+    const currentPixel = (position - (this.offset / 2)) - this.$htmlContainer[0].getBoundingClientRect()[direction];
+    const minPercent: number = this.model.getOption<number>('minAvailableValue');
+    const maxPercent: number = this.model.getOption<number>('maxAvailableValue');
+    const maxValue: number = this.$htmlContainer.width();
+    const value = (currentPixel * (maxPercent - minPercent)) / maxValue + minPercent;
 
-    this.observer.broadcast({ type: `HANDLER_${event.type.toUpperCase()}`, data });
+    this.observer.broadcast({ type: `HANDLER_${event.type.toUpperCase()}`, data: { value } });
   }
 
   private handleDocumentMouseUp(): void {

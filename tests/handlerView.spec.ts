@@ -4,9 +4,7 @@ import { Axis } from '../src/plugin/components/types/types';
 const $dummyHtmlElement = $(document.createElement('div'));
 document.getElementById = jasmine.createSpy('HTML Element').and.returnValue($dummyHtmlElement);
 
-const currentAxis: Axis = 'Y';
-
-const handlerView = new HandlerView($dummyHtmlElement, currentAxis);
+const handlerView = new HandlerView($dummyHtmlElement, null);
 
 describe('Проверка класса SliderBodyView', () => {
   it('Произошла инициализация класса MainView', () => {

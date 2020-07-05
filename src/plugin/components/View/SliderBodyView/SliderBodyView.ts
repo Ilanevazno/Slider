@@ -1,20 +1,26 @@
 import {
-  SliderBreakpoint, CustomEvents, Axis, BodyBreakpointsData,
+  CustomEvents, Axis, BodyBreakpointsData,
 } from '../../types/types';
 import Observer from '../../Observer/Observer';
+import BreakpointsView from '../BreakpointsView/BreakpointsView';
+import MainView from '../MainView';
 
 class SliderBodyView {
   public $sliderBody: JQuery<HTMLElement>;
 
   public eventObserver: Observer;
 
-  private breakpointElements: JQuery<HTMLElement>[];
+  private breakpoints: BreakpointsView;
 
-  constructor($htmlContainer: JQuery<HTMLElement>, private axis: Axis) {
+  private axis: Axis;
+
+  constructor(private mainView: MainView) {
     this.eventObserver = new Observer();
-    this.axis = axis;
-    this.$sliderBody = this.drawBody($htmlContainer);
-    this.breakpointElements = [];
+    this.axis = mainView.model.getOption('axis');
+    this.$sliderBody = this.drawBody(mainView.$sliderContainer);
+    this.breakpoints = new BreakpointsView(this.axis, this, this.mainView);
+
+    this.listenBreakpointsEvents();
 
     useAutoBind(this);
     this.bindActions();
@@ -35,76 +41,43 @@ class SliderBodyView {
       : this.$sliderBody[0].getBoundingClientRect().height;
   }
 
-  public drawBreakpoints(breakpoints: SliderBreakpoint[]): void {
-    this.removeBreakpoints();
+  public findTheClosestArrayValue(array: number[], base: number): number {
+    let theClosest = Infinity;
+    let temp;
+    let arrayElement;
 
-    const direction: string = this.axis === 'X' ? 'left' : 'top';
-    let shortStepCounter: number = Math.trunc((breakpoints.length - 1) / 10);
-    const shortBreakpoints: SliderBreakpoint[] = [];
-    shortBreakpoints.push(breakpoints[0]);
+    array.map((element, i) => {
+      temp = Math.abs(array[i] - base);
 
-    while (shortStepCounter <= breakpoints.length) {
-      shortBreakpoints.push(breakpoints[shortStepCounter]);
+      if (temp < theClosest) {
+        theClosest = temp;
+        arrayElement = array[i];
+      }
 
-      const cycleCounter = Math.trunc(breakpoints.length / 10) === 0
-        ? Math.ceil(breakpoints.length / 10)
-        : Math.trunc(breakpoints.length / 10);
-
-      shortStepCounter += cycleCounter;
-    }
-
-    this.breakpointElements = shortBreakpoints
-      .filter((breakpoint) => breakpoint !== undefined).map((breakpoint: SliderBreakpoint) => {
-        const icon: number = breakpoint.currentValue;
-
-        return $('<div/>', {
-          class: `slider__breakpoint slider__breakpoint_direction_${direction}`,
-        })
-          .css(direction, `${breakpoint.pixelPosition}px`)
-          .text(icon)
-          .appendTo(this.$sliderBody)
-          .on('click', this.handleBreakpointClick.bind(null, icon));
-      });
-  }
-
-  public removeBreakpoints(): void {
-    this.breakpointElements.forEach(($element: JQuery<HTMLElement>) => {
-      $element.remove();
+      return element;
     });
+
+    return arrayElement;
   }
 
   public changeBreakpointsActivity(isActive: boolean, breakpointsData: BodyBreakpointsData): void {
     if (isActive) {
-      const availableBreakpoints = this.getConvertedBreakpoints(breakpointsData);
-      this.drawBreakpoints(availableBreakpoints);
+      this.breakpoints.draw(breakpointsData);
     } else {
-      this.removeBreakpoints();
+      this.breakpoints.remove();
     }
   }
 
-  private getConvertedBreakpoints(data: BodyBreakpointsData) {
-    const {
-      axis,
-      offsetHandlerWidth,
-      currentBreakpointList,
-      minAvailableValue,
-      maxAvailableValue,
-    } = data;
-    const axisDivisionOffset = axis === 'X' ? 4 : 2;
-    const sliderBodyParams: number = this.getSliderBodyParams() - offsetHandlerWidth;
-
-    return currentBreakpointList.map((currentValue: number) => {
-      const currentPixel = ((currentValue - minAvailableValue) / (maxAvailableValue - minAvailableValue)) * sliderBodyParams;
-
-      return {
-        currentValue,
-        pixelPosition: currentPixel + (offsetHandlerWidth / axisDivisionOffset),
-      };
+  private listenBreakpointsEvents() {
+    this.breakpoints.eventObserver.subscribe((event: any) => {
+      switch (event.type) {
+        case CustomEvents.BREAKPOINT_CLICKED:
+          this.eventObserver.broadcast({ type: CustomEvents.BREAKPOINT_CLICKED, data: event.data });
+          break;
+        default:
+          return event;
+      }
     });
-  }
-
-  private handleBreakpointClick(breakpointValue: number): void {
-    this.eventObserver.broadcast({ type: CustomEvents.BREAKPOINT_CLICKED, percentValue: breakpointValue });
   }
 
   private drawBody($htmlContainer): JQuery<HTMLElement> {
@@ -121,14 +94,42 @@ class SliderBodyView {
     this.eventObserver.broadcast({ type: CustomEvents.WINDOW_RESIZED });
   }
 
+  public getRangeValues(): number[] {
+    const availableHandlers = [this.mainView.minValueHandler, this.mainView.maxValueHandler];
+    const availableHandlerValues: number[] = [];
+
+    availableHandlers.forEach((current, index) => {
+      if (current !== undefined) {
+        availableHandlerValues.push(availableHandlers[index].value);
+      }
+    });
+
+    return availableHandlerValues;
+  }
+
+  private convertPxToPercent(currentValue: number): number {
+    const minPercent: number = this.mainView.model.getOption<number>('minAvailableValue');
+    const maxPercent: number = this.mainView.model.getOption<number>('maxAvailableValue');
+    const maxValue: number = this.getSliderBodyParams();
+    const minValueOption: number = this.mainView.model.getOption<number>('minAvailableValue');
+
+    return (currentValue * (maxPercent - minPercent)) / maxValue + minValueOption;
+  }
+
   private handleSliderBodyClick(event): void {
     const htmlEventTarget = event.target;
     const caughtCoords: number = this.axis === 'X'
       ? event.offsetX
       : event.offsetY;
 
+    const availableHandlerValues = this.getRangeValues();
+    const newValue = this.convertPxToPercent(caughtCoords);
+    const oldValue: number = this.findTheClosestArrayValue(availableHandlerValues, newValue);
+
+    const data = { oldValue, newValue };
+
     if (htmlEventTarget === this.$sliderBody[0]) {
-      this.eventObserver.broadcast({ type: CustomEvents.BODY_CLICKED, caughtCoords });
+      this.eventObserver.broadcast({ type: CustomEvents.BODY_CLICKED, data });
     }
   }
 

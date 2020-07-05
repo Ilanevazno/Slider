@@ -26,10 +26,8 @@ export type SliderBreakpoint = {
 }
 
 export type HandlerEvent = {
-  pos?: number;
-  posX?: number;
-  posY?: number;
-  name: HandlerName;
+  name: string;
+  value: number;
 }
 
 export type ViewHandlerData = {

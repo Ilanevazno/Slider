@@ -17,7 +17,7 @@ import HandlerView from './HandlerView/HandlerView';
 class MainView {
   public eventObserver: Observer;
 
-  private $sliderContainer: JQuery<HTMLElement>
+  public $sliderContainer: JQuery<HTMLElement>
 
   public sliderBody: SliderBodyView;
 
@@ -25,7 +25,7 @@ class MainView {
 
   public maxValueHandler: ViewHandlerData;
 
-  constructor(private model: Model, initHtmlElement: HTMLElement) {
+  constructor(public model: Model, initHtmlElement: HTMLElement) {
     this.eventObserver = new Observer();
     this.$sliderContainer = this.drawSliderContainer(initHtmlElement);
 
@@ -68,14 +68,14 @@ class MainView {
   public setTooltipActivity(withTooltip: boolean): void {
     [this.minValueHandler, this.maxValueHandler].forEach((currentHandler: ViewHandlerData) => {
       if (currentHandler) {
-        const tooltipPercent: number = currentHandler.value || this.model.getOption<number>('minAvailableValue');
+        const tooltipValue: number = currentHandler.value;
         currentHandler.handler.changeTooltipActivity(withTooltip);
-        currentHandler.handler.setTooltipValue(tooltipPercent);
+        currentHandler.handler.setTooltipValue(tooltipValue);
       }
     });
   }
 
-  public changeSliderBodyAxis(axis: Axis): string {
+  public changeSliderBodyAxis(axis: Axis): Axis {
     this.sliderBody.setAxis(axis);
     this.refreshView();
 
@@ -112,27 +112,13 @@ class MainView {
     return this.model.getOption<boolean>('withTooltip');
   }
 
-  private convertPxToPercent(currentValue: number): number {
-    const minPercent: number = this.model.getOption<number>('minAvailableValue');
-    const maxPercent: number = this.model.getOption<number>('maxAvailableValue');
-    const maxValue: number = this.sliderBody.getSliderBodyParams();
-    const minValueOption: number = this.model.getOption<number>('minAvailableValue');
-
-    return (currentValue * (maxPercent - minPercent)) / maxValue + minValueOption;
-  }
-
   private handleHandlerMove(data: HandlerEvent): number {
     const {
+      value,
       name,
-      pos,
     } = data;
 
-    const direction = this.model.getOption<Axis>('axis') === 'X' ? 'left' : 'top';
-
-    const currentPixel: number = pos - this.sliderBody.$sliderBody[0].getBoundingClientRect()[direction];
-
-    const value: number = this.convertPxToPercent(currentPixel);
-    const dataForBroadcasting: ObserverEvent<ViewHandlerData> = {
+    const dataForBroadcasting: ObserverEvent<HandlerEvent> = {
       type: CustomEvents.HANDLER_MOUSEMOVE,
       data: {
         value,
@@ -146,7 +132,7 @@ class MainView {
 
   private createSliderComponents() {
     const valueType: ValueType = this.model.getOption<ValueType>('valueType');
-    this.sliderBody = this.drawSliderBody(this.$sliderContainer);
+    this.sliderBody = this.drawSliderBody();
     this.minValueHandler = {
       name: 'minValue',
       handler: this.getHandlerComponent(this.sliderBody.$sliderBody),
@@ -177,7 +163,7 @@ class MainView {
   }
 
   private initSliderBodyEvents(): void {
-    this.sliderBody.eventObserver.subscribe((event: ObserverEvent<object>) => {
+    this.sliderBody.eventObserver.subscribe((event: any) => {
       switch (event.type) {
         case CustomEvents.WINDOW_RESIZED:
           this.setBreakpointsActivity();
@@ -185,7 +171,7 @@ class MainView {
           break;
         case CustomEvents.BODY_CLICKED:
         case CustomEvents.BREAKPOINT_CLICKED:
-          this.callToChangeByBreakpointClicked(event);
+          this.callToChangeByBreakpointClicked(event.data);
           break;
         default:
           break;
@@ -193,48 +179,16 @@ class MainView {
     });
   }
 
-  private findTheClosestArrayValue(array: number[], base: number): number {
-    let theClosest = Infinity;
-    let temp;
-    let arrayElement;
-
-    array.map((element, i) => {
-      temp = Math.abs(array[i] - base);
-
-      if (temp < theClosest) {
-        theClosest = temp;
-        arrayElement = array[i];
-      }
-
-      return element;
-    });
-
-    return arrayElement;
-  }
-
-  private callToChangeByBreakpointClicked(event): void {
+  private callToChangeByBreakpointClicked(data: any): void {
     const availableHandlers = [this.minValueHandler, this.maxValueHandler];
-    const targetPercent: number = event.caughtCoords
-      ? this.convertPxToPercent(event.caughtCoords)
-      : event.percentValue;
-
-    const availableHandlerValues: number[] = [];
-
-    availableHandlers.forEach((current, index) => {
-      if (current !== undefined) {
-        availableHandlerValues.push(availableHandlers[index].value);
-      }
-    });
-
-    const findAvailableHandler: number = this.findTheClosestArrayValue(availableHandlerValues, targetPercent);
 
     availableHandlers.forEach((handler) => {
-      if (handler !== undefined && handler.value === findAvailableHandler) {
+      if (handler !== undefined && handler.value === data.oldValue) {
         const dataForBroadcasting: ObserverEvent<ViewHandlerData> = {
           type: CustomEvents.BREAKPOINT_CLICKED,
           data: {
+            value: data.newValue,
             name: handler.name,
-            value: targetPercent,
           },
         };
         this.eventObserver.broadcast(dataForBroadcasting);
@@ -250,14 +204,14 @@ class MainView {
     return this.$sliderContainer;
   }
 
-  private drawSliderBody($HtmlContainer: JQuery<HTMLElement>): SliderBodyView {
-    const sliderBody: SliderBodyView = new SliderBodyView($HtmlContainer, this.model.getOption<Axis>('axis'));
+  private drawSliderBody(): SliderBodyView {
+    const sliderBody: SliderBodyView = new SliderBodyView(this);
 
     return sliderBody;
   }
 
   private getHandlerComponent($HtmlContainer): HandlerView {
-    const handler = new HandlerView($HtmlContainer, this.model.getOption<Axis>('axis'));
+    const handler = new HandlerView($HtmlContainer, this.model);
 
     const withTooltip: boolean = this.model.getOption<boolean>('withTooltip');
 
@@ -274,8 +228,8 @@ class MainView {
         case CustomEvents.HANDLER_MOUSEMOVE:
         case CustomEvents.HANDLER_TOUCHMOVE:
           this.handleHandlerMove({
-            pos: this.model.getOption<Axis>('axis') === 'X' ? event.data.posX : event.data.posY,
             name: parent.name,
+            value: event.data.value,
           });
           break;
         default:
