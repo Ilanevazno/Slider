@@ -135,7 +135,7 @@ class MainView {
     this.sliderBody = this.drawSliderBody();
     this.minValueHandler = {
       name: 'minValue',
-      handler: this.getHandlerComponent(this.sliderBody.$sliderBody),
+      handler: this.getHandlerComponent(),
     };
 
     const callFunctionAfterAll = (callbackFunction) => setTimeout(callbackFunction, 0);
@@ -146,7 +146,7 @@ class MainView {
     if (valueType === 'double') {
       this.maxValueHandler = {
         name: 'maxValue',
-        handler: this.getHandlerComponent(this.sliderBody.$sliderBody),
+        handler: this.getHandlerComponent(),
       };
 
       this.initHandlerEvents(this.maxValueHandler);
@@ -210,8 +210,8 @@ class MainView {
     return sliderBody;
   }
 
-  private getHandlerComponent($HtmlContainer): HandlerView {
-    const handler = new HandlerView($HtmlContainer, this.model);
+  private getHandlerComponent(): HandlerView {
+    const handler = new HandlerView(this);
 
     const withTooltip: boolean = this.model.getOption<boolean>('withTooltip');
 

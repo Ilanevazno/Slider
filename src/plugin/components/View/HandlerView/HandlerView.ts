@@ -1,7 +1,7 @@
 import { Axis, ConvertingData } from '../../types/types';
 import Observer from '../../Observer/Observer';
 import TooltipView from '../TooltipView/TooltipView';
-import Model from '../../Model/Model';
+import MainView from '../MainView';
 
 class HandlerView {
   public $handler: JQuery<HTMLElement>;
@@ -14,9 +14,9 @@ class HandlerView {
 
   private axis: Axis;
 
-  constructor(private $htmlContainer: JQuery<HTMLElement>, private model: Model) {
-    this.axis = this.model.getOption('axis');
-    this.$handler = this.drawHandler(this.$htmlContainer);
+  constructor(private mainView: MainView) {
+    this.axis = this.mainView.model.getOption('axis');
+    this.$handler = this.drawHandler(this.mainView.sliderBody.$sliderBody);
     this.tooltip = new TooltipView(this.$handler, this.axis);
     this.observer = new Observer();
 
@@ -89,10 +89,10 @@ class HandlerView {
       ? event.clientX || event.touches[0].clientX
       : event.clientX || event.touches[0].clientY;
     const direction = this.axis === 'X' ? 'left' : 'top';
-    const currentPixel = (position - (this.offset / 2)) - this.$htmlContainer[0].getBoundingClientRect()[direction];
-    const minPercent: number = this.model.getOption<number>('minAvailableValue');
-    const maxPercent: number = this.model.getOption<number>('maxAvailableValue');
-    const maxValue: number = this.$htmlContainer.width();
+    const currentPixel = (position - (this.offset / 2)) - this.mainView.sliderBody.$sliderBody[0].getBoundingClientRect()[direction];
+    const minPercent: number = this.mainView.model.getOption<number>('minAvailableValue');
+    const maxPercent: number = this.mainView.model.getOption<number>('maxAvailableValue');
+    const maxValue: number = this.mainView.sliderBody.getSliderBodyParams();
     const value = (currentPixel * (maxPercent - minPercent)) / maxValue + minPercent;
 
     this.observer.broadcast({ type: `HANDLER_${event.type.toUpperCase()}`, data: { value } });
