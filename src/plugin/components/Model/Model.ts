@@ -116,11 +116,9 @@ class Model {
       this.state[name] = parsedValue;
     }
 
-    if (Object.keys(this.state).length > 1) {
-      this.checkCollision(name);
-    }
+    this.scanningStateForCollisions(name);
 
-    this.state[name] = this.findTheClosestBreakpoint(parsedValue);
+    this.state[name] = this.findClosestBreakpoint(parsedValue);
     this.eventObserver.broadcast({ type: CustomEvents.STATE_CHANGED, data: { state: this.state } });
   }
 
@@ -190,7 +188,7 @@ class Model {
     this.breakpoints = this.updateBreakpointList();
   }
 
-  private checkCollision(currentStateItem): void {
+  private scanningStateForCollisions(currentStateItem): void {
     const {
       minValue,
       maxValue,
@@ -209,7 +207,7 @@ class Model {
     }
   }
 
-  private findTheClosestBreakpoint(target: number): number {
+  private findClosestBreakpoint(target: number): number {
     let newTarget: number = this.minAvailableValue;
 
     this.breakpoints.some((currentValue, index) => {
