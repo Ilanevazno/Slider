@@ -67,12 +67,6 @@ export type ConvertingData = {
   maxValue: number;
 }
 
-export type ModelResponse<T> = {
-  readonly response: Response;
-  message: string;
-  newValue?: T;
-}
-
 export enum ValueType {
   SINGLE = 'single',
   DOUBLE = 'double'

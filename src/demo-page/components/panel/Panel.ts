@@ -83,11 +83,10 @@ class Panel {
   }
 
   private prepareSelectLabels(): void {
-    const valueType = this.$slider.sliderPlugin('setValueType', this.sliderOptions.valueType);
-    const axis = this.$slider.sliderPlugin('setAxis', this.sliderOptions.axis);
-
-    this.$valueTypeSelect.val(valueType.newValue === 'single' ? 'Одиночное' : 'Интервал');
-    this.$viewTypeSelect.val(axis.newValue === 'X' ? 'Горизонтальный' : 'Вертикальный');
+    this.$slider.sliderPlugin('setValueType', this.sliderOptions.valueType);
+    this.$slider.sliderPlugin('setAxis', this.sliderOptions.axis);
+    this.$valueTypeSelect.val(this.sliderOptions.valueType === 'single' ? 'Одиночное' : 'Интервал');
+    this.$viewTypeSelect.val(this.sliderOptions.axis === 'X' ? 'Горизонтальный' : 'Вертикальный');
   }
 
   private prepareInputLabels(): void {
@@ -103,13 +102,13 @@ class Panel {
     });
 
     this.$stepSizeInput?.val(this.sliderOptions.stepSize);
-    this.$minValueInput?.val(minAvailableValue.newValue);
-    this.$maxValueInput?.val(maxAvailableValue.newValue);
+    this.$minValueInput?.val(this.sliderOptions.minAvailableValue);
+    this.$maxValueInput?.val(this.sliderOptions.maxAvailableValue);
   }
 
   private prepareLabelsData(): void {
-    const viewType = this.$slider.sliderPlugin('setValueType', this.sliderOptions.valueType);
-    this.changeViewTypeInputState(viewType.newValue);
+    this.$slider.sliderPlugin('setValueType', this.sliderOptions.valueType);
+    this.changeViewTypeInputState(this.sliderOptions.valueType);
     this.prepareCheckboxes();
     this.prepareInputLabels();
     this.prepareSelectLabels();
@@ -227,10 +226,10 @@ class Panel {
   private setStepSize($targetLabel: JQuery<HTMLElement>): void {
     const caughtNewValue = Number($targetLabel.val());
     const $targetLabelParent = $targetLabel.parent();
-    const setStepSizeRequest = this.$slider.sliderPlugin('setStepSize', caughtNewValue);
-
-    if (setStepSizeRequest.response === 'ERROR') {
-      this.getErrorNotify(setStepSizeRequest.message, $targetLabelParent);
+    try {
+      this.$slider.sliderPlugin('setStepSize', caughtNewValue);
+    } catch (error) {
+      this.getErrorNotify(error.message, $targetLabelParent);
       $targetLabel.val('');
     }
   }

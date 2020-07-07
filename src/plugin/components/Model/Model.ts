@@ -1,7 +1,6 @@
 import {
   AvailableOptions,
   UnconvertedStateItem,
-  ModelResponse,
   CustomEvents,
   Response,
   ValueType,
@@ -37,50 +36,23 @@ class Model {
     this.callInitialMethods(options);
   }
 
-  public setValueType(valueType: ValueType): ModelResponse<string> {
+  public setValueType(valueType: ValueType): void {
     if (valueType === ValueType.SINGLE || valueType === ValueType.DOUBLE) {
       this.valueType = valueType;
       this.eventObserver.broadcast({ type: CustomEvents.VALUE_TYPE_CHANGED, data: { valueType: this.valueType } });
-
-      return {
-        response: Response.SUCCESS,
-        message: `Тип значения установлен на ${valueType}`,
-        newValue: valueType,
-      };
+    } else {
+      throw new Error(`Невалидное типа значения: ${valueType}`);
     }
-
-    this.valueType = ValueType.SINGLE;
-    this.eventObserver.broadcast({ type: CustomEvents.VALUE_TYPE_CHANGED, data: { valueType: this.valueType } });
-
-    return {
-      response: Response.ERROR,
-      message: `Не удалось найти указанное значение ${valueType}, установлено значение на ${ValueType.SINGLE}`,
-      newValue: ValueType.SINGLE,
-    };
   }
 
-  public setAxis(axis: Axis): ModelResponse<string> {
+  public setAxis(axis: Axis): void {
     if (axis === 'X' || axis === 'Y') {
       this.axis = axis;
 
       this.eventObserver.broadcast({ type: CustomEvents.AXIS_CHANGED, data: { axis: this.axis } });
-
-      return {
-        response: Response.SUCCESS,
-        message: `Тип отображения установлен на ${axis}`,
-        newValue: axis,
-      };
+    } else {
+      throw new Error(`Невалидный тип отображения ${axis}`);
     }
-
-    this.axis = 'X';
-
-    this.eventObserver.broadcast({ type: CustomEvents.AXIS_CHANGED, data: { axis: this.axis } });
-
-    return {
-      response: Response.ERROR,
-      message: `Не удалось найти тип отображения ${axis}, установлено значение X`,
-      newValue: 'X',
-    };
   }
 
   public setLabelsActivity(isLabelsActive: boolean): void {
@@ -106,32 +78,20 @@ class Model {
     return { ...this.state };
   }
 
-  public requestToSetMinAvailableValue(value: number): ModelResponse<number> {
+  public requestToSetMinAvailableValue(value: number): void {
     if (value <= this.maxAvailableValue) {
       this.setMinAvailableValue(value);
-
-      return {
-        response: Response.SUCCESS,
-        message: `Минимальное значение установлено на ${value}`,
-        newValue: value,
-      };
+    } else {
+      throw new Error('Минимальное значение не может быть больше чем максимальное.');
     }
-
-    throw new Error('Минимальное значение не может быть больше чем максимальное.');
   }
 
-  public requestToSetMaxAvailableValue(value: number): ModelResponse<number> {
+  public requestToSetMaxAvailableValue(value: number): void {
     if (value >= this.minAvailableValue) {
       this.setMaxAvailableValue(value);
-
-      return {
-        response: Response.SUCCESS,
-        message: `Максимальное значение установлено на ${value}`,
-        newValue: value,
-      };
+    } else {
+      throw new Error('Максимальное значение не может быть меньше минимального.');
     }
-
-    throw new Error('Максимальное значение не может быть меньше минимального.');
   }
 
   public updateBreakpointList(): number[] {
@@ -164,7 +124,7 @@ class Model {
     this.eventObserver.broadcast({ type: CustomEvents.STATE_CHANGED, data: { state: this.state } });
   }
 
-  public setStepSize(newStepSize: number): ModelResponse<number> {
+  public setStepSize(newStepSize: number): void {
     const convertedNewStepSize = Math.abs(newStepSize);
     const convertedMaxValue = Math.abs(this.maxAvailableValue);
 
@@ -174,17 +134,9 @@ class Model {
       this.updateBreakpointList();
 
       this.eventObserver.broadcast({ type: CustomEvents.STEP_SIZE_CHANGED, data: { newBreakpoints: this.breakpoints } });
-
-      return {
-        response: Response.SUCCESS,
-        message: `Размер шага установлен на ${convertedNewStepSize}`,
-        newValue: convertedNewStepSize,
-      };
+    } else {
+      throw new Error(`Размер шага должен быть от 1 до ${convertedMaxValue}`);
     }
-    return {
-      response: Response.ERROR,
-      message: `Размер шага должен быть от 1 до ${convertedMaxValue}`,
-    };
   }
 
   private setMinAvailableValue(value: number): void {

@@ -1,7 +1,6 @@
 import {
   ObserverEvent,
   ModelListener,
-  ModelResponse,
   CustomEvents,
   ValueType,
   Axis,
@@ -33,7 +32,7 @@ class Controller {
     this.model.setState({ name, value });
   }
 
-  public setValueType(valueType: ValueType): ModelResponse<string> {
+  public setValueType(valueType: ValueType): void {
     return this.model.setValueType(valueType);
   }
 
@@ -45,19 +44,19 @@ class Controller {
     this.model.setTooltipActivity(isActive);
   }
 
-  public setAxis(axis: Axis): ModelResponse<string> {
+  public setAxis(axis: Axis): void {
     return this.model.setAxis(axis);
   }
 
-  public setStepSize(newStepSize: number): ModelResponse<number> {
+  public setStepSize(newStepSize: number): void {
     return this.model.setStepSize(newStepSize);
   }
 
-  public setMinAvailableValue(value: number): ModelResponse<number> {
+  public setMinAvailableValue(value: number): void {
     return this.model.requestToSetMinAvailableValue(value);
   }
 
-  public setMaxAvailableValue(value: number): ModelResponse<number> {
+  public setMaxAvailableValue(value: number): void {
     return this.model.requestToSetMaxAvailableValue(value);
   }
 
