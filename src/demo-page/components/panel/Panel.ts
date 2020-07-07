@@ -94,11 +94,10 @@ class Panel {
     const maxAvailableValue = this.$slider.sliderPlugin('setMaxAvailableValue', this.sliderOptions.maxAvailableValue);
 
     this.$slider.sliderPlugin('subscribeToChangeState', (newState) => {
-      try {
-        this.$minValueHandlerInput?.val(newState.minValue);
-        this.$maxValueHandlerInput?.val(newState.maxValue);
-        // eslint-disable-next-line no-empty
-      } catch (err) { }
+      const oldMinValue = this.$minValueHandlerInput?.val();
+      const oldMaxValue = this.$maxValueHandlerInput?.val();
+      this.$minValueHandlerInput?.val(newState.minValue ?? oldMinValue);
+      this.$maxValueHandlerInput?.val(newState.maxValue ?? oldMaxValue);
     });
 
     this.$stepSizeInput?.val(this.sliderOptions.stepSize);

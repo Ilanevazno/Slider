@@ -64,7 +64,7 @@ export type ConvertingData = {
   minPercent: number;
   maxPercent: number;
   currentValue: number;
-  maxValue: number;
+  maxContainerSize: number;
 }
 
 export enum ValueType {

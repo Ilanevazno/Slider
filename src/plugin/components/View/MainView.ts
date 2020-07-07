@@ -87,7 +87,7 @@ class MainView {
             currentValue,
             minPercent: this.model.getOption<number>('minAvailableValue'),
             maxPercent: this.model.getOption<number>('maxAvailableValue'),
-            maxValue: this.sliderBody.getSliderBodyParams(),
+            maxContainerSize: this.sliderBody.getSliderBodyParams(),
           });
 
           // eslint-disable-next-line no-param-reassign

@@ -31,9 +31,9 @@ class HandlerView {
       minPercent,
       maxPercent,
       currentValue,
-      maxValue,
+      maxContainerSize,
     } = data;
-    return ((currentValue - minPercent) / (maxPercent - minPercent)) * (maxValue - this.getWidth());
+    return ((currentValue - minPercent) / (maxPercent - minPercent)) * (maxContainerSize - this.getWidth());
   }
 
   public move(data: ConvertingData): void {

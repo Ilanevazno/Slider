@@ -109,17 +109,20 @@ class Model {
   }
 
   public setState({ name, value }: UnconvertedStateItem): void {
-    const parsedValue = Math.floor(value);
-    const has = Object.prototype.hasOwnProperty;
+    this.state[name] = this.findClosestBreakpoint(value);
 
-    if (has.call(this.state, name)) {
-      this.state[name] = parsedValue;
+    const withCollision = this.checkStateForCollisions(name);
+
+    if (!withCollision) {
+      this.eventObserver.broadcast({
+        type: CustomEvents.STATE_CHANGED,
+        data: {
+          state: {
+            [name]: this.state[name],
+          },
+        },
+      });
     }
-
-    this.scanningStateForCollisions(name);
-
-    this.state[name] = this.findClosestBreakpoint(parsedValue);
-    this.eventObserver.broadcast({ type: CustomEvents.STATE_CHANGED, data: { state: this.state } });
   }
 
   public setStepSize(newStepSize: number): void {
@@ -188,23 +191,29 @@ class Model {
     this.breakpoints = this.updateBreakpointList();
   }
 
-  private scanningStateForCollisions(currentStateItem): void {
+  private checkStateForCollisions(currentStateItem): boolean {
     const {
       minValue,
       maxValue,
     } = this.state;
 
-    if (currentStateItem === 'minValue') {
-      this.state.maxValue = minValue > maxValue
-        ? minValue
-        : maxValue;
+    let isCaughtCollision = false;
+
+    if (currentStateItem === 'minValue' && minValue > maxValue) {
+      isCaughtCollision = true;
+      this.state.maxValue = minValue;
     }
 
-    if (currentStateItem === 'maxValue') {
-      this.state.minValue = maxValue < minValue
-        ? maxValue
-        : minValue;
+    if (currentStateItem === 'maxValue' && maxValue < minValue) {
+      this.state.minValue = maxValue;
+      isCaughtCollision = true;
     }
+
+    if (isCaughtCollision) {
+      this.eventObserver.broadcast({ type: CustomEvents.STATE_CHANGED, data: { state: this.state } });
+    }
+
+    return isCaughtCollision;
   }
 
   private findClosestBreakpoint(target: number): number {
