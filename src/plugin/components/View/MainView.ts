@@ -8,6 +8,7 @@ import {
   Axis,
   ModelState,
   HandlerName,
+  InteractiveComponentEvent,
 } from '../types/types';
 import Model from '../Model/Model';
 import Observer from '../Observer/Observer';
@@ -155,17 +156,18 @@ class MainView {
   }
 
   private initSliderBodyEvents(): void {
-    this.sliderBody.eventObserver.subscribe((event: any) => {
+    this.sliderBody.eventObserver.subscribe((event: ObserverEvent<InteractiveComponentEvent>) => {
       switch (event.type) {
         case CustomEvents.WINDOW_RESIZED:
           this.setBreakpointsAvailability();
           this.moveHandler({
             minValue: this.minValueHandler.handler.value,
-            maxValue: this.maxValueHandler.handler.value,
+            maxValue: this.maxValueHandler?.handler.value,
           });
           break;
         case CustomEvents.BODY_CLICKED:
         case CustomEvents.BREAKPOINT_CLICKED:
+          console.log(event);
           this.interactiveComponentClicked(event.data);
           break;
         default:

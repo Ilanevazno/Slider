@@ -60,6 +60,11 @@ export type ModelState = {
   maxValue?: number;
 }
 
+export type InteractiveComponentEvent = {
+  oldValue: number;
+  newValue: number;
+}
+
 export type ConvertingData = {
   minPercent: number;
   maxPercent: number;
@@ -84,8 +89,6 @@ export enum Response {
 }
 
 export enum CustomEvents {
-  RESPONSE_ACTUAL_STATE = 'RESPONSE_ACTUAL_STATE',
-  VIEW_WILL_REFRESH = 'VIEW_WILL_REFRESH',
   HANDLER_WILL_MOUNT = 'HANDLER_WILL_MOUNT',
   BREAKPOINT_CLICKED = 'BREAKPOINT_CLICKED',
   INTERACTIVE_COMPONENT_CLICKED = 'INTERACTIVE_COMPONENT_CLICKED',
@@ -98,8 +101,6 @@ export enum CustomEvents {
   MIN_AVAILABLE_VALUE_CHANGED = 'MIN_AVAILABLE_VALUE_CHANGED',
   MAX_AVAILABLE_VALUE_CHANGED = 'MAX_AVAILABLE_VALUE_CHANGED',
   STATE_CHANGED = 'STATE_CHANGED',
-  STATE_CLEARED = 'STATE_CLEARED',
-  STATE_REFRESHED = 'STATE_REFRESHED',
   VALUE_TYPE_CHANGED = 'VALUE_TYPE_CHANGED',
   STEP_SIZE_CHANGED = 'STEP_SIZE_CHANGED',
   AXIS_CHANGED = 'AXIS_CHANGED',

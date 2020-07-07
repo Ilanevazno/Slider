@@ -1,5 +1,5 @@
 import {
-  CustomEvents, Axis, BodyBreakpointsData,
+  CustomEvents, Axis, BodyBreakpointsData, ObserverEvent, InteractiveComponentEvent,
 } from '../../types/types';
 import Observer from '../../Observer/Observer';
 import BreakpointsView from '../BreakpointsView/BreakpointsView';
@@ -64,7 +64,7 @@ class SliderBodyView {
   }
 
   private listenBreakpointsEvents() {
-    this.breakpoints.eventObserver.subscribe((event: any) => {
+    this.breakpoints.eventObserver.subscribe((event: ObserverEvent<InteractiveComponentEvent>) => {
       switch (event.type) {
         case CustomEvents.BREAKPOINT_CLICKED:
           this.eventObserver.broadcast({ type: CustomEvents.BREAKPOINT_CLICKED, data: event.data });
