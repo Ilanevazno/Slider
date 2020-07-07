@@ -161,36 +161,19 @@ class Model {
     return this.breakpoints;
   }
 
-  public changeStateByItemName(name: HandlerName, value: number): void {
-    this.setState({ name, value });
-
-    if (Object.keys(this.state).length > 1) {
-      this.checkCollision(name);
-    }
-
-    this.eventObserver.broadcast({ type: CustomEvents.STATE_CHANGED, data: { state: this.state } });
-  }
-
   public setState({ name, value }: UnconvertedStateItem): void {
+    const parsedValue = Math.floor(value);
     const has = Object.prototype.hasOwnProperty;
 
     if (has.call(this.state, name)) {
-      this.state[name] = value;
+      this.state[name] = parsedValue;
     }
 
     if (Object.keys(this.state).length > 1) {
       this.checkCollision(name);
     }
 
-    this.state[name] = this.findTheClosestBreakpoint(value);
-    this.eventObserver.broadcast({ type: CustomEvents.STATE_CHANGED, data: { state: this.state } });
-  }
-
-  public clearState(): void {
-    this.state = {};
-  }
-
-  public refreshState(): void {
+    this.state[name] = this.findTheClosestBreakpoint(parsedValue);
     this.eventObserver.broadcast({ type: CustomEvents.STATE_CHANGED, data: { state: this.state } });
   }
 
@@ -202,7 +185,6 @@ class Model {
       this.stepSize = Number(convertedNewStepSize);
 
       this.updateBreakpointList();
-      this.refreshState();
 
       this.eventObserver.broadcast({ type: CustomEvents.STEP_SIZE_CHANGED, data: { newBreakpoints: this.breakpoints } });
 
@@ -221,7 +203,6 @@ class Model {
   private setMinAvailableValue(value: number): void {
     this.minAvailableValue = value;
     this.updateBreakpointList();
-    this.refreshState();
 
     this.eventObserver.broadcast({ type: CustomEvents.MIN_AVAILABLE_VALUE_CHANGED, data: { minAvailableValue: this.minAvailableValue } });
   }
@@ -230,7 +211,6 @@ class Model {
     this.maxAvailableValue = value;
 
     this.updateBreakpointList();
-    this.refreshState();
 
     this.eventObserver.broadcast({ type: CustomEvents.MAX_AVAILABLE_VALUE_CHANGED, data: { maxAvailableValue: this.maxAvailableValue } });
   }
@@ -290,8 +270,18 @@ class Model {
     }
   }
 
-  private findTheClosestBreakpoint(target) {
-    return Math.min(...this.breakpoints.filter((breakpoint) => breakpoint >= target));
+  private findTheClosestBreakpoint(target: number): number {
+    let newTarget: number = this.minAvailableValue;
+
+    this.breakpoints.some((currentValue, index) => {
+      const nextValue: number = this.breakpoints[index + 1];
+      const halfValue: number = nextValue - ((nextValue - currentValue) / 2);
+
+      if (target > halfValue) newTarget = nextValue;
+      return false;
+    });
+
+    return newTarget;
   }
 }
 

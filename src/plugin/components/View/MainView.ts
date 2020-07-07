@@ -35,14 +35,13 @@ class MainView {
   public refreshView(): void {
     this.sliderBody.remove();
     this.createSliderComponents();
-    this.eventObserver.broadcast({ type: CustomEvents.VIEW_REFRESHED });
   }
 
   public handlerDidMount(handler: HandlerName): void {
     const minValue: number = this.model.getOption<number>('minAvailableValue');
 
     const dataForBroadcasting: ObserverEvent<ViewHandlerData> = {
-      type: CustomEvents.HANDLER_DID_MOUNT,
+      type: CustomEvents.HANDLER_WILL_MOUNT,
       data: {
         name: handler,
         value: minValue,
@@ -68,18 +67,11 @@ class MainView {
   public setTooltipActivity(withTooltip: boolean): void {
     [this.minValueHandler, this.maxValueHandler].forEach((currentHandler: ViewHandlerData) => {
       if (currentHandler) {
-        const tooltipValue: number = currentHandler.value;
+        const tooltipValue: number = currentHandler.handler.value;
         currentHandler.handler.changeTooltipActivity(withTooltip);
         currentHandler.handler.setTooltipValue(tooltipValue);
       }
     });
-  }
-
-  public changeSliderBodyAxis(axis: Axis): Axis {
-    this.sliderBody.setAxis(axis);
-    this.refreshView();
-
-    return this.model.getOption<Axis>('axis');
   }
 
   public moveHandler(dataForMoving: ModelState) {
@@ -167,11 +159,14 @@ class MainView {
       switch (event.type) {
         case CustomEvents.WINDOW_RESIZED:
           this.setBreakpointsActivity();
-          this.eventObserver.broadcast({ type: CustomEvents.WINDOW_RESIZED });
+          this.moveHandler({
+            minValue: this.minValueHandler.handler.value,
+            maxValue: this.maxValueHandler.handler.value,
+          });
           break;
         case CustomEvents.BODY_CLICKED:
         case CustomEvents.BREAKPOINT_CLICKED:
-          this.callToChangeByBreakpointClicked(event.data);
+          this.interactiveComponentClicked(event.data);
           break;
         default:
           break;
@@ -179,14 +174,14 @@ class MainView {
     });
   }
 
-  private callToChangeByBreakpointClicked({ oldValue, newValue }): void {
+  private interactiveComponentClicked({ oldValue, newValue }): void {
     const availableHandlers = [this.minValueHandler, this.maxValueHandler]
       .filter((handler) => handler !== undefined);
 
     availableHandlers.forEach((handler: ViewHandlerData) => {
       if (handler.handler.value === oldValue) {
         const dataForBroadcasting: ObserverEvent<ViewHandlerData> = {
-          type: CustomEvents.BREAKPOINT_CLICKED,
+          type: CustomEvents.INTERACTIVE_COMPONENT_CLICKED,
           data: {
             value: newValue,
             name: handler.name,

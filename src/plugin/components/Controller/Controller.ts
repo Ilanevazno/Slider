@@ -29,8 +29,8 @@ class Controller {
     });
   }
 
-  public changeStateByItemName(handlerName: HandlerName, value: number): void {
-    this.model.changeStateByItemName(handlerName, value);
+  public changeStateByItemName(name: HandlerName, value: number): void {
+    this.model.setState({ name, value });
   }
 
   public setValueType(valueType: ValueType): ModelResponse<string> {
@@ -64,14 +64,10 @@ class Controller {
   private subscribeViewObserver(): void {
     this.view.eventObserver.subscribe((event: ObserverEvent<UnconvertedStateItem>) => {
       switch (event.type) {
-        case CustomEvents.HANDLER_DID_MOUNT:
-        case CustomEvents.BREAKPOINT_CLICKED:
+        case CustomEvents.HANDLER_WILL_MOUNT:
+        case CustomEvents.INTERACTIVE_COMPONENT_CLICKED:
         case CustomEvents.HANDLER_MOUSEMOVE:
           this.model.setState(event.data);
-          break;
-        case CustomEvents.WINDOW_RESIZED:
-        case CustomEvents.VIEW_REFRESHED:
-          this.model.refreshState();
           break;
         default:
           break;
@@ -85,16 +81,12 @@ class Controller {
         case CustomEvents.STATE_CHANGED:
           this.view.moveHandler(event.data.state);
           break;
-        case CustomEvents.VALUE_TYPE_CHANGED:
-          this.view.refreshView();
-          break;
         case CustomEvents.MIN_AVAILABLE_VALUE_CHANGED:
         case CustomEvents.MAX_AVAILABLE_VALUE_CHANGED:
         case CustomEvents.STEP_SIZE_CHANGED:
-          this.view.setBreakpointsActivity();
-          break;
+        case CustomEvents.VALUE_TYPE_CHANGED:
         case CustomEvents.AXIS_CHANGED:
-          this.view.changeSliderBodyAxis(event.data.axis);
+          this.view.refreshView();
           break;
         case CustomEvents.TOOLTIP_ACTIVITY_CHANGED:
           this.view.setTooltipActivity(event.data.withTooltip);

@@ -26,11 +26,6 @@ class SliderBodyView {
     this.bindActions();
   }
 
-  public setAxis(axis: Axis): Axis {
-    this.axis = axis;
-    return this.axis;
-  }
-
   public remove(): void {
     this.$sliderBody.remove();
   }
