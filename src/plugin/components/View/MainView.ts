@@ -167,7 +167,6 @@ class MainView {
           break;
         case CustomEvents.BODY_CLICKED:
         case CustomEvents.BREAKPOINT_CLICKED:
-          console.log(event);
           this.interactiveComponentClicked(event.data);
           break;
         default:
