@@ -9,7 +9,7 @@ class Panel {
 
   private $slider: JqueryPluginElement;
 
-  private $setTooltipActivity: JQuery<HTMLElement>;
+  private $setTooltipAvailability: JQuery<HTMLElement>;
 
   private $viewTypeSelect: JQuery<HTMLElement>;
 
@@ -25,7 +25,7 @@ class Panel {
 
   private $stepSizeInput: JQuery<HTMLElement>;
 
-  private $setLabelsActivity: JQuery<HTMLElement>;
+  private $setLabelsAvailability: JQuery<HTMLElement>;
 
   private $errorNotify: JQuery<HTMLElement>;
 
@@ -59,12 +59,12 @@ class Panel {
   }
 
   private connectLabels(): void {
-    this.$setTooltipActivity = this.$panelHtml.find('[name=tooltip]');
+    this.$setTooltipAvailability = this.$panelHtml.find('[name=tooltip]');
     this.$viewTypeSelect = this.$panelHtml.find('[name=view-type]');
     this.$valueTypeSelect = this.$panelHtml.find('[name=value-type]');
     this.$minValueInput = this.$panelHtml.find('[name=min-value]');
     this.$maxValueInput = this.$panelHtml.find('[name=max-value]');
-    this.$setLabelsActivity = this.$panelHtml.find('[name=labels-activity]');
+    this.$setLabelsAvailability = this.$panelHtml.find('[name=labels-Availability]');
     this.$stepSizeInput = this.$panelHtml.find('[name=step-size]');
     this.$minValueHandlerInput = this.$panelHtml.find('[name=min-value-handler]');
     this.$maxValueHandlerInput = this.$panelHtml.find('[name=max-value-handler]');
@@ -74,11 +74,11 @@ class Panel {
 
   private prepareCheckboxes(): void {
     if (this.sliderOptions.withTooltip) {
-      this.$setTooltipActivity?.prop('checked', true);
+      this.$setTooltipAvailability?.prop('checked', true);
     }
 
     if (this.sliderOptions.withLabels) {
-      this.$setLabelsActivity?.prop('checked', true);
+      this.$setLabelsAvailability?.prop('checked', true);
     }
   }
 
@@ -125,8 +125,8 @@ class Panel {
 
   private initEvents() {
     $(document).on('mousedown.documentMousedown', this.handleDocumentMouseDown.bind(this));
-    this.$setTooltipActivity?.on('change.tooltipActivity', this.handleLabelChange.bind(this, 'setTooltipActivity'));
-    this.$setLabelsActivity?.on('change.labelsActivity', this.handleLabelChange.bind(this, 'setLabelsActivity'));
+    this.$setTooltipAvailability?.on('change.tooltipAvailability', this.handleLabelChange.bind(this, 'setTooltipAvailability'));
+    this.$setLabelsAvailability?.on('change.labelsAvailability', this.handleLabelChange.bind(this, 'setLabelsAvailability'));
     this.$viewTypeSelect?.on('change.viewTypeSelect', this.handleLabelChange.bind(this, 'changeAxis'));
     this.$valueTypeSelect?.on('change.ValueTypeSelect', this.handleLabelChange.bind(this, 'changeValueType'));
     this.$minValueInput?.on('focusout.minValueInput', this.handleLabelChange.bind(this, 'setMinAvailableValue'));
@@ -155,11 +155,11 @@ class Panel {
     const $caughtElement: JQuery<HTMLElement> = $(event.target);
 
     switch (target) {
-      case 'setTooltipActivity':
-        this.setActivityTooltip($caughtElement);
+      case 'setTooltipAvailability':
+        this.setAvailabilityTooltip($caughtElement);
         break;
-      case 'setLabelsActivity':
-        this.setLabelsActivity($caughtElement);
+      case 'setLabelsAvailability':
+        this.setLabelsAvailability($caughtElement);
         break;
       case 'changeAxis':
         this.changeAxis($caughtElement);
@@ -216,10 +216,10 @@ class Panel {
     });
   }
 
-  private setLabelsActivity($targetLabel: JQuery<HTMLElement>): void {
+  private setLabelsAvailability($targetLabel: JQuery<HTMLElement>): void {
     $targetLabel.is(':checked')
-      ? this.$slider.sliderPlugin('setLabelsActivity', true)
-      : this.$slider.sliderPlugin('setLabelsActivity', false);
+      ? this.$slider.sliderPlugin('setLabelsAvailability', true)
+      : this.$slider.sliderPlugin('setLabelsAvailability', false);
   }
 
   private setStepSize($targetLabel: JQuery<HTMLElement>): void {
@@ -255,10 +255,10 @@ class Panel {
     }
   }
 
-  private setActivityTooltip($targetLabel: JQuery<HTMLElement>): void {
+  private setAvailabilityTooltip($targetLabel: JQuery<HTMLElement>): void {
     $targetLabel.is(':checked')
-      ? this.$slider.sliderPlugin('setTooltipActivity', true)
-      : this.$slider.sliderPlugin('setTooltipActivity', false);
+      ? this.$slider.sliderPlugin('setTooltipAvailability', true)
+      : this.$slider.sliderPlugin('setTooltipAvailability', false);
   }
 
   private changeAxis($targetLabel: JQuery<HTMLElement>): void {

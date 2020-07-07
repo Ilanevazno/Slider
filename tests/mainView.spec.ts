@@ -47,9 +47,9 @@
 //     });
 
 //     it('Обновляем необходимость рендера брейкпоинтов', () => {
-//       spyOn(view, 'setBreakpointsActivity');
-//       view.setBreakpointsActivity();
-//       expect(view.setBreakpointsActivity).toHaveBeenCalled();
+//       spyOn(view, 'setBreakpointsAvailability');
+//       view.setBreakpointsAvailability();
+//       expect(view.setBreakpointsAvailability).toHaveBeenCalled();
 //     });
 
 //     it('Смена направления слайдера на указанное значение', () => {
@@ -82,11 +82,11 @@
 
 //   describe('Попытка включить tooltip', () => {
 //     it('Вызываем метод смены состояния tooltip', () => {
-//       spyOn(view, 'setTooltipActivity').and.callThrough();
+//       spyOn(view, 'setTooltipAvailability').and.callThrough();
 
-//       view.setTooltipActivity(true);
+//       view.setTooltipAvailability(true);
 
-//       expect(view.setTooltipActivity).toHaveBeenCalledWith(true);
+//       expect(view.setTooltipAvailability).toHaveBeenCalledWith(true);
 //     });
 //   });
 // });

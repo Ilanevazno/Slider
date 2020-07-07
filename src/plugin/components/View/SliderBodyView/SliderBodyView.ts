@@ -55,7 +55,7 @@ class SliderBodyView {
     return arrayElement;
   }
 
-  public changeBreakpointsActivity(isActive: boolean, breakpointsData: BodyBreakpointsData): void {
+  public changeBreakpointsAvailability(isActive: boolean, breakpointsData: BodyBreakpointsData): void {
     if (isActive) {
       this.breakpoints.draw(breakpointsData);
     } else {

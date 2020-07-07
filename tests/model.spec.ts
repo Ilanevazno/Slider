@@ -36,13 +36,13 @@
 //     });
 
 //     it('Включение нижней подсказки с шагами', () => {
-//       modelSpec.setLabelsActivity(true);
+//       modelSpec.setLabelsAvailability(true);
 
 //       expect(modelSpec.withLabels).toBe(true);
 //     });
 
 //     it('Включение тултипа', () => {
-//       modelSpec.setTooltipActivity(true);
+//       modelSpec.setTooltipAvailability(true);
 
 //       expect(modelSpec.withTooltip).toBe(true);
 //     });

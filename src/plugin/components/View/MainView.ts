@@ -51,7 +51,7 @@ class MainView {
     this.eventObserver.broadcast(dataForBroadcasting);
   }
 
-  public setBreakpointsActivity(): void {
+  public setBreakpointsAvailability(): void {
     const withLabels: boolean = this.model.getOption<boolean>('withLabels');
     const data: BodyBreakpointsData = {
       axis: this.model.getOption<Axis>('axis'),
@@ -61,14 +61,14 @@ class MainView {
       maxAvailableValue: this.model.getOption<number>('maxAvailableValue'),
     };
 
-    this.sliderBody.changeBreakpointsActivity(withLabels, data);
+    this.sliderBody.changeBreakpointsAvailability(withLabels, data);
   }
 
-  public setTooltipActivity(withTooltip: boolean): void {
+  public setTooltipAvailability(withTooltip: boolean): void {
     [this.minValueHandler, this.maxValueHandler].forEach((currentHandler: ViewHandlerData) => {
       if (currentHandler) {
         const tooltipValue: number = currentHandler.handler.value;
-        currentHandler.handler.changeTooltipActivity(withTooltip);
+        currentHandler.handler.setTooltipAvailability(withTooltip);
         currentHandler.handler.setTooltipValue(tooltipValue);
       }
     });
@@ -147,7 +147,7 @@ class MainView {
 
     if (this.model.getOption<boolean>('withLabels')) {
       callFunctionAfterAll(() => {
-        this.setBreakpointsActivity();
+        this.setBreakpointsAvailability();
       });
     }
 
@@ -158,7 +158,7 @@ class MainView {
     this.sliderBody.eventObserver.subscribe((event: any) => {
       switch (event.type) {
         case CustomEvents.WINDOW_RESIZED:
-          this.setBreakpointsActivity();
+          this.setBreakpointsAvailability();
           this.moveHandler({
             minValue: this.minValueHandler.handler.value,
             maxValue: this.maxValueHandler.handler.value,
@@ -212,7 +212,7 @@ class MainView {
     const withTooltip: boolean = this.model.getOption<boolean>('withTooltip');
 
     if (withTooltip) {
-      handler.getTooltip();
+      handler.setTooltipAvailability(true);
     }
 
     return handler;

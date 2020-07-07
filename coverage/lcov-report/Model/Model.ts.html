@@ -667,22 +667,22 @@ class Model {
     this.eventObserver.broadcast({ type: СustomEvents.SetAxis, data: { axis: this.axis } });
   }
 &nbsp;
-  public setLabelsActivity(isLabelsActive: boolean): void {
+  public setLabelsAvailability(isLabelsActive: boolean): void {
     this.withLabels = isLabelsActive;
 &nbsp;
-    this.eventObserver.broadcast({ type: СustomEvents.SetLabelsActivity, data: { isLabelsActive } });
+    this.eventObserver.broadcast({ type: СustomEvents.SetLabelsAvailability, data: { isLabelsActive } });
   }
 &nbsp;
   public showTooltip(): void {
     this.withTooltip = true;
 &nbsp;
-    this.eventObserver.broadcast({ type: СustomEvents.SetTooltipActivity, data: { withTooltip: this.withTooltip } });
+    this.eventObserver.broadcast({ type: СustomEvents.SetTooltipAvailability, data: { withTooltip: this.withTooltip } });
   }
 &nbsp;
   public hideTooltip(): void {
     this.withTooltip = false;
 &nbsp;
-    this.eventObserver.broadcast({ type: СustomEvents.SetTooltipActivity, data: { withTooltip: this.withTooltip } });
+    this.eventObserver.broadcast({ type: СustomEvents.SetTooltipAvailability, data: { withTooltip: this.withTooltip } });
   }
 &nbsp;
   public getOption&lt;T&gt;(targetOption: string): T {

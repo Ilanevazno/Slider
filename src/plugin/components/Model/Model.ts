@@ -2,11 +2,9 @@ import {
   AvailableOptions,
   UnconvertedStateItem,
   CustomEvents,
-  Response,
   ValueType,
   Axis,
   ModelState,
-  HandlerName,
 } from '../types/types';
 import Observer from '../Observer/Observer';
 
@@ -55,18 +53,17 @@ class Model {
     }
   }
 
-  public setLabelsActivity(isLabelsActive: boolean): void {
+  public setLabelsAvailability(isLabelsActive: boolean): void {
     this.withLabels = isLabelsActive;
 
-    this.eventObserver.broadcast({ type: CustomEvents.LABELS_ACTIVITY_CHANGED, data: { isLabelsActive } });
+    this.eventObserver.broadcast({ type: CustomEvents.LABELS_AVAILABILITY_CHANGED, data: { isLabelsActive } });
   }
 
-  public setTooltipActivity(isActive: boolean): void {
+  public setTooltipAvailability(isActive: boolean): void {
     this.withTooltip = isActive;
 
-    this.eventObserver.broadcast({ type: CustomEvents.TOOLTIP_ACTIVITY_CHANGED, data: { withTooltip: this.withTooltip } });
+    this.eventObserver.broadcast({ type: CustomEvents.TOOLTIP_AVAILABILITY_CHANGED, data: { withTooltip: this.withTooltip } });
   }
-
 
   public getOption<T>(targetOption: string): T {
     const optionsList: object = this.getOptionList();
@@ -76,22 +73,6 @@ class Model {
 
   public getState(): ModelState {
     return { ...this.state };
-  }
-
-  public requestToSetMinAvailableValue(value: number): void {
-    if (value <= this.maxAvailableValue) {
-      this.setMinAvailableValue(value);
-    } else {
-      throw new Error('Минимальное значение не может быть больше чем максимальное.');
-    }
-  }
-
-  public requestToSetMaxAvailableValue(value: number): void {
-    if (value >= this.minAvailableValue) {
-      this.setMaxAvailableValue(value);
-    } else {
-      throw new Error('Максимальное значение не может быть меньше минимального.');
-    }
   }
 
   public updateBreakpointList(): number[] {
@@ -140,19 +121,27 @@ class Model {
     }
   }
 
-  private setMinAvailableValue(value: number): void {
-    this.minAvailableValue = value;
-    this.updateBreakpointList();
+  public setMinAvailableValue(value: number): void {
+    if (value <= this.maxAvailableValue) {
+      this.minAvailableValue = value;
+      this.updateBreakpointList();
 
-    this.eventObserver.broadcast({ type: CustomEvents.MIN_AVAILABLE_VALUE_CHANGED, data: { minAvailableValue: this.minAvailableValue } });
+      this.eventObserver.broadcast({ type: CustomEvents.MIN_AVAILABLE_VALUE_CHANGED, data: { minAvailableValue: this.minAvailableValue } });
+    } else {
+      throw new Error('Минимальное значение не может быть больше чем максимальное.');
+    }
   }
 
-  private setMaxAvailableValue(value: number): void {
-    this.maxAvailableValue = value;
+  public setMaxAvailableValue(value: number): void {
+    if (value >= this.minAvailableValue) {
+      this.maxAvailableValue = value;
 
-    this.updateBreakpointList();
+      this.updateBreakpointList();
 
-    this.eventObserver.broadcast({ type: CustomEvents.MAX_AVAILABLE_VALUE_CHANGED, data: { maxAvailableValue: this.maxAvailableValue } });
+      this.eventObserver.broadcast({ type: CustomEvents.MAX_AVAILABLE_VALUE_CHANGED, data: { maxAvailableValue: this.maxAvailableValue } });
+    } else {
+      throw new Error('Максимальное значение не может быть меньше минимального.');
+    }
   }
 
   private getOptionList(): AvailableOptions {
@@ -171,8 +160,8 @@ class Model {
   }
 
   private callInitialMethods(options: AvailableOptions) {
-    this.requestToSetMinAvailableValue(options.minAvailableValue);
-    this.requestToSetMaxAvailableValue(options.maxAvailableValue);
+    this.setMinAvailableValue(options.minAvailableValue);
+    this.setMaxAvailableValue(options.maxAvailableValue);
     this.setStepSize(options.stepSize);
     this.setValueType(options.valueType);
     this.setAxis(options.axis);
@@ -191,7 +180,7 @@ class Model {
     this.breakpoints = this.updateBreakpointList();
   }
 
-  private checkStateForCollisions(currentStateItem): boolean {
+  private checkStateForCollisions(checkableStateItem): boolean {
     const {
       minValue,
       maxValue,
@@ -199,12 +188,12 @@ class Model {
 
     let isCaughtCollision = false;
 
-    if (currentStateItem === 'minValue' && minValue > maxValue) {
+    if (checkableStateItem === 'minValue' && minValue > maxValue) {
       isCaughtCollision = true;
       this.state.maxValue = minValue;
     }
 
-    if (currentStateItem === 'maxValue' && maxValue < minValue) {
+    if (checkableStateItem === 'maxValue' && maxValue < minValue) {
       this.state.minValue = maxValue;
       isCaughtCollision = true;
     }

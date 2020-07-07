@@ -17,28 +17,6 @@ class BreakpointsView {
     useAutoBind(this);
   }
 
-
-  private getConvertedBreakpoints(data: BodyBreakpointsData) {
-    const {
-      axis,
-      offsetHandlerWidth,
-      currentBreakpointList,
-      minAvailableValue,
-      maxAvailableValue,
-    } = data;
-    const axisDivisionOffset = axis === 'X' ? 4 : 2;
-    const sliderBodyParams: number = this.parent.getSliderBodyParams() - offsetHandlerWidth;
-
-    return currentBreakpointList.map((currentValue: number) => {
-      const currentPixel = ((currentValue - minAvailableValue) / (maxAvailableValue - minAvailableValue)) * sliderBodyParams;
-
-      return {
-        currentValue,
-        pixelPosition: currentPixel + (offsetHandlerWidth / axisDivisionOffset),
-      };
-    });
-  }
-
   public draw(breakpointsData: BodyBreakpointsData): void {
     this.remove();
 
@@ -76,6 +54,27 @@ class BreakpointsView {
   public remove() {
     this.breakpointElements.forEach(($element: JQuery<HTMLElement>) => {
       $element.remove();
+    });
+  }
+
+  private getConvertedBreakpoints(data: BodyBreakpointsData) {
+    const {
+      axis,
+      offsetHandlerWidth,
+      currentBreakpointList,
+      minAvailableValue,
+      maxAvailableValue,
+    } = data;
+    const axisDivisionOffset = axis === 'X' ? 4 : 2;
+    const sliderBodyParams: number = this.parent.getSliderBodyParams() - offsetHandlerWidth;
+
+    return currentBreakpointList.map((currentValue: number) => {
+      const currentPixel = ((currentValue - minAvailableValue) / (maxAvailableValue - minAvailableValue)) * sliderBodyParams;
+
+      return {
+        currentValue,
+        pixelPosition: currentPixel + (offsetHandlerWidth / axisDivisionOffset),
+      };
     });
   }
 

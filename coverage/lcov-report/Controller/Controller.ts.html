@@ -346,11 +346,11 @@ class Controller {
   }
 &nbsp;
 <span class="fstat-no" title="function not covered" >  pu</span>blic showLabels(): void {
-<span class="cstat-no" title="statement not covered" >    this.model.setLabelsActivity(true);</span>
+<span class="cstat-no" title="statement not covered" >    this.model.setLabelsAvailability(true);</span>
   }
 &nbsp;
 <span class="fstat-no" title="function not covered" >  pu</span>blic hideLabels(): void {
-<span class="cstat-no" title="statement not covered" >    this.model.setLabelsActivity(false);</span>
+<span class="cstat-no" title="statement not covered" >    this.model.setLabelsAvailability(false);</span>
   }
 &nbsp;
 <span class="fstat-no" title="function not covered" >  pu</span>blic showTooltip(): void {
@@ -407,16 +407,16 @@ class Controller {
         case СustomEvents.SetMinValue:
         case СustomEvents.SetMaxValue:
         case СustomEvents.SetStepSize:
-<span class="cstat-no" title="statement not covered" >          this.view.changeBreakpointsActivity();</span>
+<span class="cstat-no" title="statement not covered" >          this.view.changeBreakpointsAvailability();</span>
 <span class="cstat-no" title="statement not covered" >          break;</span>
         case СustomEvents.SetAxis:
 <span class="cstat-no" title="statement not covered" >          this.view.changeSliderBodyAxis(event.data.axis);</span>
 <span class="cstat-no" title="statement not covered" >          break;</span>
-        case СustomEvents.SetTooltipActivity:
-<span class="cstat-no" title="statement not covered" >          this.view.setTooltipActivity(event.data.withTooltip);</span>
+        case СustomEvents.SetTooltipAvailability:
+<span class="cstat-no" title="statement not covered" >          this.view.setTooltipAvailability(event.data.withTooltip);</span>
 <span class="cstat-no" title="statement not covered" >          break;</span>
-        case СustomEvents.SetLabelsActivity:
-<span class="cstat-no" title="statement not covered" >          this.view.changeBreakpointsActivity();</span>
+        case СustomEvents.SetLabelsAvailability:
+<span class="cstat-no" title="statement not covered" >          this.view.changeBreakpointsAvailability();</span>
 <span class="cstat-no" title="statement not covered" >          break;</span>
         default:
 <span class="cstat-no" title="statement not covered" >          break;</span>

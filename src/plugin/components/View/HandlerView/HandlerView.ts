@@ -26,6 +26,27 @@ class HandlerView {
     this.initEvents();
   }
 
+  public move(data: ConvertingData): void {
+    const newPosition: number = this.calculateNewPosition(data);
+    const direction: string = this.axis === 'X' ? 'left' : 'top';
+
+    this.$handler.css(direction, `${newPosition}px`);
+  }
+
+  public setTooltipValue(value: number): void {
+    this.tooltip.setValue(value);
+  }
+
+  public setTooltipAvailability(isActive: boolean) {
+    return isActive
+      ? this.tooltip.draw()
+      : this.tooltip.remove();
+  }
+
+  public getWidth() {
+    return this.$handler.width();
+  }
+
   private calculateNewPosition(data: ConvertingData): number {
     const {
       minPercent,
@@ -34,31 +55,6 @@ class HandlerView {
       maxContainerSize,
     } = data;
     return ((currentValue - minPercent) / (maxPercent - minPercent)) * (maxContainerSize - this.getWidth());
-  }
-
-  public move(data: ConvertingData): void {
-    const newPosition: number = this.calculateNewPosition(data);
-    const direction: string = this.axis === 'X' ? 'left' : 'top';
-
-    this.$handler.css(direction, `${newPosition}px`);
-  }
-
-  public getTooltip(): void {
-    this.tooltip.draw();
-  }
-
-  public setTooltipValue(value: number): void {
-    this.tooltip.setValue(value);
-  }
-
-  public changeTooltipActivity(isActive: boolean) {
-    return isActive
-      ? this.tooltip.draw()
-      : this.tooltip.remove();
-  }
-
-  public getWidth() {
-    return this.$handler.width();
   }
 
   private drawHandler($htmlContainer: JQuery<HTMLElement>): JQuery<HTMLElement> {

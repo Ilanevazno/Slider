@@ -36,12 +36,12 @@ class Controller {
     return this.model.setValueType(valueType);
   }
 
-  public setLabelsActivity(isActive: boolean): void {
-    this.model.setLabelsActivity(isActive);
+  public setLabelsAvailability(isActive: boolean): void {
+    this.model.setLabelsAvailability(isActive);
   }
 
-  public setTooltipActivity(isActive: boolean): void {
-    this.model.setTooltipActivity(isActive);
+  public setTooltipAvailability(isActive: boolean): void {
+    this.model.setTooltipAvailability(isActive);
   }
 
   public setAxis(axis: Axis): void {
@@ -53,11 +53,11 @@ class Controller {
   }
 
   public setMinAvailableValue(value: number): void {
-    return this.model.requestToSetMinAvailableValue(value);
+    return this.model.setMinAvailableValue(value);
   }
 
   public setMaxAvailableValue(value: number): void {
-    return this.model.requestToSetMaxAvailableValue(value);
+    return this.model.setMaxAvailableValue(value);
   }
 
   private subscribeViewObserver(): void {
@@ -87,11 +87,11 @@ class Controller {
         case CustomEvents.AXIS_CHANGED:
           this.view.refreshView();
           break;
-        case CustomEvents.TOOLTIP_ACTIVITY_CHANGED:
-          this.view.setTooltipActivity(event.data.withTooltip);
+        case CustomEvents.TOOLTIP_AVAILABILITY_CHANGED:
+          this.view.setTooltipAvailability(event.data.withTooltip);
           break;
-        case CustomEvents.LABELS_ACTIVITY_CHANGED:
-          this.view.setBreakpointsActivity();
+        case CustomEvents.LABELS_AVAILABILITY_CHANGED:
+          this.view.setBreakpointsAvailability();
           break;
         default:
           break;

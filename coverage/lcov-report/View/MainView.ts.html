@@ -784,18 +784,18 @@ class MainView {
 <span class="cstat-no" title="statement not covered" >    this.eventObserver.broadcast(dataForBroadcasting);</span>
   }
 &nbsp;
-<span class="fstat-no" title="function not covered" >  pu</span>blic changeBreakpointsActivity(): void {
+<span class="fstat-no" title="function not covered" >  pu</span>blic changeBreakpointsAvailability(): void {
     const isActiveBreakpoints: boolean = <span class="cstat-no" title="statement not covered" >this.model.getOption('withLabels');</span>
     const availableBreakpoints: SliderBreakpoint[] = <span class="cstat-no" title="statement not covered" >this.getConvertedBreakpoints();</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    this.sliderBody.changeBreakpointsActivity(isActiveBreakpoints, availableBreakpoints);</span>
+<span class="cstat-no" title="statement not covered" >    this.sliderBody.changeBreakpointsAvailability(isActiveBreakpoints, availableBreakpoints);</span>
   }
 &nbsp;
-  public setTooltipActivity(isTooltipActive: boolean): void {
+  public setTooltipAvailability(isTooltipActive: boolean): void {
     [this.minValueHandler, this.maxValueHandler].map((currentHandler: ViewHandlerData) =&gt; {
       if (currentHandler) {
         const tooltipPercent: number = currentHandler.statePercent || <span class="branch-1 cbranch-no" title="branch not covered" >this.model.getOption('minValue');</span>
-        currentHandler.handler.changeTooltipActivity(isTooltipActive);
+        currentHandler.handler.changeTooltipAvailability(isTooltipActive);
         currentHandler.handler.setTooltipValue(tooltipPercent);
       }
 &nbsp;
@@ -945,7 +945,7 @@ class MainView {
     }
 &nbsp;
     <span class="missing-if-branch" title="if path not taken" >I</span>if (this.model.getOption('withLabels')) {
-<span class="cstat-no" title="statement not covered" >      this.changeBreakpointsActivity();</span>
+<span class="cstat-no" title="statement not covered" >      this.changeBreakpointsAvailability();</span>
     }
 &nbsp;
     this.initSliderBodyEvents();
@@ -955,7 +955,7 @@ class MainView {
     this.sliderBody.eventObserver.subscribe(<span class="fstat-no" title="function not covered" >(e</span>vent: ObserverEvent&lt;object&gt;) =&gt; {
 <span class="cstat-no" title="statement not covered" >      switch (event.type) {</span>
         case CustomEvents.WindowResize:
-<span class="cstat-no" title="statement not covered" >          this.changeBreakpointsActivity();</span>
+<span class="cstat-no" title="statement not covered" >          this.changeBreakpointsAvailability();</span>
 <span class="cstat-no" title="statement not covered" >          this.eventObserver.broadcast({ type: CustomEvents.RefreshState });</span>
 <span class="cstat-no" title="statement not covered" >          break;</span>
         case CustomEvents.ChangeStateByClick:
