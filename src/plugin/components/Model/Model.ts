@@ -117,7 +117,7 @@ class Model {
       };
     }
 
-    throw new Error('Ошибка  при создании слайдера. Неверно установлено минимальное значение');
+    throw new Error('Минимальное значение не может быть больше чем максимальное.');
   }
 
   public requestToSetMaxAvailableValue(value: number): ModelResponse<number> {
@@ -131,7 +131,7 @@ class Model {
       };
     }
 
-    throw new Error('Ошибка  при создании слайдера. Неверно установлено максимальное значение');
+    throw new Error('Максимальное значение не может быть меньше минимального.');
   }
 
   public updateBreakpointList(): number[] {

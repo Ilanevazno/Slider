@@ -51,7 +51,11 @@ class Panel {
   }
 
   private drawSlider(): void {
-    this.$slider.sliderPlugin(this.sliderOptions);
+    try {
+      this.$slider.sliderPlugin(this.sliderOptions);
+    } catch (error) {
+      console.error('Ошибка при создании слайдера!', error);
+    }
   }
 
   private connectLabels(): void {
@@ -234,10 +238,10 @@ class Panel {
   private setMinAvailableValue($targetLabel: JQuery<HTMLElement>): void {
     const caughtNewValue = Number($targetLabel.val());
     const $targetLabelParent = $targetLabel.parent();
-    const setNewValueRequest = this.$slider.sliderPlugin('setMinAvailableValue', caughtNewValue);
-
-    if (setNewValueRequest.response === 'ERROR') {
-      this.getErrorNotify(setNewValueRequest.message, $targetLabelParent);
+    try {
+      this.$slider.sliderPlugin('setMinAvailableValue', caughtNewValue);
+    } catch (error) {
+      this.getErrorNotify(error.message, $targetLabelParent);
       $targetLabel.val('');
     }
   }
@@ -245,10 +249,10 @@ class Panel {
   private setMaxAvailableValue($targetLabel: JQuery<HTMLElement>): void {
     const caughtNewValue = Number($targetLabel.val());
     const $targetLabelParent = $targetLabel.parent();
-    const setMaxValueRequest = this.$slider.sliderPlugin('setMaxAvailableValue', caughtNewValue);
-
-    if (setMaxValueRequest.response === 'ERROR') {
-      this.getErrorNotify(setMaxValueRequest.message, $targetLabelParent);
+    try {
+      this.$slider.sliderPlugin('setMaxAvailableValue', caughtNewValue);
+    } catch (error) {
+      this.getErrorNotify(error.message, $targetLabelParent);
       $targetLabel.val('');
     }
   }
