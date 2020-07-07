@@ -117,13 +117,7 @@ class Model {
       };
     }
 
-    this.setMinAvailableValue(this.minAvailableValue);
-
-    return {
-      response: Response.ERROR,
-      message: 'Невалидное значение. Минимальное значение не может быть больше чем максимальное.',
-      newValue: 0,
-    };
+    throw new Error('Ошибка  при создании слайдера. Неверно установлено минимальное значение');
   }
 
   public requestToSetMaxAvailableValue(value: number): ModelResponse<number> {
@@ -137,14 +131,7 @@ class Model {
       };
     }
 
-    this.setMaxAvailableValue(this.maxAvailableValue);
-
-
-    return {
-      response: Response.ERROR,
-      message: 'Невалидное значение. Максимальное значение не может быть меньше чем минимальное.',
-      newValue: 100,
-    };
+    throw new Error('Ошибка  при создании слайдера. Неверно установлено максимальное значение');
   }
 
   public updateBreakpointList(): number[] {
