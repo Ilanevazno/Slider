@@ -208,7 +208,7 @@ class Model {
   private findClosestBreakpoint(target: number): number {
     let newTarget: number = this.minAvailableValue;
 
-    this.breakpoints.some((currentValue, index) => {
+    this.breakpoints.find((currentValue, index) => {
       const nextValue: number = this.breakpoints[index + 1];
       const halfValue: number = nextValue - ((nextValue - currentValue) / 2);
 
