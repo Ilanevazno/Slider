@@ -3,14 +3,13 @@ import {
 } from '../../types/types';
 import Observer from '../../Observer/Observer';
 import SliderBodyView from '../SliderBodyView/SliderBodyView';
-import MainView from '../MainView';
 
 class BreakpointsView {
   public eventObserver: Observer;
 
   private breakpointElements: JQuery<HTMLElement>[];
 
-  constructor(private axis: Axis, private parent: SliderBodyView, private mainView: MainView) {
+  constructor(private axis: Axis, private parent: SliderBodyView) {
     this.eventObserver = new Observer();
     this.breakpointElements = [];
 

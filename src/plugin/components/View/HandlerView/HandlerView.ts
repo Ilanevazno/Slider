@@ -83,9 +83,12 @@ class HandlerView {
   }
 
   private handleDocumentMouseMove(event): void {
-    const position = this.axis === 'X'
-      ? event.clientX ?? event.touches[0].clientX
-      : event.clientY ?? event.touches[0].clientY;
+    let position = this.axis === 'X' ? event.clientX : event.clientY;
+
+    if (typeof position === 'undefined' && event.touches) {
+      position = this.axis === 'X' ? event.touches[0].clientX : event.touches[0].clientY;
+    }
+
     const direction = this.axis === 'X' ? 'left' : 'top';
     const currentPixel = (position - (this.offset / 2)) - this.mainView.sliderBody.$sliderBody[0].getBoundingClientRect()[direction];
     const minPercent: number = this.mainView.model.getOption<number>('minAvailableValue');

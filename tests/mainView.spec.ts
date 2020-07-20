@@ -1,92 +1,159 @@
-// import Model from '../src/plugin/components/Model/Model';
-// import MainView from '../src/plugin/components/View/MainView';
-// import { AvailableOptions, ValueType, Axis } from '../src/plugin/components/types/types';
+import Model from '../src/plugin/components/Model/Model';
+import MainView from '../src/plugin/components/View/MainView';
+import SliderBodyView from '../src/plugin/components/View/SliderBodyView/SliderBodyView';
+import {
+  AvailableOptions, ValueType, CustomEvents, ObserverEvent, ViewHandlerData,
+} from '../src/plugin/components/types/types';
 
-// const mockModelOptions: AvailableOptions = {
-//   stepSize: 1,
-//   minAvailableValue: 1,
-//   maxAvailableValue: 100,
-//   minCurrentValue: 30,
-//   maxCurrentValue: 70,
-//   axis: 'X',
-//   withLabels: false,
-//   withTooltip: false,
-//   valueType: ValueType.SINGLE,
-// };
+const mockModelOptions: AvailableOptions = {
+  stepSize: 1,
+  minAvailableValue: 1,
+  maxAvailableValue: 100,
+  minCurrentValue: 30,
+  maxCurrentValue: 70,
+  axis: 'X',
+  withLabels: false,
+  withTooltip: false,
+  valueType: ValueType.SINGLE,
+};
 
-// const dummyHtmlElement = document.createElement('div');
-// document.getElementById = jasmine.createSpy('HTML Element').and.returnValue(dummyHtmlElement);
+const dummyHtmlElement = document.createElement('div');
+document.getElementById = jasmine.createSpy('HTML Element').and.returnValue(dummyHtmlElement);
 
-// const model = new Model(mockModelOptions);
-// const view = new MainView(model, dummyHtmlElement);
+let model: Model;
+let mainView: MainView;
 
-// describe('Тестирование класса MainView', () => {
-//   it('Произошла инициализация класса MainView', () => {
-//     expect(view).toBeDefined();
-//     expect(view).toBeInstanceOf(MainView);
-//   });
+jest.mock('../src/plugin/components/View/TooltipView/TooltipView');
 
-//   it('Произошла инициализация класса Model', () => {
-//     expect(model).toBeDefined();
-//     expect(model).toBeInstanceOf(Model);
-//   });
+describe('Тестирование класса MainView', () => {
+  beforeEach(() => {
+    model = new Model(mockModelOptions);
+    mainView = new MainView(model, dummyHtmlElement);
+  });
 
-//   describe('Проверяем обновление визуального состояния', () => {
-//     it('Обновить визуальное состояние', () => {
-//       spyOn(view, 'refreshView').and.callThrough();
+  it('Успешная инициализация', () => {
+    expect(mainView).toBeDefined();
+    expect(mainView).toBeInstanceOf(MainView);
+  });
 
-//       view.eventObserver.subscribe((event) => {
-//         const refreshStateEvents = ['CLEAR_STATE', 'REFRESH_STATE'];
-//         expect(typeof event).toBe('object');
-//         expect(refreshStateEvents).toContain(event.type);
-//       });
+  describe('Проверка observer', () => {
+    let broadcastSpy;
 
-//       view.refreshView();
+    beforeEach(() => {
+      mainView.eventObserver.subscribe((data) => data);
+      broadcastSpy = spyOn(mainView.eventObserver, 'broadcast');
+    });
 
-//       expect(view.refreshView).toHaveBeenCalled();
-//     });
+    it('Проверка эвента handler will mount', () => {
+      const data = jest.fn((_) => ({
+        type: CustomEvents.HANDLER_WILL_MOUNT,
+        data: {
+          name: 'minValue',
+          value: 66,
+        },
+      }));
 
-//     it('Обновляем необходимость рендера брейкпоинтов', () => {
-//       spyOn(view, 'setBreakpointsAvailability');
-//       view.setBreakpointsAvailability();
-//       expect(view.setBreakpointsAvailability).toHaveBeenCalled();
-//     });
+      mainView.eventObserver.broadcast(data);
 
-//     it('Смена направления слайдера на указанное значение', () => {
-//       spyOn(view, 'changeSliderBodyAxis').and.callThrough();
+      expect(mainView.eventObserver.broadcast).toBeCalledWith(data);
+    });
 
-//       const currentAxis: Axis = 'Y';
-//       const newSliderBodyAxis = view.changeSliderBodyAxis(currentAxis);
+    it('Эвент mousemove', () => {
+      const data = {
+        type: CustomEvents.HANDLER_MOUSEMOVE,
+        data: {
+          name: 'minValue',
+          value: 50,
+        },
+      };
+      mainView.minValueHandler.handler.observer.broadcast(data);
 
-//       expect(view.changeSliderBodyAxis).toHaveBeenCalledWith(currentAxis);
-//     });
-//   });
+      expect(broadcastSpy).toBeCalledWith(data);
+    });
 
-//   describe('Попытка смены положения хандлера, метод moveHandler', () => {
-//     it('Вызываем метод', () => {
-//       spyOn(view, 'moveHandler').and.callThrough();
-//       const currentState: any = {};
+    it('Рандомный эвент должен ничего не делать', () => {
+      const data = {
+        type: 'MOUSE_NOTHING',
+        data: {
+          name: 'minValue',
+          value: 50,
+        },
+      };
+      mainView.minValueHandler.handler.observer.broadcast(data);
 
-//       const currentHandler = {
-//         $handler: view.minValueHandler.handler.$handler,
-//         name: view.minValueHandler.name,
-//         value: 50,
-//       };
+      expect(broadcastSpy).toBeCalledTimes(0);
+    });
+  });
 
-//       currentState[0] = currentHandler;
 
-//       view.moveHandler(currentState);
-//       expect(view.moveHandler).toHaveBeenCalledWith(currentState);
-//     });
-//   });
+  describe('refreshView method', () => {
+    it('sliderBody has been called', () => {
+      const removingBodyMethod = spyOn(mainView.sliderBody, 'remove');
 
-//   describe('Попытка включить tooltip', () => {
-//     it('Вызываем метод смены состояния tooltip', () => {
-//       spyOn(view, 'setTooltipAvailability').and.callThrough();
+      mainView.refreshView();
 
-//       view.setTooltipAvailability(true);
+      expect(removingBodyMethod).toBeCalled();
+    });
+  });
 
-//       expect(view.setTooltipAvailability).toHaveBeenCalledWith(true);
-//     });
-//   });
-// });
+  describe('setBreakpointsAvailability method', () => {
+    it('breakpoint availability changed', () => {
+      spyOn(mainView.sliderBody, 'changeBreakpointsAvailability');
+
+      mainView.setBreakpointsAvailability();
+
+      expect(mainView.sliderBody.changeBreakpointsAvailability).toBeCalledWith(mockModelOptions.withLabels, {
+        axis: mockModelOptions.axis,
+        offsetHandlerWidth: mainView.minValueHandler.handler.getWidth(),
+        currentBreakpointList: mainView.model.getOption<number[]>('breakpoints'),
+        minAvailableValue: mockModelOptions.minAvailableValue,
+        maxAvailableValue: mockModelOptions.maxAvailableValue,
+      });
+    });
+  });
+
+  describe('setTooltipAvailability method', () => {
+    beforeEach(() => {
+      spyOn(mainView.minValueHandler.handler, 'setTooltipAvailability');
+    });
+
+    it('enable handler', () => {
+      mainView.setTooltipAvailability(true);
+
+      expect(mainView.minValueHandler.handler.setTooltipAvailability).toBeCalledWith(true);
+    });
+
+    it('disable handler', () => {
+      mainView.setTooltipAvailability(false);
+
+      expect(mainView.minValueHandler.handler.setTooltipAvailability).toBeCalledWith(false);
+    });
+  });
+
+  describe('now... we can try moving this dummy handler', () => {
+    it('changed handler percent values', () => {
+      [10, 30, 70, 99, 100].forEach((minValue) => {
+        mainView.moveHandler({ minValue });
+
+        expect(mainView.minValueHandler.handler.value).toBe(minValue);
+      });
+    });
+
+    it('DOM moving handler checking', () => {
+      [10, 30, 70, 99, 100].forEach((value) => {
+        const oldHandlerPosition = mainView.minValueHandler.handler.$handler.css('left');
+
+        mainView.minValueHandler.handler.move({
+          currentValue: value,
+          minPercent: mockModelOptions.minAvailableValue,
+          maxPercent: mockModelOptions.maxAvailableValue,
+          maxContainerSize: 800,
+        });
+
+        const newHandlerPosition = mainView.minValueHandler.handler.$handler.css('left');
+
+        expect(oldHandlerPosition).not.toEqual(newHandlerPosition);
+      });
+    });
+  });
+});

@@ -38,20 +38,6 @@ class MainView {
     this.createSliderComponents();
   }
 
-  public handlerDidMount(handler: HandlerName): void {
-    const minValue: number = this.model.getOption<number>('minAvailableValue');
-
-    const dataForBroadcasting: ObserverEvent<ViewHandlerData> = {
-      type: CustomEvents.HANDLER_WILL_MOUNT,
-      data: {
-        name: handler,
-        value: minValue,
-      },
-    };
-
-    this.eventObserver.broadcast(dataForBroadcasting);
-  }
-
   public setBreakpointsAvailability(): void {
     const withLabels: boolean = this.model.getOption<boolean>('withLabels');
     const data: BodyBreakpointsData = {
@@ -99,6 +85,20 @@ class MainView {
           }
         }
       });
+  }
+
+  private handlerDidMount(handler: HandlerName): void {
+    const minValue: number = this.model.getOption<number>('minAvailableValue');
+
+    const dataForBroadcasting: ObserverEvent<ViewHandlerData> = {
+      type: CustomEvents.HANDLER_WILL_MOUNT,
+      data: {
+        name: handler,
+        value: minValue,
+      },
+    };
+
+    this.eventObserver.broadcast(dataForBroadcasting);
   }
 
   private withTooltip(): boolean {

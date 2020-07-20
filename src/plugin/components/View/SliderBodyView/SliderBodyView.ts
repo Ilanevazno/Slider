@@ -18,7 +18,7 @@ class SliderBodyView {
     this.eventObserver = new Observer();
     this.axis = mainView.model.getOption('axis');
     this.$sliderBody = this.drawBody(mainView.$sliderContainer);
-    this.breakpoints = new BreakpointsView(this.axis, this, this.mainView);
+    this.breakpoints = new BreakpointsView(this.axis, this);
 
     this.listenBreakpointsEvents();
 
@@ -32,8 +32,8 @@ class SliderBodyView {
 
   public getSliderBodyParams(): number {
     return this.axis === 'X'
-      ? this.$sliderBody[0].getBoundingClientRect().width
-      : this.$sliderBody[0].getBoundingClientRect().height;
+      ? this.$sliderBody.width()
+      : this.$sliderBody.height();
   }
 
   public findTheClosestArrayValue(array: number[], base: number): number {
@@ -92,7 +92,9 @@ class SliderBodyView {
   public getRangeValues(): number[] {
     return [
       this.mainView.minValueHandler.handler.value,
-      this.mainView.maxValueHandler.handler.value,
+      this.mainView.maxValueHandler
+        ? this.mainView.maxValueHandler.handler.value
+        : this.mainView.minValueHandler.handler.value,
     ];
   }
 

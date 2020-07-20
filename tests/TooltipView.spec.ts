@@ -8,41 +8,48 @@ const currentAxis: Axis = 'X';
 
 const tooltipView = new TooltipView(dummyHtmlElement, currentAxis);
 
-describe('Проверка класса ValidateView', () => {
-  it('Произошла инициализация класса MainView', () => {
+describe('Проверка класса tooltipView', () => {
+  it('Произошла инициализация', () => {
     expect(tooltipView).toBeDefined();
     expect(tooltipView).toBeInstanceOf(TooltipView);
   });
 
   describe('Создание и удаление HTML элемента', () => {
-    let tooltip: JQuery<HTMLElement> | undefined;
+    let $tooltip: JQuery<HTMLElement> | undefined;
 
     beforeEach(() => {
-      spyOn(tooltipView, 'draw').and.callThrough();
-      tooltip = tooltipView.draw();
-      expect(tooltipView.draw).toBeCalled();
+      $tooltip = tooltipView.draw();
     });
 
-    it('Создание элемента', () => {
-      expect(tooltip).toBeDefined();
+    afterEach(() => {
+      $tooltip = tooltipView.remove();
     });
 
-    it('Удаление элемента', () => {
-      spyOn(tooltipView, 'remove').and.callThrough();
+    it('Создание DOM элемента через метод draw()', () => {
+      expect($tooltip).toBeDefined();
+      expect($tooltip[0]).toBeInstanceOf(window.HTMLElement);
+    });
 
-      tooltipView.remove();
+    it('Удаление DOM элемента через метод remove()', () => {
+      expect($(dummyHtmlElement).find('.slider__tooltip')).toHaveLength(1);
 
-      expect(tooltipView.remove).toBeCalled();
+      $tooltip = tooltipView.remove();
+
+      expect($(dummyHtmlElement).find('.slider__tooltip')).toHaveLength(0);
     });
   });
 
-  describe('Установка текущего значения', () => {
-    it('метод setValue', () => {
-      spyOn(tooltipView, 'setValue');
+  describe('Установка текущего value', () => {
+    it('Установим рандомные значения', () => {
+      const $tooltip = tooltipView.draw();
 
-      tooltipView.setValue(10);
+      [1, 3, 13, 27, 45, 67, 80, 93, 100].forEach((number) => {
+        expect(Number($(dummyHtmlElement).find('.slider__tooltip').text())).not.toEqual(number);
 
-      expect(tooltipView.setValue).toBeCalledWith(10);
+        tooltipView.setValue(number);
+
+        expect(Number($(dummyHtmlElement).find('.slider__tooltip').text())).toEqual(number);
+      });
     });
   });
 });
