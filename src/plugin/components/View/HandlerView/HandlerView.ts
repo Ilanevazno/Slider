@@ -37,6 +37,10 @@ class HandlerView {
     this.tooltip.setValue(value);
   }
 
+  public getPosition(): number {
+    return Number(this.$handler.css(this.axis === 'X' ? 'left' : 'top').replace('px', ''));
+  }
+
   public setTooltipAvailability(isActive: boolean) {
     return isActive
       ? this.tooltip.draw()

@@ -85,6 +85,8 @@ class MainView {
           }
         }
       });
+
+    this.sliderBody.updateRange();
   }
 
   private handlerDidMount(handler: HandlerName): void {
@@ -152,7 +154,15 @@ class MainView {
       });
     }
 
+    callFunctionAfterAll(() => {
+      this.getRangeView();
+    });
+
     this.initSliderBodyEvents();
+  }
+
+  private getRangeView(): void {
+    this.sliderBody.getRangeView();
   }
 
   private initSliderBodyEvents(): void {

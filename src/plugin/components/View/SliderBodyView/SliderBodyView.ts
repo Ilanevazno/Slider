@@ -1,8 +1,9 @@
 import {
-  CustomEvents, Axis, BodyBreakpointsData, ObserverEvent, InteractiveComponentEvent,
+  CustomEvents, Axis, BodyBreakpointsData, ObserverEvent, InteractiveComponentEvent, ModelState,
 } from '../../types/types';
 import Observer from '../../Observer/Observer';
 import BreakpointsView from '../BreakpointsView/BreakpointsView';
+import RangeView from '../RangeView/RangeView';
 import MainView from '../MainView';
 
 class SliderBodyView {
@@ -11,6 +12,8 @@ class SliderBodyView {
   public eventObserver: Observer;
 
   private breakpoints: BreakpointsView;
+
+  private rangeView: RangeView;
 
   private axis: Axis;
 
@@ -24,6 +27,25 @@ class SliderBodyView {
 
     useAutoBind(this);
     this.bindActions();
+  }
+
+  public updateRange(): void {
+    if (this.rangeView) {
+      this.rangeView.update();
+    }
+  }
+
+  public getRangeView(): void {
+    const settings = {
+      axis: this.mainView.model.getOption('axis'),
+      valueType: this.mainView.model.getOption('valueType'),
+      handlers: {
+        minValue: this.mainView.minValueHandler,
+        maxValue: this.mainView.maxValueHandler,
+      },
+      $parent: this.$sliderBody,
+    };
+    this.rangeView = new RangeView(settings);
   }
 
   public remove(): void {
@@ -110,8 +132,8 @@ class SliderBodyView {
   private handleSliderBodyClick(event): void {
     const htmlEventTarget = event.target;
     const caughtCoords: number = this.axis === 'X'
-      ? event.offsetX
-      : event.offsetY;
+      ? event.clientX - this.mainView.minValueHandler.handler.getWidth()
+      : event.clientX - this.mainView.minValueHandler.handler.getWidth();
 
     const availableHandlerValues = this.getRangeValues();
     const newValue = this.convertPxToPercent(caughtCoords);
@@ -119,7 +141,7 @@ class SliderBodyView {
 
     const data = { oldValue, newValue };
 
-    if (htmlEventTarget === this.$sliderBody[0]) {
+    if (htmlEventTarget === this.$sliderBody[0] || htmlEventTarget === this.rangeView.$range[0]) {
       this.eventObserver.broadcast({ type: CustomEvents.BODY_CLICKED, data });
     }
   }
