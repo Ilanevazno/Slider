@@ -71,7 +71,8 @@
   height: 2rem;
   position: absolute;
   top: -1rem;
-  cursor: pointer; }
+  cursor: pointer;
+  z-index: 1000; }
   .slider__handler_type_vertical {
     transform: translate(-0.8rem); }
 
