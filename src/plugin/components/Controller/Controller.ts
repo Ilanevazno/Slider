@@ -78,7 +78,9 @@ class Controller {
     this.model.eventObserver.subscribe((event: ObserverEvent<ModelListener>) => {
       switch (event.type) {
         case CustomEvents.STATE_CHANGED:
+        case CustomEvents.GET_ACTUAL_STATE:
           this.view.moveHandler(event.data.state);
+          this.view.sliderBody.updateRange();
           break;
         case CustomEvents.MIN_AVAILABLE_VALUE_CHANGED:
         case CustomEvents.MAX_AVAILABLE_VALUE_CHANGED:
@@ -86,6 +88,7 @@ class Controller {
         case CustomEvents.VALUE_TYPE_CHANGED:
         case CustomEvents.AXIS_CHANGED:
           this.view.refreshView();
+          this.model.getActualState();
           break;
         case CustomEvents.TOOLTIP_AVAILABILITY_CHANGED:
           this.view.setTooltipAvailability(event.data.withTooltip);

@@ -5,6 +5,7 @@ import {
   ValueType,
   Axis,
   ModelState,
+  HandlerName,
 } from '../types/types';
 import Observer from '../Observer/Observer';
 
@@ -37,6 +38,7 @@ class Model {
   public setValueType(valueType: ValueType): void {
     if (valueType === ValueType.SINGLE || valueType === ValueType.DOUBLE) {
       this.valueType = valueType;
+
       this.eventObserver.broadcast({ type: CustomEvents.VALUE_TYPE_CHANGED, data: { valueType: this.valueType } });
     } else {
       throw new Error(`Невалидное типа значения: ${valueType}`);
@@ -84,15 +86,37 @@ class Model {
       breakpoint += Math.abs(this.stepSize);
     }
 
+    if (this.stepSize % this.maxAvailableValue !== 0) {
+      stepsBreakpointList.pop();
+      stepsBreakpointList.push(this.maxAvailableValue);
+    }
+
     this.breakpoints = stepsBreakpointList;
 
     return this.breakpoints;
   }
 
+  public getActualState(): void {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const item in this.state) {
+      this.setState({ name: item as HandlerName, value: this.state[item] });
+    }
+
+    this.eventObserver.broadcast({
+      type: CustomEvents.GET_ACTUAL_STATE,
+      data: {
+        state: this.state,
+      },
+    });
+
+    this.updateBreakpointList();
+  }
+
   public setState({ name, value }: UnconvertedStateItem): void {
     this.state[name] = this.findClosestBreakpoint(value);
+    let withCollision = false;
 
-    const withCollision = this.checkStateForCollisions(name);
+    if (this.valueType === ValueType.DOUBLE) withCollision = this.checkStateForCollisions(name);
 
     if (!withCollision) {
       this.eventObserver.broadcast({
@@ -188,13 +212,13 @@ class Model {
 
     let isCaughtCollision = false;
 
-    if (checkableStateItem === 'minValue' && minValue > maxValue) {
+    if (checkableStateItem === 'minValue' && minValue >= maxValue) {
       isCaughtCollision = true;
-      this.state.maxValue = minValue;
+      this.state.minValue = maxValue - this.stepSize;
     }
 
-    if (checkableStateItem === 'maxValue' && maxValue < minValue) {
-      this.state.minValue = maxValue;
+    if (checkableStateItem === 'maxValue' && maxValue <= minValue) {
+      this.state.maxValue = minValue + this.stepSize;
       isCaughtCollision = true;
     }
 

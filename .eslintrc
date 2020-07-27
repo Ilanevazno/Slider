@@ -37,6 +37,7 @@
     "class-methods-use-this": "off",
     "max-len": "off",
     "import/no-cycle": "off",
+    "guard-for-in": "off",
 
     "import/extensions": [
       "error",

@@ -15,6 +15,8 @@ class SliderBodyView {
 
   private rangeView: RangeView;
 
+  private $bodyClickArea: JQuery<HTMLElement>
+
   private axis: Axis;
 
   constructor(private mainView: MainView) {
@@ -104,6 +106,15 @@ class SliderBodyView {
         : 'slider__body slider__body_type_vertical',
     }).appendTo($htmlContainer);
 
+    this.$bodyClickArea = $('<div/>', {
+      class: 'slider__click-area',
+    }).css({
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      zIndex: '1000',
+    }).appendTo(sliderBody);
+
     return sliderBody;
   }
 
@@ -130,10 +141,9 @@ class SliderBodyView {
   }
 
   private handleSliderBodyClick(event): void {
-    const htmlEventTarget = event.target;
     const caughtCoords: number = this.axis === 'X'
-      ? event.clientX - this.mainView.minValueHandler.handler.getWidth()
-      : event.clientX - this.mainView.minValueHandler.handler.getWidth();
+      ? event.offsetX
+      : event.offsetY;
 
     const availableHandlerValues = this.getRangeValues();
     const newValue = this.convertPxToPercent(caughtCoords);
@@ -141,14 +151,12 @@ class SliderBodyView {
 
     const data = { oldValue, newValue };
 
-    if (htmlEventTarget === this.$sliderBody[0] || htmlEventTarget === this.rangeView.$range[0]) {
-      this.eventObserver.broadcast({ type: CustomEvents.BODY_CLICKED, data });
-    }
+    this.eventObserver.broadcast({ type: CustomEvents.BODY_CLICKED, data });
   }
 
   private bindActions(): void {
     $(window).on('resize.windowResize', this.handleWindowResize);
-    this.$sliderBody.on('click.sliderBodyClick', this.handleSliderBodyClick);
+    this.$bodyClickArea.on('click.bodyClickAreaClick', this.handleSliderBodyClick);
   }
 }
 

@@ -48,6 +48,14 @@ class BreakpointsView {
           .appendTo(this.parent.$sliderBody)
           .on('click', this.handleBreakpointClick.bind(null, icon));
       });
+
+    if (this.axis === 'X') {
+      this.breakpointElements.forEach((item: JQuery<HTMLElement>) => {
+        const oldItemPosition = Number(item.css('left').replace('px', ''));
+        const itemOffset: number = oldItemPosition - (item.width() / 5);
+        item.css('left', itemOffset);
+      });
+    }
   }
 
   public remove() {

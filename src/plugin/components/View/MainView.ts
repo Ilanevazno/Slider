@@ -89,20 +89,6 @@ class MainView {
     this.sliderBody.updateRange();
   }
 
-  private handlerDidMount(handler: HandlerName): void {
-    const minValue: number = this.model.getOption<number>('minAvailableValue');
-
-    const dataForBroadcasting: ObserverEvent<ViewHandlerData> = {
-      type: CustomEvents.HANDLER_WILL_MOUNT,
-      data: {
-        name: handler,
-        value: minValue,
-      },
-    };
-
-    this.eventObserver.broadcast(dataForBroadcasting);
-  }
-
   private withTooltip(): boolean {
     return this.model.getOption<boolean>('withTooltip');
   }
@@ -136,7 +122,6 @@ class MainView {
     const callFunctionAfterAll = (callbackFunction) => setTimeout(callbackFunction, 0);
 
     this.initHandlerEvents(this.minValueHandler);
-    this.handlerDidMount('minValue');
 
     if (valueType === 'double') {
       this.maxValueHandler = {
@@ -145,8 +130,7 @@ class MainView {
       };
 
       this.initHandlerEvents(this.maxValueHandler);
-      this.handlerDidMount('maxValue');
-    }
+    } else this.maxValueHandler = undefined;
 
     if (this.model.getOption<boolean>('withLabels')) {
       callFunctionAfterAll(() => {
@@ -155,14 +139,10 @@ class MainView {
     }
 
     callFunctionAfterAll(() => {
-      this.getRangeView();
+      this.sliderBody.getRangeView();
     });
 
     this.initSliderBodyEvents();
-  }
-
-  private getRangeView(): void {
-    this.sliderBody.getRangeView();
   }
 
   private initSliderBodyEvents(): void {

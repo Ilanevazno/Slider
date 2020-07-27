@@ -17,10 +17,12 @@ class RangeView {
 
   constructor(settings) {
     this.$parent = settings.$parent;
-    this.draw(settings);
-
     this.axis = settings.axis;
     this.valueType = settings.valueType;
+    this.minValueHandler = settings.handlers.minValue;
+    this.maxValueHandler = settings.handlers.maxValue;
+
+    this.draw();
   }
 
   public update(): void {
@@ -30,49 +32,41 @@ class RangeView {
       : positionFrom;
 
     const stylesParams = {
-      [this.axis === 'X' ? 'left' : 'top']: this.valueType === 'double' ? positionFrom : 0,
-      [this.axis === 'X' ? 'width' : 'height']: this.valueType === 'double' ? positionTo - positionFrom : positionTo,
+      [this.axis === 'X' ? 'left' : 'top']: this.valueType === ValueType.DOUBLE ? positionFrom : 0,
+      [this.axis === 'X' ? 'width' : 'height']: this.valueType === ValueType.DOUBLE ? positionTo - positionFrom : positionTo,
     };
 
     this.$range.css({ ...stylesParams });
   }
 
-  public draw(settings): void {
+  public draw(): void {
     this.remove();
 
-    const {
-      axis,
-      valueType,
-      handlers,
-      $parent,
-    } = settings;
+    const minCurrentPos = this.minValueHandler.handler.getPosition();
+    const maxCurrentPos = this.valueType === ValueType.DOUBLE ? this.maxValueHandler.handler.getPosition() : minCurrentPos;
 
-    this.minValueHandler = handlers.minValue;
-    this.maxValueHandler = handlers.maxValue;
-
-    const minCurrentPos = handlers.minValue.handler.getPosition();
-    const maxCurrentPos = valueType === 'double' ? handlers.maxValue.handler.getPosition() : minCurrentPos;
-
-    const positionFrom = valueType === 'single'
+    const positionFrom = this.valueType === ValueType.SINGLE
       ? '0px'
       : `${minCurrentPos}px`;
-    const positionTo = valueType === 'single'
+    const positionTo = this.valueType === ValueType.SINGLE
       ? `${minCurrentPos}px`
       : `${maxCurrentPos - minCurrentPos}px`;
 
     this.$range = $('<div/>', {
-      class: axis === 'X'
+      class: this.axis === 'X'
         ? 'slider__range slider__range_type_horizontal'
         : 'slider__range slider__range_type_vertical',
-    }).appendTo($parent)
+    }).appendTo(this.$parent)
       .css({
         position: 'absolute',
-        height: axis === 'X' ? $parent.height() : positionTo,
-        width: axis === 'X' ? positionTo : '100%',
+        height: this.axis === 'X' ? this.$parent.height() : positionTo,
+        width: this.axis === 'X' ? positionTo : '100%',
         background: this.minValueHandler.handler.$handler.css('background'),
-        left: axis === 'X' ? positionFrom : 0,
-        top: axis === 'X' ? 0 : positionTo,
+        left: this.axis === 'X' ? positionFrom : 0,
+        top: this.axis === 'X' ? 0 : positionTo,
       });
+
+    this.update();
   }
 
   private remove(): void {
