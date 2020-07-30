@@ -28,7 +28,7 @@ class HandlerView {
 
   public move(data: ConvertingData): void {
     const newPosition: number = this.calculateNewPosition(data);
-    const direction: string = this.axis === 'X' ? 'left' : 'top';
+    const direction = this.axis === 'X' ? 'left' : 'top';
 
     this.$handler.css(direction, `${newPosition}px`);
   }
@@ -75,7 +75,7 @@ class HandlerView {
     this.$handler.on('touchstart.handlerTouchStart mousedown.handlerMouseDown', this.handleHandlerMouseDown);
   }
 
-  private handleHandlerMouseDown(event): void {
+  private handleHandlerMouseDown(event: JQuery.Event): void {
     event.preventDefault();
     this.offset = this.axis === 'X'
       ? (event.clientX || event.touches[0].clientX) - this.$handler[0].getBoundingClientRect().left
@@ -86,7 +86,7 @@ class HandlerView {
     $(document).on('touchend.documentTouchEnd mouseup.documentMouseUp', this.handleDocumentMouseUp);
   }
 
-  private handleDocumentMouseMove(event): void {
+  private handleDocumentMouseMove(event: JQuery.Event): void {
     let position = this.axis === 'X' ? event.clientX : event.clientY;
 
     if (typeof position === 'undefined' && event.touches) {

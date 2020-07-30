@@ -1,6 +1,5 @@
 import MainView from '../src/plugin/components/View/MainView';
 import BreakpointsView from '../src/plugin/components/View/BreakpointsView/BreakpointsView';
-import Model from '../src/plugin/components/Model/Model';
 import SliderBodyView from '../src/plugin/components/View/SliderBodyView/SliderBodyView';
 
 jest.mock('../src/plugin/components/Model/Model');
@@ -9,7 +8,7 @@ jest.mock('../src/plugin/components/View/BreakpointsView/BreakpointsView');
 jest.mock('../src/plugin/components/View/SliderBodyView/SliderBodyView');
 
 interface Mock<T> extends SliderBodyView {
-  new(...args): T;
+  new(...args: any[]): T;
 }
 
 let breakpointsView: BreakpointsView;

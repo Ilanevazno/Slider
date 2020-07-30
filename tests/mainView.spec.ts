@@ -1,8 +1,7 @@
 import Model from '../src/plugin/components/Model/Model';
 import MainView from '../src/plugin/components/View/MainView';
-import SliderBodyView from '../src/plugin/components/View/SliderBodyView/SliderBodyView';
 import {
-  AvailableOptions, ValueType, CustomEvents, ObserverEvent, ViewHandlerData,
+  AvailableOptions, ValueType, CustomEvents, ObserverEvent, UnconvertedStateItem,
 } from '../src/plugin/components/types/types';
 
 const mockModelOptions: AvailableOptions = {
@@ -37,10 +36,10 @@ describe('Тестирование класса MainView', () => {
   });
 
   describe('Проверка observer', () => {
-    let broadcastSpy;
+    let broadcastSpy: typeof spyOn;
 
     beforeEach(() => {
-      mainView.eventObserver.subscribe((data) => data);
+      mainView.eventObserver.subscribe((data: ObserverEvent<UnconvertedStateItem>) => data);
       broadcastSpy = spyOn(mainView.eventObserver, 'broadcast');
     });
 

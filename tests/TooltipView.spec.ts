@@ -1,7 +1,7 @@
 import TooltipView from '../src/plugin/components/View/TooltipView/TooltipView';
 import { Axis } from '../src/plugin/components/types/types';
 
-const dummyHtmlElement = document.createElement('div');
+const dummyHtmlElement = $('<div/>').appendTo(document);
 document.getElementById = jasmine.createSpy('HTML Element').and.returnValue(dummyHtmlElement);
 
 const currentAxis: Axis = 'X';

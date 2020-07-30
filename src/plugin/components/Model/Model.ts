@@ -67,10 +67,21 @@ class Model {
     this.eventObserver.broadcast({ type: CustomEvents.TOOLTIP_AVAILABILITY_CHANGED, data: { withTooltip: this.withTooltip } });
   }
 
-  public getOption<T>(targetOption: string): T {
-    const optionsList: object = this.getOptionList();
+  public getOption<T extends string | number | boolean | number[]>(targetOption: keyof AvailableOptions): T {
+    const optionsList = {
+      axis: this.axis,
+      valueType: this.valueType,
+      minAvailableValue: this.minAvailableValue,
+      maxAvailableValue: this.maxAvailableValue,
+      minCurrentValue: this.state.minValue || 'Значение не найдено',
+      maxCurrentValue: this.state.maxValue || 'Значение не найдено',
+      stepSize: this.stepSize,
+      breakpoints: this.breakpoints,
+      withTooltip: this.withTooltip,
+      withLabels: this.withLabels,
+    };
 
-    return optionsList[targetOption];
+    return optionsList[targetOption] as T;
   }
 
   public getState(): ModelState {
@@ -97,10 +108,9 @@ class Model {
   }
 
   public getActualState(): void {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const item in this.state) {
-      this.setState({ name: item as HandlerName, value: this.state[item] });
-    }
+    Object.keys(this.state).forEach((stateItemName) => {
+      this.setState({ name: stateItemName as HandlerName, value: this.state[stateItemName as HandlerName] });
+    });
 
     this.eventObserver.broadcast({
       type: CustomEvents.GET_ACTUAL_STATE,
@@ -168,21 +178,6 @@ class Model {
     }
   }
 
-  private getOptionList(): AvailableOptions {
-    return {
-      axis: this.axis,
-      valueType: this.valueType,
-      minAvailableValue: this.minAvailableValue,
-      maxAvailableValue: this.maxAvailableValue,
-      minCurrentValue: this.state.minValue || 'Значение не найдено',
-      maxCurrentValue: this.state.maxValue || 'Значение не найдено',
-      stepSize: this.stepSize,
-      breakpoints: this.breakpoints,
-      withTooltip: this.withTooltip,
-      withLabels: this.withLabels,
-    } as AvailableOptions;
-  }
-
   private callInitialMethods(options: AvailableOptions) {
     this.setMinAvailableValue(options.minAvailableValue);
     this.setMaxAvailableValue(options.maxAvailableValue);
@@ -204,7 +199,7 @@ class Model {
     this.breakpoints = this.updateBreakpointList();
   }
 
-  private checkStateForCollisions(checkableStateItem): boolean {
+  private checkStateForCollisions(checkableStateItem: HandlerName): boolean {
     const {
       minValue,
       maxValue,

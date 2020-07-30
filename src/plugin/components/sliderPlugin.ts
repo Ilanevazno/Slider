@@ -5,7 +5,7 @@ import Controller from './Controller/Controller';
 
 (function ($) {
   const methods = {
-    _init(args) {
+    _init(args: AvailableOptions) {
       const initSliderOptions: AvailableOptions = {
         stepSize: 1,
         minAvailableValue: 1,
@@ -16,11 +16,8 @@ import Controller from './Controller/Controller';
         withLabels: true,
         withTooltip: true,
         valueType: ValueType.SINGLE,
+        ...args,
       };
-
-      Object.keys(args).forEach((setting) => {
-        initSliderOptions[setting] = args[setting];
-      });
 
       const model = new Model(initSliderOptions);
       const view = new MainView(model, this);
@@ -39,15 +36,15 @@ import Controller from './Controller/Controller';
     },
   };
   $.fn.extend({
-    sliderPlugin<T>(method: string, ...args: T[]): JQuery<HTMLElement> {
+    sliderPlugin<T>(method: keyof AvailableOptions | AvailableOptions, ...args: T[]): JQuery<HTMLElement> {
       const currentController = this.data('controller') || {};
 
-      if (currentController[method]) {
-        return currentController[method].call(currentController, ...args) || this;
+      if (currentController[method as keyof AvailableOptions]) {
+        return currentController[method as keyof AvailableOptions].call(currentController, ...args) || this;
       }
 
       if (typeof method === 'object' || !method) {
-        return methods._init.apply(this, [method]);
+        return methods._init.apply(this, [method as AvailableOptions]);
       }
 
       return this;

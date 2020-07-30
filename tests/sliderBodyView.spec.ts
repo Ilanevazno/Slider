@@ -1,7 +1,9 @@
 import SliderBodyView from '../src/plugin/components/View/SliderBodyView/SliderBodyView';
 import Model from '../src/plugin/components/Model/Model';
 import MainView from '../src/plugin/components/View/MainView';
-import { AvailableOptions, ValueType, CustomEvents } from '../src/plugin/components/types/types';
+import {
+  AvailableOptions, ValueType, CustomEvents, ObserverEvent, InteractiveComponentEvent, UnconvertedStateItem,
+} from '../src/plugin/components/types/types';
 
 const mockModelOptions: AvailableOptions = {
   stepSize: 1,
@@ -84,7 +86,7 @@ describe('Проверка класса SliderBodyView', () => {
 
   describe('DOM events', () => {
     it('window resize event', () => {
-      sliderBody.eventObserver.subscribe((data) => data);
+      sliderBody.eventObserver.subscribe((data: ObserverEvent<InteractiveComponentEvent>) => data);
       spyOn(sliderBody.eventObserver, 'broadcast');
 
       const resize = $.Event('resize');
@@ -107,7 +109,7 @@ describe('Проверка класса SliderBodyView', () => {
     let broadcastSpy;
 
     beforeEach(() => {
-      mainView.eventObserver.subscribe((data) => data);
+      mainView.eventObserver.subscribe((data: ObserverEvent<UnconvertedStateItem>) => data);
       broadcastSpy = spyOn(mainView.eventObserver, 'broadcast');
     });
 

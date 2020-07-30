@@ -1,5 +1,5 @@
 import {
-  CustomEvents, Axis, BodyBreakpointsData, ObserverEvent, InteractiveComponentEvent, ModelState,
+  CustomEvents, Axis, BodyBreakpointsData, ObserverEvent, InteractiveComponentEvent, rangeSettings,
 } from '../../types/types';
 import Observer from '../../Observer/Observer';
 import BreakpointsView from '../BreakpointsView/BreakpointsView';
@@ -38,7 +38,7 @@ class SliderBodyView {
   }
 
   public getRangeView(): void {
-    const settings = {
+    const settings: rangeSettings = {
       axis: this.mainView.model.getOption('axis'),
       valueType: this.mainView.model.getOption('valueType'),
       handlers: {
@@ -99,7 +99,7 @@ class SliderBodyView {
     });
   }
 
-  private drawBody($htmlContainer): JQuery<HTMLElement> {
+  private drawBody($htmlContainer: JQuery<HTMLElement>): JQuery<HTMLElement> {
     const sliderBody: JQuery<HTMLElement> = $('<div/>', {
       class: this.axis === 'X'
         ? 'slider__body slider__body_type_horizontal'
@@ -140,7 +140,7 @@ class SliderBodyView {
     return (currentValue * (maxPercent - minPercent)) / maxValue + minValueOption;
   }
 
-  private handleSliderBodyClick(event): void {
+  private handleSliderBodyClick(event: JQuery.Event): void {
     const caughtCoords: number = this.axis === 'X'
       ? event.offsetX
       : event.offsetY;

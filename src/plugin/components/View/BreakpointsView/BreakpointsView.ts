@@ -21,7 +21,7 @@ class BreakpointsView {
 
     const breakpoints = this.getConvertedBreakpoints(breakpointsData);
 
-    const direction: string = this.axis === 'X' ? 'left' : 'top';
+    const direction = this.axis === 'X' ? 'left' : 'top';
     let shortStepCounter: number = Math.trunc((breakpoints.length - 1) / 10);
     const shortBreakpoints: SliderBreakpoint[] = [];
     shortBreakpoints.push(breakpoints[0]);

@@ -48,12 +48,11 @@ describe('Проверка класса Model', () => {
     });
 
     it('Получение всех возможных опций', () => {
-      const options = ['axis', 'valueType', 'minAvailableValue', 'maxAvailableValue', 'stepSize', 'breakpoints', 'withTooltip', 'withLabels'];
+      const options: string[] = ['axis', 'valueType', 'minAvailableValue', 'maxAvailableValue', 'stepSize', 'breakpoints', 'withTooltip', 'withLabels'];
 
-      options.map((option: string) => {
-        const caughtOption = modelSpec.getOption(option);
+      options.forEach((option) => {
+        const caughtOption = modelSpec.getOption(option as keyof AvailableOptions);
         expect(caughtOption).toBeDefined();
-        return option;
       });
     });
 

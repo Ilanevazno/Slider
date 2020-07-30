@@ -1,5 +1,5 @@
 import {
-  Axis, ValueType, ViewHandlerData,
+  Axis, ValueType, ViewHandlerData, rangeSettings,
 } from '../../types/types';
 
 class RangeView {
@@ -15,7 +15,7 @@ class RangeView {
 
   private maxValueHandler: ViewHandlerData;
 
-  constructor(settings) {
+  constructor(settings: rangeSettings) {
     this.$parent = settings.$parent;
     this.axis = settings.axis;
     this.valueType = settings.valueType;

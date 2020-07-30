@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import '../../../plugin/components/sliderPlugin';
-import { AvailableOptions, JqueryPluginElement } from '../../../plugin/components/types/types';
+import { AvailableOptions, JqueryPluginElement, ModelState } from '../../../plugin/components/types/types';
 
 class Panel {
   private sliderOptions: AvailableOptions;
@@ -93,7 +93,7 @@ class Panel {
     const minAvailableValue = this.$slider.sliderPlugin('setMinAvailableValue', this.sliderOptions.minAvailableValue);
     const maxAvailableValue = this.$slider.sliderPlugin('setMaxAvailableValue', this.sliderOptions.maxAvailableValue);
 
-    this.$slider.sliderPlugin('subscribeToChangeState', (newState) => {
+    this.$slider.sliderPlugin('subscribeToChangeState', (newState: ModelState) => {
       const oldMinValue = this.$minValueHandlerInput?.val();
       const oldMaxValue = this.$maxValueHandlerInput?.val();
       this.$minValueHandlerInput?.val(newState.minValue ?? oldMinValue);
@@ -151,7 +151,7 @@ class Panel {
     this.$errorNotify?.remove();
   }
 
-  private handleLabelChange(target, event) {
+  private handleLabelChange(target: string, event: JQuery.TriggeredEvent) {
     const $caughtElement: JQuery<HTMLElement> = $(event.target);
 
     switch (target) {

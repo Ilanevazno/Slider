@@ -31,7 +31,7 @@ describe('Проверка класса Controller', () => {
   describe('Проверка основных методов', () => {
     it('Подписка на события', () => {
       spyOn(controllerSpec, 'subscribeToChangeState').and.callThrough();
-      const callback = (_) => true;
+      const callback = (_: string) => true;
       controllerSpec.subscribeToChangeState(callback);
       expect(controllerSpec.subscribeToChangeState).toBeCalledWith(callback);
     });

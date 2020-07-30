@@ -4,21 +4,31 @@ export type AvailableOptions = {
   stepSize: number;
   minAvailableValue: number;
   maxAvailableValue: number;
-  minCurrentValue?: number;
-  maxCurrentValue?: number;
   axis: Axis;
   withLabels: boolean;
   withTooltip: boolean;
   valueType: ValueType;
   breakpoints?: number[];
-}
-
-export type UnconvertedStateItem = {
-  name: 'minValue' | 'maxValue';
-  value: number;
+  minCurrentValue?: number;
+  maxCurrentValue?: number;
 }
 
 export type HandlerName = 'minValue' | 'maxValue';
+
+export type UnconvertedStateItem = {
+  name: HandlerName;
+  value: number;
+}
+
+export type rangeSettings = {
+  axis: Axis;
+  valueType: ValueType;
+  handlers: {
+    minValue: ViewHandlerData;
+    maxValue: ViewHandlerData;
+  };
+  $parent: JQuery<HTMLElement>;
+}
 
 export type SliderBreakpoint = {
   currentValue: number;
@@ -31,9 +41,9 @@ export type HandlerEvent = {
 }
 
 export type ViewHandlerData = {
-  handler?: HandlerView;
   name: HandlerName;
   value?: number;
+  handler?: HandlerView;
 }
 
 export type ModelListener = {

@@ -3,7 +3,7 @@ import { Axis } from '../../types/types';
 class TooltipView {
   private $tooltip: JQuery<HTMLElement>;
 
-  constructor(private $htmlContainer, private axis: Axis) {
+  constructor(private $htmlContainer: JQuery<HTMLElement>, private axis: Axis) {
     this.$tooltip = null;
   }
 

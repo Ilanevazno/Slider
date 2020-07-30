@@ -39,7 +39,7 @@ class MainView {
   }
 
   public setBreakpointsAvailability(): void {
-    const withLabels: boolean = this.model.getOption<boolean>('withLabels');
+    const withLabels = this.model.getOption<boolean>('withLabels');
     const data: BodyBreakpointsData = {
       axis: this.model.getOption<Axis>('axis'),
       offsetHandlerWidth: this.minValueHandler.handler.getWidth(),
@@ -112,14 +112,14 @@ class MainView {
   }
 
   private createSliderComponents() {
-    const valueType: ValueType = this.model.getOption<ValueType>('valueType');
+    const valueType = this.model.getOption<ValueType>('valueType');
     this.sliderBody = this.drawSliderBody();
     this.minValueHandler = {
       name: 'minValue',
       handler: this.getHandlerComponent(),
     };
 
-    const callFunctionAfterAll = (callbackFunction) => setTimeout(callbackFunction, 0);
+    const callFunctionAfterAll = (callbackFunction: Function) => setTimeout(callbackFunction, 0);
 
     this.initHandlerEvents(this.minValueHandler);
 
@@ -165,7 +165,7 @@ class MainView {
     });
   }
 
-  private interactiveComponentClicked({ oldValue, newValue }): void {
+  private interactiveComponentClicked({ oldValue, newValue }: InteractiveComponentEvent): void {
     const availableHandlers = [this.minValueHandler, this.maxValueHandler]
       .filter((handler) => handler !== undefined);
 
@@ -200,7 +200,7 @@ class MainView {
   private getHandlerComponent(): HandlerView {
     const handler = new HandlerView(this);
 
-    const withTooltip: boolean = this.model.getOption<boolean>('withTooltip');
+    const withTooltip = this.model.getOption<boolean>('withTooltip');
 
     if (withTooltip) {
       handler.setTooltipAvailability(true);
@@ -209,7 +209,7 @@ class MainView {
     return handler;
   }
 
-  private initHandlerEvents(parent): void {
+  private initHandlerEvents(parent: ViewHandlerData): void {
     parent.handler.observer.subscribe((event: ObserverEvent<HandlerEvent>) => {
       switch (event.type) {
         case CustomEvents.HANDLER_MOUSEMOVE:

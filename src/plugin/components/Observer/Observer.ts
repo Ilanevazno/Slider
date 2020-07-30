@@ -9,7 +9,7 @@ class Observer {
     this.observers.push(fn);
   }
 
-  public broadcast(data): void {
+  public broadcast(data: object): void {
     this.observers.forEach((subscriber) => subscriber(data));
   }
 }
