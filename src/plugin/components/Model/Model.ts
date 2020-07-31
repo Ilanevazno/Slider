@@ -156,25 +156,25 @@ class Model {
   }
 
   public setMinAvailableValue(value: number): void {
-    if (value <= this.maxAvailableValue) {
+    if (value < this.maxAvailableValue) {
       this.minAvailableValue = value;
       this.updateBreakpointList();
 
       this.eventObserver.broadcast({ type: CustomEvents.MIN_AVAILABLE_VALUE_CHANGED, data: { minAvailableValue: this.minAvailableValue } });
     } else {
-      throw new Error('Минимальное значение не может быть больше чем максимальное.');
+      throw new Error('Минимальное значение не может быть больше или равно максимальному.');
     }
   }
 
   public setMaxAvailableValue(value: number): void {
-    if (value >= this.minAvailableValue) {
+    if (value > this.minAvailableValue) {
       this.maxAvailableValue = value;
 
       this.updateBreakpointList();
 
       this.eventObserver.broadcast({ type: CustomEvents.MAX_AVAILABLE_VALUE_CHANGED, data: { maxAvailableValue: this.maxAvailableValue } });
     } else {
-      throw new Error('Максимальное значение не может быть меньше минимального.');
+      throw new Error('Максимальное значение не может быть меньше или равно минимальному.');
     }
   }
 

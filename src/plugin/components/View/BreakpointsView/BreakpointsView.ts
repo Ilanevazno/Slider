@@ -52,7 +52,7 @@ class BreakpointsView {
     if (this.axis === 'X') {
       this.breakpointElements.forEach((item: JQuery<HTMLElement>) => {
         const oldItemPosition = Number(item.css('left').replace('px', ''));
-        const itemOffset: number = oldItemPosition - (item.width() / 5);
+        const itemOffset: number = oldItemPosition - (item.width() / 4);
         item.css('left', itemOffset);
       });
     }
