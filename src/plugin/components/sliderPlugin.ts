@@ -36,11 +36,12 @@ import Controller from './Controller/Controller';
     },
   };
   $.fn.extend({
-    sliderPlugin<T>(method: keyof AvailableOptions | AvailableOptions, ...args: T[]): JQuery<HTMLElement> {
+    sliderPlugin<T>(method: string | AvailableOptions, ...args: T[]): JQuery<HTMLElement> {
       const currentController = this.data('controller') || {};
 
-      if (currentController[method as keyof AvailableOptions]) {
-        return currentController[method as keyof AvailableOptions].call(currentController, ...args) || this;
+      if (currentController[method as string]) {
+        console.log(method);
+        return currentController[method as string].call(currentController, ...args) || this;
       }
 
       if (typeof method === 'object' || !method) {
