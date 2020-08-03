@@ -1,7 +1,7 @@
 import Controller from '../src/plugin/components/Controller/Controller';
 import Model from '../src/plugin/components/Model/Model';
 import MainView from '../src/plugin/components/View/MainView';
-import { AvailableOptions, ValueType } from '../src/plugin/components/types/types';
+import { AvailableOptions, ValueType, Axis } from '../src/plugin/components/types/types';
 
 const mockModelOptions: AvailableOptions = {
   stepSize: 1,
@@ -37,33 +37,81 @@ describe('Проверка класса Controller', () => {
     });
 
     it('Запрос на изменение состояния по имени', () => {
-      spyOn(controllerSpec, 'changeStateByItemName').and.callThrough();
       controllerSpec.changeStateByItemName('minValue', 50);
-      expect(controllerSpec.changeStateByItemName).toBeCalledWith('minValue', 50);
+      expect(modelForControllerSpec.state.minValue = 50);
+
+      controllerSpec.changeStateByItemName('minValue', 77);
+      expect(modelForControllerSpec.state.minValue = 77);
     });
 
     it('Запрос на изменение типа вида', () => {
-      spyOn(controllerSpec, 'setValueType').and.callThrough();
+      expect(modelForControllerSpec.valueType).toBe(ValueType.SINGLE);
       controllerSpec.setValueType(ValueType.DOUBLE);
-      expect(controllerSpec.setValueType).toBeCalledWith(ValueType.DOUBLE);
+      expect(modelForControllerSpec.valueType).toBe(ValueType.DOUBLE);
+      controllerSpec.setValueType(ValueType.SINGLE);
+      expect(modelForControllerSpec.valueType).toBe(ValueType.SINGLE);
     });
 
     it('Запрос на включение индикатора шагов', () => {
-      spyOn(controllerSpec, 'setLabelsAvailability').and.callThrough();
+      expect(modelForControllerSpec.withLabels).toBeFalsy();
       controllerSpec.setLabelsAvailability(true);
-      expect(controllerSpec.setLabelsAvailability).toBeCalled();
+      expect(modelForControllerSpec.withLabels).toBeTruthy();
+      controllerSpec.setLabelsAvailability(false);
+      expect(modelForControllerSpec.withLabels).toBeFalsy();
     });
 
     it('Запрос на включение Tooltip', () => {
-      spyOn(controllerSpec, 'setTooltipAvailability').and.callThrough();
+      expect(modelForControllerSpec.withTooltip).toBeFalsy();
       controllerSpec.setTooltipAvailability(true);
-      expect(controllerSpec.setTooltipAvailability).toBeCalled();
+      expect(modelForControllerSpec.withTooltip).toBeTruthy();
+      controllerSpec.setTooltipAvailability(false);
+      expect(modelForControllerSpec.withTooltip).toBeFalsy();
     });
 
     it('Изменение направления', () => {
-      spyOn(controllerSpec, 'setAxis').and.callThrough();
+      expect(modelForControllerSpec.axis).not.toEqual('Y');
       controllerSpec.setAxis('Y');
-      expect(controllerSpec.setAxis).toBeCalledWith('Y');
+      expect(modelForControllerSpec.axis).toEqual('Y');
+      controllerSpec.setAxis('X');
+      expect(modelForControllerSpec.axis).toEqual('X');
+
+      let errorsCount = 0;
+
+      try {
+        controllerSpec.setAxis('KEK' as Axis);
+      } catch (err) {
+        errorsCount += 1;
+      }
+
+      expect(errorsCount).toBe(1);
+    });
+
+    it('Изменение шага', () => {
+      expect(modelForControllerSpec.stepSize).not.toEqual(20);
+      controllerSpec.setStepSize(20);
+      expect(modelForControllerSpec.stepSize).toEqual(20);
+
+      let errorsCount = 0;
+
+      try {
+        controllerSpec.setStepSize(90000);
+      } catch (err) {
+        errorsCount += 1;
+      }
+
+      expect(errorsCount).toBe(1);
+    });
+
+    it('set max available value', () => {
+      expect(modelForControllerSpec.maxAvailableValue).not.toBe(444);
+      controllerSpec.setMaxAvailableValue(444);
+      expect(modelForControllerSpec.maxAvailableValue).toBe(444);
+    });
+
+    it('set min available value', () => {
+      expect(modelForControllerSpec.minAvailableValue).not.toBe(333);
+      controllerSpec.setMinAvailableValue(333);
+      expect(modelForControllerSpec.minAvailableValue).toBe(333);
     });
   });
 });

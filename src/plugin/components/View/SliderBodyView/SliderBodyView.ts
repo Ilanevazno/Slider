@@ -13,11 +13,11 @@ class SliderBodyView {
 
   private readonly breakpoints: BreakpointsView;
 
+  private $bodyClickArea: JQuery<HTMLElement>
+
   private readonly axis: Axis;
 
   private rangeView: RangeView;
-
-  private $bodyClickArea: JQuery<HTMLElement>
 
   constructor(private readonly mainView: MainView) {
     this.eventObserver = new Observer();

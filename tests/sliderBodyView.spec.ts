@@ -1,6 +1,7 @@
 import SliderBodyView from '../src/plugin/components/View/SliderBodyView/SliderBodyView';
 import Model from '../src/plugin/components/Model/Model';
 import MainView from '../src/plugin/components/View/MainView';
+import HandlerView from '../src/plugin/components/View/HandlerView/HandlerView';
 import {
   AvailableOptions, ValueType, CustomEvents, ObserverEvent, InteractiveComponentEvent, UnconvertedStateItem,
 } from '../src/plugin/components/types/types';
@@ -22,6 +23,13 @@ document.getElementById = jasmine.createSpy('HTML Element').and.returnValue(dumm
 
 let model = new Model(mockModelOptions);
 let mainView = new MainView(model, dummyHtmlElement);
+
+// mainView.minValueHandler = {
+//   name: 'minValue',
+//   handler: new HandlerView(mainView),
+// };
+
+// this.initHandlerEvents(this.minValueHandler);
 
 mainView.sliderBody.remove();
 
@@ -96,11 +104,24 @@ describe('Проверка класса SliderBodyView', () => {
       expect(sliderBody.eventObserver.broadcast).toBeCalledWith({ type: CustomEvents.WINDOW_RESIZED });
     });
 
-    it('body clicked', () => {
+    it('body click area was clicked', () => {
       const click = $.Event('click');
       click.offsetX = 700;
+      let clickCounter = 0;
 
-      sliderBody.$sliderBody.trigger(click);
+      sliderBody.$sliderBody.find('.slider__click-area').on('click', () => {
+        clickCounter += 1;
+      });
+
+      sliderBody.$sliderBody.find('.slider__click-area').trigger(click);
+
+      expect(clickCounter).toBe(1);
+
+      sliderBody.$sliderBody.find('.slider__click-area').trigger(click);
+
+      sliderBody.$sliderBody.find('.slider__click-area').trigger(click);
+
+      expect(clickCounter).toBe(3);
     });
   });
 
@@ -122,6 +143,30 @@ describe('Проверка класса SliderBodyView', () => {
       mainView.eventObserver.broadcast(data);
 
       expect(mainView.eventObserver.broadcast).toBeCalledWith(data);
+    });
+  });
+
+  describe('getting range values', () => {
+    it('should return minValue as 50', () => {
+      mainView.minValueHandler.handler.value = 50;
+
+      expect(sliderBody.getRangeValues()[0]).toBe(50);
+    });
+  });
+
+  describe('test calling range view', () => {
+    it('0 elements length before init', () => {
+      expect(sliderBody.$sliderBody.find('.slider__range').length).toBe(0);
+    });
+
+    it('1 elem length after init', () => {
+      sliderBody.getRangeView();
+      expect(sliderBody.$sliderBody.find('.slider__range').length).toBe(1);
+    });
+
+    it('updating range view', () => {
+      sliderBody.getRangeView();
+      sliderBody.updateRange();
     });
   });
 });
