@@ -39,12 +39,12 @@ import Controller from './Controller/Controller';
     sliderPlugin<T>(method: string | AvailableOptions, ...args: T[]): JQuery<HTMLElement> {
       const currentController = this.data('controller') || {};
 
-      if (currentController[method as string]) {
-        return currentController[method as string].call(currentController, ...args) || this;
-      }
-
       if (typeof method === 'object' || !method) {
         return methods._init.apply(this, [method as AvailableOptions]);
+      }
+
+      if (currentController[method]) {
+        return currentController[method].call(currentController, ...args) || this;
       }
 
       return this;
