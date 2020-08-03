@@ -40,7 +40,6 @@ import Controller from './Controller/Controller';
       const currentController = this.data('controller') || {};
 
       if (currentController[method as string]) {
-        console.log(method);
         return currentController[method as string].call(currentController, ...args) || this;
       }
 
