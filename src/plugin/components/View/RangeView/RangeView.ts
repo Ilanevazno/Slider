@@ -3,19 +3,19 @@ import {
 } from '../../types/types';
 
 class RangeView {
-  private $parent: JQuery<HTMLElement>;
-
   public $range: JQuery<HTMLElement>;
 
-  private axis: Axis;
+  private readonly $parent: JQuery<HTMLElement>;
 
-  private valueType: ValueType;
+  private readonly valueType: ValueType;
 
-  private minValueHandler: ViewHandlerData;
+  private readonly minValueHandler: ViewHandlerData;
 
-  private maxValueHandler: ViewHandlerData;
+  private readonly maxValueHandler: ViewHandlerData;
 
-  constructor(settings: rangeSettings) {
+  private readonly axis: Axis;
+
+  constructor(readonly settings: rangeSettings) {
     this.$parent = settings.$parent;
     this.axis = settings.axis;
     this.valueType = settings.valueType;

@@ -5,11 +5,11 @@ import Observer from '../../Observer/Observer';
 import SliderBodyView from '../SliderBodyView/SliderBodyView';
 
 class BreakpointsView {
-  public eventObserver: Observer;
+  public readonly eventObserver: Observer;
 
   private breakpointElements: JQuery<HTMLElement>[];
 
-  constructor(private axis: Axis, private parent: SliderBodyView) {
+  constructor(private readonly axis: Axis, private readonly parent: SliderBodyView) {
     this.eventObserver = new Observer();
     this.breakpointElements = [];
 

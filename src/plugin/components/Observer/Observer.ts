@@ -1,5 +1,5 @@
 class Observer {
-  private observers: Function[];
+  private readonly observers: Function[];
 
   constructor() {
     this.observers = [];

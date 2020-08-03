@@ -209,11 +209,17 @@ class Model {
 
     if (checkableStateItem === 'minValue' && minValue >= maxValue) {
       isCaughtCollision = true;
-      this.state.minValue = maxValue - this.stepSize;
+      this.state.minValue = this.minAvailableValue > maxValue - this.stepSize
+        ? this.minAvailableValue
+        : maxValue - this.stepSize;
     }
 
     if (checkableStateItem === 'maxValue' && maxValue <= minValue) {
-      this.state.maxValue = minValue + this.stepSize;
+      this.setState({ name: 'minValue', value: minValue - this.stepSize });
+
+      this.state.maxValue = this.maxAvailableValue < minValue + this.stepSize
+        ? this.maxAvailableValue
+        : minValue + this.stepSize;
       isCaughtCollision = true;
     }
 

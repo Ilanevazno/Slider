@@ -16,7 +16,7 @@ import SliderBodyView from './SliderBodyView/SliderBodyView';
 import HandlerView from './HandlerView/HandlerView';
 
 class MainView {
-  public eventObserver: Observer;
+  public readonly eventObserver: Observer;
 
   public $sliderContainer: JQuery<HTMLElement>
 
@@ -26,7 +26,7 @@ class MainView {
 
   public maxValueHandler: ViewHandlerData;
 
-  constructor(public model: Model, initHtmlElement: HTMLElement) {
+  constructor(public readonly model: Model, private readonly initHtmlElement: HTMLElement) {
     this.eventObserver = new Observer();
     this.$sliderContainer = this.drawSliderContainer(initHtmlElement);
 

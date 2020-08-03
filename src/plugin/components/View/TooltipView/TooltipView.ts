@@ -1,20 +1,24 @@
 import { Axis } from '../../types/types';
 
 class TooltipView {
-  private $tooltip: JQuery<HTMLElement>;
-
-  constructor(private $htmlContainer: JQuery<HTMLElement>, private axis: Axis) {
+  constructor(
+    private readonly $htmlContainer: JQuery<HTMLElement>,
+    private readonly axis: Axis,
+    private $tooltip?: JQuery<HTMLElement>,
+  ) {
     this.$tooltip = null;
   }
 
   public setValue(percent: number): void {
     this.$tooltip.text(percent);
 
-    if (this.$tooltip.width() > this.$htmlContainer.width()) {
-      const newHandlerPosition = (this.$tooltip.width() - this.$htmlContainer.width()) / 2;
-      this.$tooltip.css('left', 0 - newHandlerPosition);
-    } else {
-      this.$tooltip.css('left', 0);
+    if (this.axis === 'X') {
+      if (this.$tooltip.width() > this.$htmlContainer.width()) {
+        const newHandlerPosition = (this.$tooltip.width() - this.$htmlContainer.width()) / 2;
+        this.$tooltip.css('left', 0 - newHandlerPosition);
+      } else {
+        this.$tooltip.css('left', 0);
+      }
     }
   }
 

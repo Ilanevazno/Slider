@@ -4,19 +4,19 @@ import TooltipView from '../TooltipView/TooltipView';
 import MainView from '../MainView';
 
 class HandlerView {
-  public $handler: JQuery<HTMLElement>;
+  public readonly $handler: JQuery<HTMLElement>;
 
-  public observer: Observer;
+  public readonly observer: Observer;
 
-  private offset: number;
+  private readonly tooltip: TooltipView;
 
-  private tooltip: TooltipView;
-
-  private axis: Axis;
+  private readonly axis: Axis;
 
   public value: number;
 
-  constructor(private mainView: MainView) {
+  private offset: number;
+
+  constructor(private readonly mainView: MainView) {
     this.axis = this.mainView.model.getOption('axis');
     this.$handler = this.drawHandler(this.mainView.sliderBody.$sliderBody);
     this.tooltip = new TooltipView(this.$handler, this.axis);

@@ -11,7 +11,7 @@ import Model from '../Model/Model';
 import MainView from '../View/MainView';
 
 class Controller {
-  constructor(private model: Model, private view: MainView) {
+  constructor(private readonly model: Model, private readonly view: MainView) {
     this.subscribeViewObserver();
     this.subscribeModelObserver();
   }

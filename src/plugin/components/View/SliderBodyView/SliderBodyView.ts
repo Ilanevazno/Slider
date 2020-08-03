@@ -7,19 +7,19 @@ import RangeView from '../RangeView/RangeView';
 import MainView from '../MainView';
 
 class SliderBodyView {
-  public $sliderBody: JQuery<HTMLElement>;
+  public readonly $sliderBody: JQuery<HTMLElement>;
 
-  public eventObserver: Observer;
+  public readonly eventObserver: Observer;
 
-  private breakpoints: BreakpointsView;
+  private readonly breakpoints: BreakpointsView;
+
+  private readonly axis: Axis;
 
   private rangeView: RangeView;
 
   private $bodyClickArea: JQuery<HTMLElement>
 
-  private axis: Axis;
-
-  constructor(private mainView: MainView) {
+  constructor(private readonly mainView: MainView) {
     this.eventObserver = new Observer();
     this.axis = mainView.model.getOption('axis');
     this.$sliderBody = this.drawBody(mainView.$sliderContainer);
