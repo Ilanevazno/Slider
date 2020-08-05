@@ -90,9 +90,6 @@ class Panel {
   }
 
   private prepareInputLabels(): void {
-    const minAvailableValue = this.$slider.sliderPlugin('setMinAvailableValue', this.sliderOptions.minAvailableValue);
-    const maxAvailableValue = this.$slider.sliderPlugin('setMaxAvailableValue', this.sliderOptions.maxAvailableValue);
-
     this.$slider.sliderPlugin('subscribeToChangeState', (newState: ModelState) => {
       const oldMinValue = this.$minValueHandlerInput?.val();
       const oldMaxValue = this.$maxValueHandlerInput?.val();
