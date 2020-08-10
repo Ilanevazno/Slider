@@ -9,7 +9,11 @@ import {
 } from '../types/types';
 import Observer from '../Observer/Observer';
 
-class Model {
+interface OptionConnector {
+  getOption<T extends string | number | boolean | number[]>(targetOption: keyof AvailableOptions): T;
+}
+
+class Model implements OptionConnector {
   public withLabels: boolean;
 
   public withTooltip: boolean;
@@ -244,5 +248,9 @@ class Model {
     return newTarget;
   }
 }
+
+export {
+  OptionConnector,
+};
 
 export default Model;

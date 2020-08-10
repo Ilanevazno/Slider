@@ -7,10 +7,9 @@ import {
   ValueType,
   Axis,
   ModelState,
-  HandlerName,
   InteractiveComponentEvent,
 } from '../types/types';
-import Model from '../Model/Model';
+import { OptionConnector } from '../Model/Model';
 import Observer from '../Observer/Observer';
 import SliderBodyView from './SliderBodyView/SliderBodyView';
 import HandlerView from './HandlerView/HandlerView';
@@ -26,7 +25,7 @@ class MainView {
 
   public maxValueHandler: ViewHandlerData;
 
-  constructor(public readonly model: Model, private readonly initHtmlElement: HTMLElement) {
+  constructor(public readonly model: OptionConnector, private readonly initHtmlElement: HTMLElement) {
     this.eventObserver = new Observer();
     this.$sliderContainer = this.drawSliderContainer(initHtmlElement);
 
