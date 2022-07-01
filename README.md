@@ -1,6 +1,6 @@
 # SliderPlugin
 
-Homework by fullstack development. Here we make JQuery plugin called as "slider".
+Homework for fullstack development. Here we make JQuery plugin called as "slider".
 
 ## Here we use
 
